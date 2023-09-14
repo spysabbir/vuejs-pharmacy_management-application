@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-md-8 ps-md-0">
                   <div class="auth-form-wrapper px-4 py-5">
-                    <a href="#" class="noble-ui-logo logo-light d-block mb-2">Spy <span>Shop</span></a>
+                    <a href="#" class="noble-ui-logo logo-light d-block mb-2">Spy <span>Pharmacy</span></a>
                     <h5 class="text-muted fw-normal mb-4">Welcome back! Log in to your account.</h5>
                     <form class="forms-sample" @submit.prevent="handleLogin">
                       <div class="mb-3">
@@ -35,7 +35,6 @@
                         <span class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-if="loginStatus">Login ....</span>
                         <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>Login</button>
                       </div>
-                      <a href="register.html" class="d-block mt-3 text-muted">Not a user? Sign up</a>
                     </form>
                   </div>
                 </div>
@@ -62,17 +61,29 @@ export default {
   methods: {
     handleLogin() {
       if(!this.formData.email){
-        alert('Email can not be empty.');
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Email can not be empty.",
+        })
+        
         this.$refs.email.focus();
         return;
       }
       if(!this.formData.password){
-        alert('Password can not be empty.');
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Password can not be empty.",
+        })
+
         this.$refs.password.focus();
         return;
       }
       if(this.formData.password.length < 6){
-        alert('Password must be at least 6 characters long.');  
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Password must be at least 6 characters long.",
+        })
+
         this.$refs.password.focus();
         return;
       }
@@ -93,7 +104,7 @@ export default {
       }).finally(() => {
         this.loginStatus = false;
       });
-    }
+    },
   },
 }
 </script>
