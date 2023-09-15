@@ -32,8 +32,7 @@
                         </label>
                       </div>
                       <div>
-                        <span class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-if="loginStatus">Submited ...</span>
-                        <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>Log In</button>
+                        <TheButton :lodding="loginStatus">Login</TheButton>
                       </div>
                     </form>
                   </div>
@@ -50,6 +49,8 @@
 <script>
 import axios from "axios";
 
+import TheButton from "../../components/TheButton.vue";
+
 export default {
   data: () => ({
     formData: {
@@ -58,6 +59,9 @@ export default {
     },
     loginStatus: false,
   }),
+  components: {
+    TheButton,
+  },
   methods: {
     handleLogin() {
       if(!this.formData.email){
@@ -89,7 +93,8 @@ export default {
       }
 
       this.loginStatus = true;
-      axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
+      // axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
+      axios.post("https://api.rimoned.com/api/pharmacy-management/v1/login", this.formData)
       .then((res) => {
         this.$eventBus.emit("toast", {
           type: "success",
@@ -105,12 +110,13 @@ export default {
         }
 
         this.$eventBus.emit("toast", {
-          type: "success",
+          type: "danger",
           message: errorMessage,
         })
       }).finally(() => {
         this.loginStatus = false;
       });
+
     },
   },
 }
