@@ -32,8 +32,8 @@
                         </label>
                       </div>
                       <div>
-                        <span class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-if="loginStatus">Login ....</span>
-                        <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>Login</button>
+                        <span class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-if="loginStatus">Submited ...</span>
+                        <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>Log In</button>
                       </div>
                     </form>
                   </div>
@@ -89,9 +89,13 @@ export default {
       }
 
       this.loginStatus = true;
-      axios.post("Your Url", this.formData)
+      axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
-        alert(res.data.message);
+        this.$eventBus.emit("toast", {
+          type: "success",
+          message: res.data.message,
+        })
+
         localStorage.setItem("accessToken", res.data.accessToken);
         this.$router.push("/dashboard")
       }).catch(err => {
@@ -100,7 +104,10 @@ export default {
           errorMessage = err.response.data.message;
         }
 
-        alert(errorMessage);
+        this.$eventBus.emit("toast", {
+          type: "success",
+          message: errorMessage,
+        })
       }).finally(() => {
         this.loginStatus = false;
       });

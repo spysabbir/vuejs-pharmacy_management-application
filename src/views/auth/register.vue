@@ -1,41 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
-	<meta name="author" content="NobleUI">
-	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-
-	<title>NobleUI - HTML Bootstrap 5 Admin Dashboard Template</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <!-- End fonts -->
-
-	<!-- core:css -->
-	<link rel="stylesheet" href="../../../assets/vendors/core/core.css">
-	<!-- endinject -->
-
-	<!-- Plugin css for this page -->
-	<!-- End plugin css for this page -->
-
-	<!-- inject:css -->
-	<link rel="stylesheet" href="../../../assets/fonts/feather-font/css/iconfont.css">
-	<link rel="stylesheet" href="../../../assets/vendors/flag-icon-css/css/flag-icon.min.css">
-	<!-- endinject -->
-
-  <!-- Layout styles -->  
-	<link rel="stylesheet" href="../../../assets/css/demo2/style.css">
-  <!-- End layout styles -->
-
-  <link rel="shortcut icon" href="../../../assets/images/favicon.png" />
-</head>
-<body>
-	<div class="main-wrapper">
+<template>
+  <div class="main-wrapper">
 		<div class="page-wrapper full-page">
 			<div class="page-content d-flex align-items-center justify-content-center">
 
@@ -50,20 +14,20 @@
                 </div>
                 <div class="col-md-8 ps-md-0">
                   <div class="auth-form-wrapper px-4 py-5">
-                    <a href="#" class="noble-ui-logo logo-light d-block mb-2">Noble<span>UI</span></a>
+                    <a href="#" class="noble-ui-logo logo-light d-block mb-2">Spy <span>Pharmacy</span></a>
                     <h5 class="text-muted fw-normal mb-4">Create a free account.</h5>
-                    <form class="forms-sample">
+                    <form class="forms-sample" @submit.prevent="handleRegister">
                       <div class="mb-3">
-                        <label for="exampleInputUsername1" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="exampleInputUsername1" autocomplete="Username" placeholder="Username">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" v-model="formData.name" ref="name" placeholder="Enter your full name">
                       </div>
                       <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="userEmail" placeholder="Email">
+                        <label class="form-label">Email address</label>
+                        <input type="email" class="form-control" v-model="formData.email" ref="email" placeholder="Enter your email">
                       </div>
                       <div class="mb-3">
-                        <label for="userPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="userPassword" autocomplete="current-password" placeholder="Password">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" v-model="formData.password" ref="password" placeholder="Enter your password">
                       </div>
                       <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="authCheck">
@@ -72,13 +36,9 @@
                         </label>
                       </div>
                       <div>
-                        <a href="../../dashboard.html" class="btn btn-primary text-white me-2 mb-2 mb-md-0">Sign up</a>
-                        <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
-                          <i class="btn-icon-prepend" data-feather="twitter"></i>
-                          Sign up with twitter
-                        </button>
+                        <span class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-if="registerStatus">Submited ...</span>
+                        <button type="submit" class="btn btn-primary text-white me-2 mb-2 mb-md-0" v-else>Register</button>
                       </div>
-                      <a href="login.html" class="d-block mt-3 text-muted">Already a user? Sign in</a>
                     </form>
                   </div>
                 </div>
@@ -90,21 +50,87 @@
 			</div>
 		</div>
 	</div>
+</template>
 
-	<!-- core:js -->
-	<script src="../../../assets/vendors/core/core.js"></script>
-	<!-- endinject -->
+<script>
+import axios from "axios";
 
-	<!-- Plugin js for this page -->
-	<!-- End plugin js for this page -->
+export default {
+  data: () => ({
+    formData: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    registerStatus: false,
+  }),
+  methods: {
+    handleRegister() {
+      if(!this.formData.name){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Full name can not be empty.",
+        })
+        
+        this.$refs.name.focus();
+        return;
+      }
+      if(!this.formData.email){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Email can not be empty.",
+        })
+        
+        this.$refs.email.focus();
+        return;
+      }
+      if(!this.formData.password){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Password can not be empty.",
+        })
 
-	<!-- inject:js -->
-	<script src="../../../assets/vendors/feather-icons/feather.min.js"></script>
-	<script src="../../../assets/js/template.js"></script>
-	<!-- endinject -->
+        this.$refs.password.focus();
+        return;
+      }
+      if(this.formData.password.length < 6){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Password must be at least 6 characters long.",
+        })
 
-	<!-- Custom js for this page -->
-	<!-- End custom js for this page -->
+        this.$refs.password.focus();
+        return;
+      }
 
-</body>
-</html>
+      this.registerStatus = true;
+      axios.post("https://pharmacy.spysabbir.com/api/register", this.formData)
+      .then((res) => {
+        this.$eventBus.emit("toast", {
+          type: "success",
+          message: res.data.message,
+        })
+
+        localStorage.setItem("accessToken", res.data.accessToken);
+        this.$router.push("/dashboard")
+      }).catch(err => {
+        let errorMessage = "Something went wrong.";
+        if(err.response){
+          errorMessage = err.response.data.message;
+        }
+
+        this.$eventBus.emit("toast", {
+          type: "success",
+          message: errorMessage,
+        })
+      }).finally(() => {
+        this.registerStatus = false;
+      });
+    },
+  },
+}
+</script>
+
+<style>
+
+</style>
