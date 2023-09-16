@@ -1,3 +1,13 @@
 <template>
-    <h1>Customer</h1>
+    <TheBreadcrumb title="Customer"></TheBreadcrumb>
 </template>
+
+<script>
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+
+export default {
+components: {
+    TheBreadcrumb,
+  }
+}
+</script>

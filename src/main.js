@@ -4,7 +4,6 @@ import App from './App.vue';
 import mitt from 'mitt'
 import router from './router';
 
-
 let eventBus = mitt();
 
 const app = createApp(App);

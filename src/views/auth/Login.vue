@@ -64,6 +64,7 @@ export default {
   },
   methods: {
     handleLogin() {
+
       if(!this.formData.email){
         this.$eventBus.emit("toast", {
           type: "danger",
@@ -93,8 +94,7 @@ export default {
       }
 
       this.loginStatus = true;
-      // axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
-      axios.post("https://api.rimoned.com/api/pharmacy-management/v1/login", this.formData)
+      axios.post("http://127.0.0.1:8000/api/login", this.formData)
       .then((res) => {
         this.$eventBus.emit("toast", {
           type: "success",

@@ -1,13 +1,14 @@
 <template>
-  <TransitionGroup name="slide-transition" tag="div">
-    <TheToast 
-      v-for="(toast, i) in toasts"
-      :key="i"
-      :toastType="toast.type"
-      :toastMessage="toast.message">
-    </TheToast>
-  </TransitionGroup>
-
+  <div class="alert-box">
+    <TransitionGroup name="toast-transition" tag="div">
+      <TheToast 
+        v-for="(toast, i) in toasts"
+        :key="i"
+        :toastType="toast.type"
+        :toastMessage="toast.message">
+      </TheToast>
+    </TransitionGroup>
+  </div>
 
   <router-view></router-view>
 
@@ -32,20 +33,27 @@ export default {
     removeToast() {
       setTimeout(() => {
         this.toasts.shift();
-      }, 2222)
+      }, 3000)
     }
   }
 }
 </script>
 
 <style scoped>
-.slide-transition-enter-active,
-.slide-transition-leave-active {
+.alert-box {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.toast-transition-move,
+.toast-transition-enter-active,
+.toast-transition-leave-active {
   transition: all 0.5s ease;
 }
-.slide-transition-enter-from,
-.slide-transition-leave-to {
+
+.toast-transition-enter-from,
+.toast-transition-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateY(-30px);
 }
 </style>

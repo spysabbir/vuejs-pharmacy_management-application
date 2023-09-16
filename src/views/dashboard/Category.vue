@@ -1,5 +1,5 @@
 <template>
-    <TheBreadcrumb title="Supplier"></TheBreadcrumb>
+    <TheBreadcrumb title="Category"></TheBreadcrumb>
 </template>
 
 <script>
