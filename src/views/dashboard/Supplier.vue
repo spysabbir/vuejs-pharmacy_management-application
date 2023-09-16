@@ -19,7 +19,8 @@
           <div></div>
         </div>
         <div class="card-body">
-          <div class="table-responsive">
+          <div class="text-center" v-if="getSuppliers">Looding...</div>
+          <div class="table-responsive" v-else>
             <table class="table table-striped table-hover align-middle">
               <thead class="table-light">
                 <caption>Table Name</caption>
@@ -30,9 +31,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="i in 9" :key="i">
-                  <td>Item</td>
-                  <td>Item</td>
+                <tr v-for="supplier in suppliers" :key="supplier.name">
+                  <td>{{ supplier.name }}</td>
+                  <td>{{ supplier.email }}</td>
                   <td>
 
                   </td>
@@ -66,12 +67,15 @@
         <label class="form-label">Address</label>
         <textarea class="form-control" v-model="supplierData.address" placeholder="Enter address"></textarea>
       </div>
-      <TheButton>Add Supplier</TheButton>
+      <TheButton :lodding="addingStatus">Add Supplier</TheButton>
     </form>
   </TheModel>
 </template>
 
 <script>
+
+import axios from "axios";
+
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';
@@ -83,16 +87,84 @@ export default {
       email: "",
       phoneNumber: "",
       address: "",
-    }
+    },
+    addingStatus: false,
+    suppliers: [],
+    getSuppliers: false,
   }),
   components: {
     TheBreadcrumb,
     TheButton,
     TheModel,
   },
+  mounted() {
+    this.getAllSuppliers();
+  },
   methods: {
-    addNew(){
+    resetForm(){
+      this.supplierData = {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        address: "",
+      }
+    },
 
+    getAllSuppliers(){
+      this.getSuppliers = true;
+      axios.get("http://127.0.0.1:8000/api/supplier",  
+        {
+          headers: {
+            authorization : `Bearer ${localStorage.getItem("accessToken")}`
+          }
+        }
+      )
+      .then((res) => {
+        this.suppliers = res.data;
+      }).catch(err => {
+        let errorMessage = "Something went wrong.";
+        if(err.response){
+          errorMessage = err.response.data.message;
+        }
+
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: errorMessage,
+        })
+      }).finally(() => {
+        this.getSuppliers = false;
+      });
+    },
+
+    addSupplier(){
+      this.addingStatus = true;
+      axios.post("http://127.0.0.1:8000/api/supplier", 
+        this.supplierData, 
+        {
+          headers: {
+            authorization : `Bearer ${localStorage.getItem("accessToken")}`
+          }
+        }
+      )
+      .then((res) => {
+        this.$eventBus.emit("toast", {
+          type: "success",
+          message: res.data.message,
+        })
+        this.resetForm();
+      }).catch(err => {
+        let errorMessage = "Something went wrong.";
+        if(err.response){
+          errorMessage = err.response.data.message;
+        }
+
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: errorMessage,
+        })
+      }).finally(() => {
+        this.addingStatus = false;
+      });
     }
   }
 }
