@@ -1,4 +1,5 @@
 <template>
+  <ul class="nav">
   <li class="nav-item nav-category">Main</li>
   <li class="nav-item">
     <router-link to="overview" class="nav-link">
@@ -7,7 +8,7 @@
     </router-link>
   </li>
 
-  <li class="nav-item nav-category">web apps</li>
+  <!-- <li class="nav-item nav-category">web apps</li>
   <li class="nav-item">
     <a class="nav-link" data-bs-toggle="collapse" href="#emails" role="button" aria-expanded="false" aria-controls="emails">
       <i class="link-icon" data-feather="mail"></i>
@@ -27,7 +28,7 @@
         </li>
       </ul>
     </div>
-  </li>
+  </li> -->
 
   <li class="nav-item">
     <router-link to="supplier" class="nav-link">
@@ -36,9 +37,9 @@
     </router-link>
   </li>
   <li class="nav-item">
-    <router-link to="category" class="nav-link">
+    <router-link to="type" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
-      <span class="link-title">Category</span>
+      <span class="link-title">Type</span>
     </router-link>
   </li>
   <li class="nav-item">
@@ -53,4 +54,5 @@
       <span class="link-title">Customer</span>
     </router-link>
   </li>
+</ul>
 </template>

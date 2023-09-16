@@ -1,5 +1,5 @@
 <template>
-<div class="main-wrapper">
+	<div class="main-wrapper">
 
   <!-- sidebar -->
   <nav class="sidebar">
@@ -13,28 +13,24 @@
         <span></span>
       </div>
     </div>
-
     <div class="sidebar-body">
-      <ul class="nav">
-        <TheSideber></TheSideber>
-      </ul>
+      <TheSideber></TheSideber>
     </div>
   </nav>
-  
   <nav class="settings-sidebar">
     <div class="sidebar-body">
       <a href="#" class="settings-sidebar-toggler">
         <i data-feather="settings"></i>
       </a>
       <div class="theme-wrapper">
-
+      
       </div>
     </div>
   </nav>
   <!-- sidebar -->
 
   <div class="page-wrapper">
-        
+      
     <!-- navbar -->
     <nav class="navbar">
       <a href="#" class="sidebar-toggler">
@@ -54,13 +50,12 @@
 
     <!-- footer -->
     <footer class="footer d-flex flex-column flex-md-row align-items-center justify-content-between px-4 py-3 border-top small">
-      <p class="text-muted mb-1 mb-md-0">Copyright © 2023 <a href="https://www.spysabbir.com" target="_blank">Spy Pharmacy</a>.</p>
+      <p class="text-muted mb-1 mb-md-0">Copyright © 2023 <a href="#" target="_blank">Spy Sabbir</a>.</p>
       <p class="text-muted">Handcrafted With <i class="mb-1 text-primary ms-1 icon-sm" data-feather="heart"></i></p>
     </footer>
     <!-- footer -->
 
   </div>
-
 </div>
 </template>
 

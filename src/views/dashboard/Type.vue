@@ -1,5 +1,5 @@
 <template>
-    <TheBreadcrumb title="Category"></TheBreadcrumb>
+    <TheBreadcrumb title="Type"></TheBreadcrumb>
 </template>
 
 <script>
