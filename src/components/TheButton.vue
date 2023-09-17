@@ -4,7 +4,7 @@
         <img src="/src/assets/images/preloader.gif" width="50" height="50">
     </div>
 
-    <button class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>
+    <button :class="['btn', 'btn-'+color, 'me-2 mb-2 mb-md-0 text-white']" v-else>
         <slot></slot>
     </button>
 
@@ -16,6 +16,10 @@ export default {
         lodding: {
             type: Boolean,
             default: false,
+        },
+        color: {
+            type: String,
+            default: 'primary',
         },
     }
 }

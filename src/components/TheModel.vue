@@ -1,5 +1,5 @@
 <template>
-<div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div :class="['modal fade', title]" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
@@ -23,7 +23,11 @@ export default {
         hadding: {
             type: String,
             default: "Default Heading"
-        }
+        },
+        title: {
+            type: String,
+            default: ""
+        },
     }
 }
 </script>

@@ -2,7 +2,6 @@
 	<div class="main-wrapper">
 		<div class="page-wrapper full-page">
 			<div class="page-content d-flex align-items-center justify-content-center">
-
 				<div class="row w-100 mx-0 auth-page">
 					<div class="col-md-8 col-xl-6 mx-auto">
 						<div class="card">
@@ -31,7 +30,7 @@
                           Remember me
                         </label>
                       </div>
-                      <div>
+                      <div class="mb-3">
                         <TheButton :lodding="loginStatus">Login</TheButton>
                       </div>
                     </form>
@@ -94,7 +93,7 @@ export default {
       }
 
       this.loginStatus = true;
-      axios.post("http://127.0.0.1:8000/api/login", this.formData)
+      axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
         this.$eventBus.emit("toast", {
           type: "success",

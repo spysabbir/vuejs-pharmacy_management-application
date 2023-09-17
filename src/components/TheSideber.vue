@@ -1,8 +1,8 @@
 <template>
-  <ul class="nav">
+<ul class="nav">
   <li class="nav-item nav-category">Main</li>
-  <li class="nav-item">
-    <router-link to="/dashboard/overview" class="nav-link">
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/overview' }">
+    <router-link to="/dashboard/overview" class="nav-link" >
       <i class="link-icon" data-feather="box"></i>
       <span class="link-title">Dashboard</span>
     </router-link>
@@ -30,25 +30,25 @@
     </div>
   </li> -->
 
-  <li class="nav-item">
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/supplier' }">
     <router-link to="/dashboard/supplier" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
       <span class="link-title">Supplier</span>
     </router-link>
   </li>
-  <li class="nav-item">
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/type' }">
     <router-link to="/dashboard/type" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
       <span class="link-title">Type</span>
     </router-link>
   </li>
-  <li class="nav-item">
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/medicine' }">
     <router-link to="/dashboard/medicine" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
       <span class="link-title">Medicine</span>
     </router-link>
   </li>
-  <li class="nav-item">
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/customer' }">
     <router-link to="/dashboard/customer" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
       <span class="link-title">Customer</span>
