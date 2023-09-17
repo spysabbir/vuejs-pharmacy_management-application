@@ -16,6 +16,8 @@
 
 <script>
 import TheToast from "./components/TheToast.vue";
+import { eventBus } from "./utils/eventBus";
+
 export default {
   data: () => ({
     toasts: [],
@@ -24,7 +26,7 @@ export default {
     TheToast,
   },
   mounted() {
-    this.$eventBus.on("toast", data => {
+    eventBus.on("toast", data => {
       this.toasts.push(data);
       this.removeToast();
     });
@@ -55,6 +57,6 @@ export default {
 .toast-transition-enter-from,
 .toast-transition-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateY(-30px);
 }
 </style>

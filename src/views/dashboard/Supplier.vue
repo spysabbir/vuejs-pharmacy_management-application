@@ -1,5 +1,5 @@
 <template>
-    <TheBreadcrumb title="Supplier"></TheBreadcrumb>
+  <TheBreadcrumb title="Supplier"></TheBreadcrumb>
 
   <div class="row">
     <div class="col-12 col-xl-12 grid-margin stretch-card">
@@ -104,6 +104,8 @@ import axios from "axios";
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';
+import { eventBus } from "../../utils/eventBus";
+import privateService from "../../service/privateService";
 
 export default {
   data: () => ({
@@ -126,7 +128,8 @@ export default {
     TheModel,
   },
   mounted() {
-    this.getAllSuppliers();
+    setTimeout(this.getAllSuppliers, 100)
+    // this.getAllSuppliers();
   },
   methods: {
     resetForm(){
@@ -147,6 +150,7 @@ export default {
           }
         }
       )
+      // privateService.getSupplier()
       .then((res) => {
         this.suppliers = res.data.data;
       }).catch(err => {
@@ -155,7 +159,7 @@ export default {
           errorMessage = err.response.data.message;
         }
 
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: errorMessage,
         })
@@ -166,7 +170,7 @@ export default {
 
     addSupplier(){
       if(!this.addingSupplierData.name){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Name can not be empty.",
         })
@@ -175,7 +179,7 @@ export default {
         return;
       }
       if(!this.addingSupplierData.email){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Email can not be empty.",
         })
@@ -184,7 +188,7 @@ export default {
         return;
       }
       if(!this.addingSupplierData.phone_number){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Phone number can not be empty.",
         })
@@ -193,7 +197,7 @@ export default {
         return;
       }
       if(!this.addingSupplierData.address){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Address can not be empty.",
         })
@@ -210,8 +214,9 @@ export default {
           }
         }
       )
+      // privateService.addSupplier(this.addingSupplierData)
       .then((res) => {
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
         })
@@ -223,7 +228,7 @@ export default {
           errorMessage = err.response.data.message;
         }
 
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: errorMessage,
         })
@@ -242,19 +247,19 @@ export default {
           }
         }
       )
+      // privateService.editSupplier(this.selectedSupplierData)
       .then((res) => {
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
         })
-        // this.getAllSuppliers();
       }).catch(err => {
         let errorMessage = "Something went wrong.";
         if(err.response){
           errorMessage = err.response.data.message;
         }
 
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: errorMessage,
         })
@@ -272,8 +277,9 @@ export default {
           }
         }
       )
+      // privateService.deleteSupplier(this.selectedSupplierData.id)
       .then((res) => {
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
         })
@@ -284,7 +290,7 @@ export default {
           errorMessage = err.response.data.message;
         }
 
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: errorMessage,
         })

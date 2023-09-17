@@ -54,6 +54,7 @@
 
 <script>
 import axios from "axios";
+import { eventBus } from "../../utils/eventBus";
 
 export default {
   data: () => ({
@@ -67,7 +68,7 @@ export default {
   methods: {
     handleRegister() {
       if(!this.formData.name){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Full name can not be empty.",
         })
@@ -76,7 +77,7 @@ export default {
         return;
       }
       if(!this.formData.email){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Email can not be empty.",
         })
@@ -85,7 +86,7 @@ export default {
         return;
       }
       if(!this.formData.password){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Password can not be empty.",
         })
@@ -94,7 +95,7 @@ export default {
         return;
       }
       if(this.formData.password.length < 6){
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "danger",
           message: "Password must be at least 6 characters long.",
         })
@@ -106,7 +107,7 @@ export default {
       this.registerStatus = true;
       axios.post("https://pharmacy.spysabbir.com/api/register", this.formData)
       .then((res) => {
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
         })
@@ -119,7 +120,7 @@ export default {
           errorMessage = err.response.data.message;
         }
 
-        this.$eventBus.emit("toast", {
+        eventBus.emit("toast", {
           type: "success",
           message: errorMessage,
         })

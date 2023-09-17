@@ -49,6 +49,9 @@
 import axios from "axios";
 
 import TheButton from "../../components/TheButton.vue";
+import { eventBus } from "../../utils/eventBus";
+import { setPrivateHeaders } from "../../service/axiosInstance";
+import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
 
 export default {
   data: () => ({
@@ -65,29 +68,17 @@ export default {
     handleLogin() {
 
       if(!this.formData.email){
-        this.$eventBus.emit("toast", {
-          type: "danger",
-          message: "Email can not be empty.",
-        })
-        
+        showErrorMessage("Email can not be empty!")
         this.$refs.email.focus();
         return;
       }
       if(!this.formData.password){
-        this.$eventBus.emit("toast", {
-          type: "danger",
-          message: "Password can not be empty.",
-        })
-
+        showErrorMessage("Password can not be empty!")
         this.$refs.password.focus();
         return;
       }
       if(this.formData.password.length < 6){
-        this.$eventBus.emit("toast", {
-          type: "danger",
-          message: "Password must be at least 6 characters long.",
-        })
-
+        showErrorMessage("Password must be at least 6 characters long!")
         this.$refs.password.focus();
         return;
       }
@@ -95,23 +86,12 @@ export default {
       this.loginStatus = true;
       axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
-        this.$eventBus.emit("toast", {
-          type: "success",
-          message: res.data.message,
-        })
-
+        showSuccessMessage(res);
         localStorage.setItem("accessToken", res.data.data.token);
+        setPrivateHeaders();
         this.$router.push("/dashboard")
       }).catch(err => {
-        let errorMessage = "Something went wrong.";
-        if(err.response){
-          errorMessage = err.response.data.message;
-        }
-
-        this.$eventBus.emit("toast", {
-          type: "danger",
-          message: errorMessage,
-        })
+        showErrorMessage(err)
       }).finally(() => {
         this.loginStatus = false;
       });

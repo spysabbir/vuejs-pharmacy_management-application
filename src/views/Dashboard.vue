@@ -62,10 +62,14 @@
 <script>
 import TheSideber from '../components/TheSideber.vue';
 import TheHeader from '../components/TheHeader.vue';
+import { setPrivateHeaders } from "../service/axiosInstance";
 export default {
   components: {
     TheSideber,
     TheHeader,
+  },
+  mounted() {
+    setPrivateHeaders();
   }
 }
 </script>
