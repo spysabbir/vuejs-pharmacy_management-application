@@ -23,10 +23,9 @@
           <div class="table-responsive" v-else>
             <table class="table table-striped table-hover align-middle">
               <thead class="table-light">
-                <caption>Table Name</caption>
                 <tr>
-                  <th>Column 1</th>
-                  <th>Column 2</th>
+                  <th>Name</th>
+                  <th>Email</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -39,9 +38,6 @@
                   </td>
                 </tr>
               </tbody>
-              <tfoot>
-                
-              </tfoot>
             </table>
           </div>
         </div>
@@ -53,19 +49,19 @@
     <form @submit.prevent="addSupplier">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" v-model="supplierData.name" placeholder="Enter name">
+        <input type="text" class="form-control" ref="name" v-model="supplierData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" v-model="supplierData.email" placeholder="Enter email">
+        <input type="email" class="form-control" ref="email" v-model="supplierData.email" placeholder="Enter email">
       </div>
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input type="text" class="form-control" v-model="supplierData.phoneNumber" placeholder="Enter phone number">
+        <input type="text" class="form-control" ref="phone_number" v-model="supplierData.phone_number" placeholder="Enter phone number">
       </div>
       <div class="mb-3">
         <label class="form-label">Address</label>
-        <textarea class="form-control" v-model="supplierData.address" placeholder="Enter address"></textarea>
+        <textarea class="form-control" v-model="supplierData.address" ref="address" placeholder="Enter address"></textarea>
       </div>
       <TheButton :lodding="addingStatus">Add Supplier</TheButton>
     </form>
@@ -85,7 +81,7 @@ export default {
     supplierData: {
       name: "",
       email: "",
-      phoneNumber: "",
+      phone_number: "",
       address: "",
     },
     addingStatus: false,
@@ -105,7 +101,7 @@ export default {
       this.supplierData = {
         name: "",
         email: "",
-        phoneNumber: "",
+        phone_number: "",
         address: "",
       }
     },
@@ -120,7 +116,7 @@ export default {
         }
       )
       .then((res) => {
-        this.suppliers = res.data;
+        this.suppliers = res.data.data;
       }).catch(err => {
         let errorMessage = "Something went wrong.";
         if(err.response){
@@ -137,6 +133,42 @@ export default {
     },
 
     addSupplier(){
+      if(!this.supplierData.name){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Name can not be empty.",
+        })
+        
+        this.$refs.name.focus();
+        return;
+      }
+      if(!this.supplierData.email){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Email can not be empty.",
+        })
+        
+        this.$refs.email.focus();
+        return;
+      }
+      if(!this.supplierData.phone_number){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Phone number can not be empty.",
+        })
+        
+        this.$refs.phone_number.focus();
+        return;
+      }
+      if(!this.supplierData.address){
+        this.$eventBus.emit("toast", {
+          type: "danger",
+          message: "Address can not be empty.",
+        })
+        
+        this.$refs.address.focus();
+        return;
+      }
       this.addingStatus = true;
       axios.post("http://127.0.0.1:8000/api/supplier", 
         this.supplierData, 

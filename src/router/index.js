@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "../views/Auth/Login.vue";
 import DashboardPage from "../views/Dashboard.vue";
 import Overview from "../views/dashboard/Overview.vue";
@@ -8,21 +8,24 @@ import Type from "../views/dashboard/Type.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 
 const routes = [
-    {path: "/", component: LoginPage},
-    {path: "/dashboard", component: DashboardPage, redirect: "/dashboard/overview",
-        children: [
-            {path: "/dashboard/overview", component: Overview},
-            {path: "/dashboard/supplier", component: Supplier},
-            {path: "/dashboard/customer", component: Customer},
-            {path: "/dashboard/type", component: Type},
-            {path: "/dashboard/medicine", component: Medicine},
-        ]
-    },
+  { path: "/", component: LoginPage },
+  {
+    path: "/dashboard",
+    component: DashboardPage,
+    redirect: "/dashboard/overview",
+    children: [
+      { path: "overview", component: Overview },
+      { path: "supplier", component: Supplier },
+      { path: "customer", component: Customer },
+      { path: "type", component: Type },
+      { path: "medicine", component: Medicine },
+    ],
+  },
 ];
 
 const router = createRouter({
-    routes,
-    history: createWebHistory(),
-})
+  routes,
+  history: createWebHistory(),
+});
 
 export default router;

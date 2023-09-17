@@ -54,8 +54,8 @@ import TheButton from "../../components/TheButton.vue";
 export default {
   data: () => ({
     formData: {
-      email: "",
-      password: "",
+      email: "sabbir@gmail.com",
+      password: "123456",
     },
     loginStatus: false,
   }),
@@ -101,7 +101,7 @@ export default {
           message: res.data.message,
         })
 
-        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("accessToken", res.data.data.token);
         this.$router.push("/dashboard")
       }).catch(err => {
         let errorMessage = "Something went wrong.";

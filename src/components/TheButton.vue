@@ -1,7 +1,7 @@
 <template>
    
     <div v-if="lodding">
-        <img src="src/assets/images/preloader.gif" width="50" height="50">
+        <img src="/src/assets/images/preloader.gif" width="50" height="50">
     </div>
 
     <button class="btn btn-primary me-2 mb-2 mb-md-0 text-white" v-else>
