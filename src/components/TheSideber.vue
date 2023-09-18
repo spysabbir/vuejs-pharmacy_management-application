@@ -48,6 +48,12 @@
       <span class="link-title">Power</span>
     </router-link>
   </li>
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/unit' }">
+    <router-link to="/dashboard/unit" class="nav-link">
+      <i class="link-icon" data-feather="message-square"></i>
+      <span class="link-title">Unit</span>
+    </router-link>
+  </li>
   <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/medicine' }">
     <router-link to="/dashboard/medicine" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>

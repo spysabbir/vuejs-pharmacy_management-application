@@ -42,4 +42,18 @@ export default {
     deletePower(id) {
         return axiosPrivate.delete("/power/" + id);
     },
+
+    // Unit
+    getUnit() {
+        return axiosPrivate.get("/unit");
+    },
+    addUnit(payload) {
+        return axiosPrivate.post("/unit", payload);
+    },
+    editUnit(payload) {
+        return axiosPrivate.put("/unit/" + payload.id, payload);
+    },
+    deleteUnit(id) {
+        return axiosPrivate.delete("/unit/" + id);
+    },
 }
