@@ -28,4 +28,18 @@ export default {
     deleteType(id) {
         return axiosPrivate.delete("/type/" + id);
     },
+
+    // Power
+    getPower() {
+        return axiosPrivate.get("/power");
+    },
+    addPower(payload) {
+        return axiosPrivate.post("/power", payload);
+    },
+    editPower(payload) {
+        return axiosPrivate.put("/power/" + payload.id, payload);
+    },
+    deletePower(id) {
+        return axiosPrivate.delete("/power/" + id);
+    },
 }

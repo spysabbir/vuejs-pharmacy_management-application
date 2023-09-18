@@ -4,6 +4,7 @@ import DashboardPage from "../views/Dashboard.vue";
 import Overview from "../views/dashboard/Overview.vue";
 import Supplier from "../views/dashboard/Supplier.vue";
 import Customer from "../views/dashboard/Customer.vue";
+import Power from "../views/dashboard/Power.vue";
 import Type from "../views/dashboard/Type.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 
@@ -17,6 +18,7 @@ const routes = [
       { path: "overview", component: Overview },
       { path: "supplier", component: Supplier },
       { path: "customer", component: Customer },
+      { path: "power", component: Power },
       { path: "type", component: Type },
       { path: "medicine", component: Medicine },
     ],
