@@ -68,6 +68,12 @@ export default {
     TheSideber,
     TheHeader,
   },
+  created() {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+        this.$router.push("/")
+      }
+  },
   mounted() {
     setPrivateHeaders();
   }
