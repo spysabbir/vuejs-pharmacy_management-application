@@ -21,16 +21,18 @@
         <div class="card-body">
           <div class="text-center" v-if="getCustomers">Looding...</div>
           <div class="table-responsive" v-else>
-            <table class="table table-striped table-hover align-middle">
+            <table class="table table-striped table-hover align-middle text-center">
               <thead class="table-light">
                 <tr>
+                  <th>Sl No</th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="customer in customers" :key="customer.name">
+                <tr v-for="(customer, i) in customers" :key="customer.name">
+                  <td>{{ i+1 }}</td>
                   <td>{{ customer.name }}</td>
                   <td>{{ customer.email }}</td>
                   <td>
@@ -46,7 +48,7 @@
     </div>
   </div>
 
-  <TheModel hadding="Add Customer" title="addingModel">
+  <TheModel hadding="Add Customer" action="addingModel">
     <form @submit.prevent="addCustomer">
       <div class="mb-3">
         <label class="form-label">Name</label>
@@ -68,7 +70,7 @@
     </form>
   </TheModel>
 
-  <TheModel hadding="Edit Customer" title="editingModel">
+  <TheModel hadding="Edit Customer" action="editingModel">
     <form @submit.prevent="editCustomer">
       <div class="mb-3">
         <label class="form-label">Name</label>
@@ -90,24 +92,26 @@
     </form>
   </TheModel>
 
-  <TheModel hadding="Delete Customer" title="deletingModel">
-    <strong>{{ selectedCustomerData.name }}</strong>
-    <TheButton data-bs-dismiss="modal">No</TheButton>
-    <TheButton color="danger" @click="deleteCustomer" :loading="deletingStatus">Yes</TheButton>
+  <TheModel hadding="Delete Customer" action="deletingModel">
+    <div class="card text-center">
+      <div class="card-header">
+        <strong>Customer Name: {{ selectedCustomerData.name }}</strong>
+      </div>
+      <div class="card-body">
+        <TheButton data-bs-dismiss="modal">No</TheButton>
+        <TheButton color="danger" @click="deleteCustomer" :loading="deletingStatus">Yes</TheButton>
+      </div>
+    </div>
   </TheModel>
 </template>
 
 <script>
-
 import axios from "axios";
-
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';
-import { eventBus } from "../../utils/eventBus";
 import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-
-
+import privateService from "../../service/privateService";
 
 export default {
   data: () => ({
@@ -130,7 +134,7 @@ export default {
     TheModel,
   },
   mounted() {
-    this.getAllCustomers();
+    setTimeout(this.getAllCustomers, 100)
   },
   methods: {
     resetForm(){
@@ -144,13 +148,7 @@ export default {
 
     getAllCustomers(){
       this.getCustomers = true;
-      axios.get("https://pharmacy.spysabbir.com/api/customer",  
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
-      )
+      privateService.getCustomer()
       .then((res) => {
         this.customers = res.data.data;
       }).catch(err => {
@@ -182,15 +180,9 @@ export default {
         return;
       }
       this.addingStatus = true;
-      axios.post("https://pharmacy.spysabbir.com/api/customer", 
-        this.addingCustomerData, 
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
-      )
+      privateService.addCustomer(this.addingCustomerData)
       .then((res) => {
+        $('.addingModel').modal('hide');
         showSuccessMessage(res);
         this.resetForm();
         this.getAllCustomers();
@@ -202,16 +194,30 @@ export default {
     },
 
     editCustomer() {
+      if(!this.selectedCustomerData.name){
+        showErrorMessage("Name can not be empty!");
+        this.$refs.name.focus();
+        return;
+      }
+      if(!this.selectedCustomerData.email){
+        showErrorMessage("Email can not be empty!");
+        this.$refs.email.focus();
+        return;
+      }
+      if(!this.selectedCustomerData.phone_number){
+        showErrorMessage("Phone number can not be empty!");
+        this.$refs.phone_number.focus();
+        return;
+      }
+      if(!this.selectedCustomerData.address){
+        showErrorMessage("Address can not be empty!");
+        this.$refs.address.focus();
+        return;
+      }
       this.editingStatus = true;
-      axios.put("https://pharmacy.spysabbir.com/api/customer/" + this.selectedCustomerData.id, 
-        this.selectedCustomerData,
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
-      )
+      privateService.editCustomer(this.selectedCustomerData)
       .then((res) => {
+        $('.editingModel').modal('hide');
         showSuccessMessage(res);
       }).catch(err => {
         showErrorMessage(err)
@@ -222,14 +228,9 @@ export default {
 
     deleteCustomer() {
       this.deletingStatus = true;
-      axios.delete("https://pharmacy.spysabbir.com/api/customer/" + this.selectedCustomerData.id,  
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
-      )
+      privateService.deleteCustomer(this.selectedCustomerData.id)
       .then((res) => {
+        $('.deletingModel').modal('hide');
         showSuccessMessage(res);
         this.getAllCustomers();
       }).catch(err => {

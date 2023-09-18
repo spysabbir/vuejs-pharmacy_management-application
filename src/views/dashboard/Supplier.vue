@@ -21,16 +21,18 @@
         <div class="card-body">
           <div class="text-center" v-if="getSuppliers">Looding...</div>
           <div class="table-responsive" v-else>
-            <table class="table table-striped table-hover align-middle">
+            <table class="table table-striped table-hover align-middle text-center">
               <thead class="table-light">
                 <tr>
+                  <th>Sl No</th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="supplier in suppliers" :key="supplier.name">
+                <tr v-for="(supplier, i) in suppliers" :key="supplier.name">
+                  <td>{{ i+1 }}</td>
                   <td>{{ supplier.name }}</td>
                   <td>{{ supplier.email }}</td>
                   <td>
@@ -46,7 +48,7 @@
     </div>
   </div>
 
-  <TheModel hadding="Add Supplier" title="addingModel">
+  <TheModel hadding="Add Supplier" action="addingModel">
     <form @submit.prevent="addSupplier">
       <div class="mb-3">
         <label class="form-label">Name</label>
@@ -68,7 +70,7 @@
     </form>
   </TheModel>
 
-  <TheModel hadding="Edit Supplier" title="editingModel">
+  <TheModel hadding="Edit Supplier" action="editingModel">
     <form @submit.prevent="editSupplier">
       <div class="mb-3">
         <label class="form-label">Name</label>
@@ -90,22 +92,25 @@
     </form>
   </TheModel>
 
-  <TheModel hadding="Delete Supplier" title="deletingModel">
-    <strong>{{ selectedSupplierData.name }}</strong>
-    <TheButton data-bs-dismiss="modal">No</TheButton>
-    <TheButton color="danger" @click="deleteSupplier" :loading="deletingStatus">Yes</TheButton>
+  <TheModel hadding="Delete Supplier" action="deletingModel">
+    <div class="card text-center">
+      <div class="card-header">
+        <strong>Supplier Name: {{ selectedSupplierData.name }}</strong>
+      </div>
+      <div class="card-body">
+        <TheButton data-bs-dismiss="modal">No</TheButton>
+        <TheButton color="danger" @click="deleteSupplier" :loading="deletingStatus">Yes</TheButton>
+      </div>
+    </div>
   </TheModel>
 </template>
 
 <script>
-
 import axios from "axios";
-
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';
 import { eventBus } from "../../utils/eventBus";
-import privateService from "../../service/privateService";
 
 export default {
   data: () => ({
@@ -128,8 +133,7 @@ export default {
     TheModel,
   },
   mounted() {
-    setTimeout(this.getAllSuppliers, 100)
-    // this.getAllSuppliers();
+    this.getAllSuppliers();
   },
   methods: {
     resetForm(){
@@ -144,13 +148,8 @@ export default {
     getAllSuppliers(){
       this.getSuppliers = true;
       axios.get("https://pharmacy.spysabbir.com/api/supplier",  
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
+        { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
-      // privateService.getSupplier()
       .then((res) => {
         this.suppliers = res.data.data;
       }).catch(err => {
@@ -174,7 +173,6 @@ export default {
           type: "danger",
           message: "Name can not be empty.",
         })
-        
         this.$refs.name.focus();
         return;
       }
@@ -183,7 +181,6 @@ export default {
           type: "danger",
           message: "Email can not be empty.",
         })
-        
         this.$refs.email.focus();
         return;
       }
@@ -192,7 +189,6 @@ export default {
           type: "danger",
           message: "Phone number can not be empty.",
         })
-        
         this.$refs.phone_number.focus();
         return;
       }
@@ -201,21 +197,15 @@ export default {
           type: "danger",
           message: "Address can not be empty.",
         })
-        
         this.$refs.address.focus();
         return;
       }
       this.addingStatus = true;
       axios.post("https://pharmacy.spysabbir.com/api/supplier", 
-        this.addingSupplierData, 
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
+        this.addingSupplierData, { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
-      // privateService.addSupplier(this.addingSupplierData)
       .then((res) => {
+        $('.addingModel').modal('hide');
         eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
@@ -238,17 +228,44 @@ export default {
     },
 
     editSupplier() {
+      if(!this.selectedSupplierData.name){
+        eventBus.emit("toast", {
+          type: "danger",
+          message: "Name can not be empty.",
+        })
+        this.$refs.name.focus();
+        return;
+      }
+      if(!this.selectedSupplierData.email){
+        eventBus.emit("toast", {
+          type: "danger",
+          message: "Email can not be empty.",
+        })
+        this.$refs.email.focus();
+        return;
+      }
+      if(!this.selectedSupplierData.phone_number){
+        eventBus.emit("toast", {
+          type: "danger",
+          message: "Phone number can not be empty.",
+        })
+        this.$refs.phone_number.focus();
+        return;
+      }
+      if(!this.selectedSupplierData.address){
+        eventBus.emit("toast", {
+          type: "danger",
+          message: "Address can not be empty.",
+        })
+        this.$refs.address.focus();
+        return;
+      }
       this.editingStatus = true;
       axios.put("https://pharmacy.spysabbir.com/api/supplier/" + this.selectedSupplierData.id, 
-        this.selectedSupplierData,
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
+        this.selectedSupplierData, { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
-      // privateService.editSupplier(this.selectedSupplierData)
       .then((res) => {
+        $('.editingModel').modal('hide');
         eventBus.emit("toast", {
           type: "success",
           message: res.data.message,
@@ -271,14 +288,10 @@ export default {
     deleteSupplier() {
       this.deletingStatus = true;
       axios.delete("https://pharmacy.spysabbir.com/api/supplier/" + this.selectedSupplierData.id,  
-        {
-          headers: {
-            authorization : `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
+      { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
-      // privateService.deleteSupplier(this.selectedSupplierData.id)
       .then((res) => {
+        $('.deletingModel').modal('hide');
         eventBus.emit("toast", {
           type: "success",
           message: res.data.message,

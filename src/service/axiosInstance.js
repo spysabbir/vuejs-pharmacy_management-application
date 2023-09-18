@@ -13,6 +13,5 @@ export const axiosPrivate = axios.create({
 });
 
 export const setPrivateHeaders = () => {
-    // axiosPrivate.defaults.headers.common["authorization"] = localStorage.getItem("accessToken");
-    axiosPrivate.defaults.headers.common["RestApi"] = localStorage.getItem("accessToken");
+    axiosPrivate.defaults.headers.common["authorization"] = `Bearer ${localStorage.getItem("accessToken")}`;
 }

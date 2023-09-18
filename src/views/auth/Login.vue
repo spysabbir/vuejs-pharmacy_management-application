@@ -47,9 +47,7 @@
 
 <script>
 import axios from "axios";
-
 import TheButton from "../../components/TheButton.vue";
-import { eventBus } from "../../utils/eventBus";
 import { setPrivateHeaders } from "../../service/axiosInstance";
 import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
 
@@ -66,7 +64,6 @@ export default {
   },
   methods: {
     handleLogin() {
-
       if(!this.formData.email){
         showErrorMessage("Email can not be empty!")
         this.$refs.email.focus();
@@ -82,7 +79,6 @@ export default {
         this.$refs.password.focus();
         return;
       }
-
       this.loginStatus = true;
       axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
@@ -95,7 +91,6 @@ export default {
       }).finally(() => {
         this.loginStatus = false;
       });
-
     },
   },
 }

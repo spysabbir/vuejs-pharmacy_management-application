@@ -1,16 +1,16 @@
 import { axiosPrivate } from "./axiosInstance"
 
 export default {
-    getSupplier() {
-        return axiosPrivate.get("/supplier");
+    getCustomer() {
+        return axiosPrivate.get("/customer");
     },
-    addSupplier(payload) {
-        return axiosPrivate.post("/supplier", payload);
+    addCustomer(payload) {
+        return axiosPrivate.post("/customer", payload);
     },
-    editSupplier(payload) {
-        return axiosPrivate.put("/supplier" + payload.id, payload);
+    editCustomer(payload) {
+        return axiosPrivate.put("/customer/" + payload.id, payload);
     },
-    deleteSupplier(id) {
-        return axiosPrivate.delete("/supplier" + id);
+    deleteCustomer(id) {
+        return axiosPrivate.delete("/customer/" + id);
     }
 }
