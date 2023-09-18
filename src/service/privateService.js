@@ -56,4 +56,18 @@ export default {
     deleteUnit(id) {
         return axiosPrivate.delete("/unit/" + id);
     },
+
+    // Medicine
+    getMedicine() {
+        return axiosPrivate.get("/medicine");
+    },
+    addMedicine(payload) {
+        return axiosPrivate.post("/medicine", payload);
+    },
+    editMedicine(payload) {
+        return axiosPrivate.put("/medicine/" + payload.id, payload);
+    },
+    deleteMedicine(id) {
+        return axiosPrivate.delete("/medicine/" + id);
+    },
 }
