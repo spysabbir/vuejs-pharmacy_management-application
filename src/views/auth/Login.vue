@@ -85,7 +85,6 @@ export default {
         showSuccessMessage(res);
         localStorage.setItem("accessToken", res.data.data.token);
         setPrivateHeaders();
-        // this.$router.push("/dashboard")
         location.href = "/dashboard";
       }).catch(err => {
         showErrorMessage(err)

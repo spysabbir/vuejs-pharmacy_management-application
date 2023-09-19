@@ -4,19 +4,11 @@
   <div class="row">
     <div class="col-12 col-xl-12 grid-margin stretch-card">
       <div class="card overflow-hidden">
-        <div class="card-body">
+        <div class="card-header">
           <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
             <h6 class="card-title mb-0">Medicine</h6>
+            <TheButton data-bs-toggle="modal" data-bs-target=".addingModel">Add New</TheButton>
           </div>
-          <div class="row align-items-start">
-            <div class="col-md-7">
-              <p class="text-muted tx-13 mb-3 mb-md-0">Revenue is the income that a business has from its normal business activities, usually from the sale of goods and services to customers.</p>
-            </div>
-            <div class="col-md-5 d-flex justify-content-md-end">
-              <TheButton data-bs-toggle="modal" data-bs-target=".addingModel">Add New</TheButton>
-            </div>
-          </div>
-          <div></div>
         </div>
         <div class="card-body">
           <div class="text-center" v-if="getMedicines">Looding...</div>
@@ -58,19 +50,6 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="addingMedicineData.name" placeholder="Enter name">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Select Power</label>
-        <select ref="power_id" class="form-control" v-model="addingMedicineData.power_id">
-          <option value="">Select One</option>
-          <option :value="power.id" v-for="power in powers" :key="power.name">
-            {{ power.name }}
-          </option>
-        </select>
-      </div>
-      <div class="mb-3">
         <label class="form-label">Select Type</label>
         <select ref="type_id" class="form-control" v-model="addingMedicineData.type_id">
           <option value="">Select One</option>
@@ -80,11 +59,15 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Select Unit</label>
-        <select ref="unit_id" class="form-control" v-model="addingMedicineData.unit_id">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-control" ref="name" v-model="addingMedicineData.name" placeholder="Enter name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Select Power</label>
+        <select ref="power_id" class="form-control" v-model="addingMedicineData.power_id">
           <option value="">Select One</option>
-          <option :value="unit.id" v-for="unit in units" :key="unit.name">
-            {{ unit.name }}
+          <option :value="power.id" v-for="power in powers" :key="power.name">
+            {{ power.name }}
           </option>
         </select>
       </div>
@@ -104,19 +87,6 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="selectedMedicineData.name" placeholder="Enter name">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Select Power</label>
-        <select ref="power_id" class="form-control" v-model="selectedMedicineData.power_id">
-          <option value="">Select One</option>
-          <option :value="power.id" v-for="power in powers" :key="power.name">
-            {{ power.name }}
-          </option>
-        </select>
-      </div>
-      <div class="mb-3">
         <label class="form-label">Select Type</label>
         <select ref="type_id" class="form-control" v-model="selectedMedicineData.type_id">
           <option value="">Select One</option>
@@ -126,11 +96,15 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Select Unit</label>
-        <select ref="unit_id" class="form-control" v-model="selectedMedicineData.unit_id">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-control" ref="name" v-model="selectedMedicineData.name" placeholder="Enter name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Select Power</label>
+        <select ref="power_id" class="form-control" v-model="selectedMedicineData.power_id">
           <option value="">Select One</option>
-          <option :value="unit.id" v-for="unit in units" :key="unit.name">
-            {{ unit.name }}
+          <option :value="power.id" v-for="power in powers" :key="power.name">
+            {{ power.name }}
           </option>
         </select>
       </div>
@@ -163,10 +137,9 @@ export default {
   data: () => ({
     addingMedicineData: {
       supplier_id: "",
+      type_id: "",
       name: "",
       power_id: "",
-      type_id: "",
-      unit_id: "",
     },
     selectedMedicineData: {},
     addingStatus: false,
@@ -175,9 +148,8 @@ export default {
     medicines: [],
     getMedicines: false,
     suppliers: [],
-    powers: [],
     types: [],
-    units: [],
+    powers: [],
   }),
   components: {
     TheBreadcrumb,
@@ -187,34 +159,25 @@ export default {
   mounted() {
     setTimeout(this.getAllMedicines, 100);
     setTimeout(this.getAllSuppliers, 100);
-    setTimeout(this.getAllPowers, 100);
     setTimeout(this.getAllTypes, 100);
-    setTimeout(this.getAllUnits, 100);
+    setTimeout(this.getAllPowers, 100);
   },
   methods: {
     resetForm(){
       this.addingMedicineData = {
         supplier_id: "",
+        type_id: "",
         name: "",
         power_id: "",
-        type_id: "",
-        unit_id: "",
       }
     },
 
     getAllSuppliers(){
-      privateService.getCustomer()
+      axios.get("https://pharmacy.spysabbir.com/api/supplier",  
+        { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
+      )
       .then((res) => {
         this.suppliers = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-    getAllPowers(){
-      privateService.getPower()
-      .then((res) => {
-        this.powers = res.data.data;
       }).catch(err => {
         showErrorMessage(err);
       }).finally(() => {
@@ -229,10 +192,10 @@ export default {
       }).finally(() => {
       });
     },
-    getAllUnits(){
-      privateService.getUnit()
+    getAllPowers(){
+      privateService.getPower()
       .then((res) => {
-        this.units = res.data.data;
+        this.powers = res.data.data;
       }).catch(err => {
         showErrorMessage(err);
       }).finally(() => {
@@ -257,6 +220,11 @@ export default {
         this.$refs.supplier_id.focus();
         return;
       }
+      if(!this.addingMedicineData.type_id){
+        showErrorMessage("Type can not be empty!");
+        this.$refs.type_id.focus();
+        return;
+      }
       if(!this.addingMedicineData.name){
         showErrorMessage("Name can not be empty!");
         this.$refs.name.focus();
@@ -265,16 +233,6 @@ export default {
       if(!this.addingMedicineData.power_id){
         showErrorMessage("Power can not be empty!");
         this.$refs.power_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.type_id){
-        showErrorMessage("Type can not be empty!");
-        this.$refs.type_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.unit_id){
-        showErrorMessage("Unit can not be empty!");
-        this.$refs.unit_id.focus();
         return;
       }
       this.addingStatus = true;
@@ -292,29 +250,24 @@ export default {
     },
 
     editMedicine() {
-      if(!this.addingMedicineData.supplier_id){
+      if(!this.selectedMedicineData.supplier_id){
         showErrorMessage("Supplier can not be empty!");
         this.$refs.supplier_id.focus();
         return;
       }
-      if(!this.addingMedicineData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.addingMedicineData.power_id){
-        showErrorMessage("Power can not be empty!");
-        this.$refs.power_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.type_id){
+      if(!this.selectedMedicineData.type_id){
         showErrorMessage("Type can not be empty!");
         this.$refs.type_id.focus();
         return;
       }
-      if(!this.addingMedicineData.unit_id){
-        showErrorMessage("Unit can not be empty!");
-        this.$refs.unit_id.focus();
+      if(!this.selectedMedicineData.name){
+        showErrorMessage("Name can not be empty!");
+        this.$refs.name.focus();
+        return;
+      }
+      if(!this.selectedMedicineData.power_id){
+        showErrorMessage("Power can not be empty!");
+        this.$refs.power_id.focus();
         return;
       }
       this.editingStatus = true;
