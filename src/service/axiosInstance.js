@@ -19,7 +19,6 @@ axiosPrivate.interceptors.response.use({
     function(error) {
         if(error.response && error.response.status == 401) {
             localStorage.removeItem("accessToken");
-            // this.$router.push("/");
             location.href = "/";
         };
 

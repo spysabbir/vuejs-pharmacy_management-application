@@ -75,8 +75,8 @@
         <label class="form-label">Select Unit</label>
         <select ref="unit_id" class="form-control" v-model="addingMedicineData.unit_id">
           <option value="">Select One</option>
-          <option :value="unit.id" v-for="unit in units" :key="unit.name">
-            {{ unit.name }}
+          <option :value="unit.id" v-for="unit in units" :key="unit.unit_name">
+            {{ unit.unit_name }}
           </option>
         </select>
       </div>
@@ -121,8 +121,8 @@
         <label class="form-label">Select Unit</label>
         <select ref="unit_id" class="form-control" v-model="selectedMedicineData.unit_id">
           <option value="">Select One</option>
-          <option :value="unit.id" v-for="unit in units" :key="unit.name">
-            {{ unit.name }}
+          <option :value="unit.id" v-for="unit in units" :key="unit.unit_name">
+            {{ unit.unit_name }}
           </option>
         </select>
       </div>

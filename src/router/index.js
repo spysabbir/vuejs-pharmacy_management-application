@@ -4,9 +4,9 @@ import DashboardPage from "../views/Dashboard.vue";
 import Overview from "../views/dashboard/Overview.vue";
 import Supplier from "../views/dashboard/Supplier.vue";
 import Type from "../views/dashboard/Type.vue";
-import Medicine from "../views/dashboard/Medicine.vue";
 import Power from "../views/dashboard/Power.vue";
 import Unit from "../views/dashboard/Unit.vue";
+import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
 import Purchase from "../views/dashboard/Purchase.vue";
 import Sale from "../views/dashboard/Sale.vue";
@@ -21,9 +21,9 @@ const routes = [
       { path: "overview", component: Overview },
       { path: "supplier", component: Supplier },
       { path: "type", component: Type },
-      { path: "medicine", component: Medicine },
       { path: "power", component: Power },
       { path: "unit", component: Unit },
+      { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
       { path: "purchase", component: Purchase },
       { path: "sale", component: Sale },

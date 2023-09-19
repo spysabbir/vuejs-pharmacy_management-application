@@ -1,19 +1,6 @@
 import { axiosPrivate } from "./axiosInstance"
 
 export default {
-    // Customer
-    getCustomer() {
-        return axiosPrivate.get("/customer");
-    },
-    addCustomer(payload) {
-        return axiosPrivate.post("/customer", payload);
-    },
-    editCustomer(payload) {
-        return axiosPrivate.put("/customer/" + payload.id, payload);
-    },
-    deleteCustomer(id) {
-        return axiosPrivate.delete("/customer/" + id);
-    },
 
     // Type
     getType() {
@@ -29,6 +16,20 @@ export default {
         return axiosPrivate.delete("/type/" + id);
     },
 
+    // Medicine
+    getMedicine() {
+        return axiosPrivate.get("/medicine");
+    },
+    addMedicine(payload) {
+        return axiosPrivate.post("/medicine", payload);
+    },
+    editMedicine(payload) {
+        return axiosPrivate.put("/medicine/" + payload.id, payload);
+    },
+    deleteMedicine(id) {
+        return axiosPrivate.delete("/medicine/" + id);
+    },
+    
     // Power
     getPower() {
         return axiosPrivate.get("/power");
@@ -57,17 +58,17 @@ export default {
         return axiosPrivate.delete("/unit/" + id);
     },
 
-    // Medicine
-    getMedicine() {
-        return axiosPrivate.get("/medicine");
+    // Customer
+    getCustomer() {
+        return axiosPrivate.get("/customer");
     },
-    addMedicine(payload) {
-        return axiosPrivate.post("/medicine", payload);
+    addCustomer(payload) {
+        return axiosPrivate.post("/customer", payload);
     },
-    editMedicine(payload) {
-        return axiosPrivate.put("/medicine/" + payload.id, payload);
+    editCustomer(payload) {
+        return axiosPrivate.put("/customer/" + payload.id, payload);
     },
-    deleteMedicine(id) {
-        return axiosPrivate.delete("/medicine/" + id);
+    deleteCustomer(id) {
+        return axiosPrivate.delete("/customer/" + id);
     },
 }
