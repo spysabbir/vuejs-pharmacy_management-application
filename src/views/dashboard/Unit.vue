@@ -17,14 +17,16 @@
                 <thead class="table-light">
                   <tr>
                     <th>Sl No</th>
-                    <th>Name</th>
+                    <th>Unit Name</th>
+                    <th>Piece in Unit</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(unit, i) in units" :key="unit.name">
+                  <tr v-for="(unit, i) in units" :key="unit.unit_name">
                     <td>{{ i+1 }}</td>
-                    <td>{{ unit.name }}</td>
+                    <td>{{ unit.unit_name }}</td>
+                    <td>{{ unit.piece_in_unit }}</td>
                     <td>
                       <TheButton data-bs-toggle="modal" data-bs-target=".editingModel" color="success" @click="selectedUnitData = unit">Edit</TheButton>
                       <TheButton data-bs-toggle="modal" data-bs-target=".deletingModel" color="warning" @click="selectedUnitData = unit">Delete</TheButton>
@@ -41,8 +43,12 @@
     <TheModel hadding="Add Unit" action="addingModel">
       <form @submit.prevent="addUnit">
         <div class="mb-3">
-          <label class="form-label">Name</label>
-          <input unit="text" class="form-control" ref="name" v-model="addingUnitData.name" placeholder="Enter name">
+          <label class="form-label">Unit Name</label>
+          <input unit="text" class="form-control" ref="unit_name" v-model="addingUnitData.unit_name" placeholder="Enter unit name">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Piece in Unit</label>
+          <input unit="number" class="form-control" ref="piece_in_unit" v-model="addingUnitData.piece_in_unit" placeholder="Enter piece in unit">
         </div>
         <TheButton :lodding="addingStatus">Add Unit</TheButton>
       </form>
@@ -51,8 +57,12 @@
     <TheModel hadding="Edit Unit" action="editingModel">
       <form @submit.prevent="editUnit">
         <div class="mb-3">
-          <label class="form-label">Name</label>
-          <input unit="text" class="form-control" ref="name" v-model="selectedUnitData.name" placeholder="Enter name">
+          <label class="form-label">Unit Name</label>
+          <input unit="text" class="form-control" ref="unit_name" v-model="selectedUnitData.unit_name" placeholder="Enter unit name">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Piece in Unit</label>
+          <input unit="number" class="form-control" ref="piece_in_unit" v-model="selectedUnitData.piece_in_unit" placeholder="Enter piece in unit">
         </div>
         <TheButton :lodding="editingStatus">Edit Unit</TheButton>
       </form>
@@ -61,7 +71,7 @@
     <TheModel hadding="Delete Unit" action="deletingModel">
       <div class="card text-center">
         <div class="card-header">
-          <strong>Unit Name: {{ selectedUnitData.name }}</strong>
+          <strong>Unit Name: {{ selectedUnitData.unit_name }}</strong>
         </div>
         <div class="card-body">
           <TheButton data-bs-dismiss="modal">No</TheButton>
@@ -82,7 +92,8 @@
   export default {
     data: () => ({
       addingUnitData: {
-        name: "",
+        unit_name: "",
+        piece_in_unit: "",
       },
       selectedUnitData: {},
       addingStatus: false,
@@ -102,7 +113,8 @@
     methods: {
       resetForm(){
         this.addingUnitData = {
-          name: "",
+          unit_name: "",
+          piece_in_unit: "",
         }
       },
   
@@ -119,9 +131,14 @@
       },
   
       addUnit(){
-        if(!this.addingUnitData.name){
-          showErrorMessage("Name can not be empty!");
-          this.$refs.name.focus();
+        if(!this.addingUnitData.unit_name){
+          showErrorMessage("Unit name can not be empty!");
+          this.$refs.unit_name.focus();
+          return;
+        }
+        if(!this.addingUnitData.piece_in_unit){
+          showErrorMessage("Piece in unit can not be empty!");
+          this.$refs.piece_in_unit.focus();
           return;
         }
         this.addingStatus = true;
@@ -139,9 +156,14 @@
       },
   
       editUnit() {
-        if(!this.selectedUnitData.name){
-          showErrorMessage("Name can not be empty!");
-          this.$refs.name.focus();
+        if(!this.selectedUnitData.unit_name){
+          showErrorMessage("Unit name can not be empty!");
+          this.$refs.unit_name.focus();
+          return;
+        }
+        if(!this.selectedUnitData.piece_in_unit){
+          showErrorMessage("Piece in unit can not be empty!");
+          this.$refs.piece_in_unit.focus();
           return;
         }
         this.editingStatus = true;

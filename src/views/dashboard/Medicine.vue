@@ -71,6 +71,15 @@
           </option>
         </select>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Select Unit</label>
+        <select ref="unit_id" class="form-control" v-model="addingMedicineData.unit_id">
+          <option value="">Select One</option>
+          <option :value="unit.id" v-for="unit in units" :key="unit.name">
+            {{ unit.name }}
+          </option>
+        </select>
+      </div>
       <TheButton :lodding="addingStatus">Add Medicine</TheButton>
     </form>
   </TheModel>
@@ -108,6 +117,15 @@
           </option>
         </select>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Select Unit</label>
+        <select ref="unit_id" class="form-control" v-model="selectedMedicineData.unit_id">
+          <option value="">Select One</option>
+          <option :value="unit.id" v-for="unit in units" :key="unit.name">
+            {{ unit.name }}
+          </option>
+        </select>
+      </div>
       <TheButton :lodding="editingStatus">Edit Medicine</TheButton>
     </form>
   </TheModel>
@@ -140,6 +158,7 @@ export default {
       type_id: "",
       name: "",
       power_id: "",
+      unit_id: "",
     },
     selectedMedicineData: {},
     addingStatus: false,
@@ -150,6 +169,7 @@ export default {
     suppliers: [],
     types: [],
     powers: [],
+    units: [],
   }),
   components: {
     TheBreadcrumb,
@@ -161,6 +181,7 @@ export default {
     setTimeout(this.getAllSuppliers, 100);
     setTimeout(this.getAllTypes, 100);
     setTimeout(this.getAllPowers, 100);
+    setTimeout(this.getAllUnits, 100);
   },
   methods: {
     resetForm(){
@@ -169,6 +190,7 @@ export default {
         type_id: "",
         name: "",
         power_id: "",
+        unit_id: "",
       }
     },
 
@@ -201,6 +223,15 @@ export default {
       }).finally(() => {
       });
     },
+    getAllUnits(){
+      privateService.getUnit()
+      .then((res) => {
+        this.units = res.data.data;
+      }).catch(err => {
+        showErrorMessage(err);
+      }).finally(() => {
+      });
+    },
 
     getAllMedicines(){
       this.getMedicines = true;
@@ -226,13 +257,18 @@ export default {
         return;
       }
       if(!this.addingMedicineData.name){
-        showErrorMessage("Name can not be empty!");
+        showErrorMessage("Medicine Name can not be empty!");
         this.$refs.name.focus();
         return;
       }
       if(!this.addingMedicineData.power_id){
         showErrorMessage("Power can not be empty!");
         this.$refs.power_id.focus();
+        return;
+      }
+      if(!this.addingMedicineData.unit_id){
+        showErrorMessage("Unit can not be empty!");
+        this.$refs.unit_id.focus();
         return;
       }
       this.addingStatus = true;
@@ -261,13 +297,18 @@ export default {
         return;
       }
       if(!this.selectedMedicineData.name){
-        showErrorMessage("Name can not be empty!");
+        showErrorMessage("Medicine Name can not be empty!");
         this.$refs.name.focus();
         return;
       }
       if(!this.selectedMedicineData.power_id){
         showErrorMessage("Power can not be empty!");
         this.$refs.power_id.focus();
+        return;
+      }
+      if(!this.selectedMedicineData.unit_id){
+        showErrorMessage("Unit can not be empty!");
+        this.$refs.unit_id.focus();
         return;
       }
       this.editingStatus = true;
