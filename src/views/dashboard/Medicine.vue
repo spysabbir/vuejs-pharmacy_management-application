@@ -80,6 +80,14 @@
           </option>
         </select>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Purchases Price</label>
+        <input type="number" class="form-control" ref="purchases_price" v-model="addingMedicineData.purchases_price" placeholder="Enter purchases price">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Sales Price</label>
+        <input type="number" class="form-control" ref="sales_price" v-model="addingMedicineData.sales_price" placeholder="Enter sales price">
+      </div>
       <TheButton :lodding="addingStatus">Add Medicine</TheButton>
     </form>
   </TheModel>
@@ -126,6 +134,14 @@
           </option>
         </select>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Purchases Price</label>
+        <input type="number" class="form-control" ref="purchases_price" v-model="selectedMedicineData.purchases_price" placeholder="Enter purchases price">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Sales Price</label>
+        <input type="number" class="form-control" ref="sales_price" v-model="selectedMedicineData.sales_price" placeholder="Enter sales price">
+      </div>
       <TheButton :lodding="editingStatus">Edit Medicine</TheButton>
     </form>
   </TheModel>
@@ -159,6 +175,8 @@ export default {
       name: "",
       power_id: "",
       unit_id: "",
+      purchases_price: "",
+      sales_price: "",
     },
     selectedMedicineData: {},
     addingStatus: false,
@@ -191,6 +209,8 @@ export default {
         name: "",
         power_id: "",
         unit_id: "",
+        purchases_price: "",
+        sales_price: "",
       }
     },
 
@@ -271,6 +291,16 @@ export default {
         this.$refs.unit_id.focus();
         return;
       }
+      if(!this.addingMedicineData.purchases_price){
+        showErrorMessage("Purchases price can not be empty!");
+        this.$refs.purchases_price.focus();
+        return;
+      }
+      if(!this.addingMedicineData.sales_price){
+        showErrorMessage("Sales price can not be empty!");
+        this.$refs.sales_price.focus();
+        return;
+      }
       this.addingStatus = true;
       privateService.addMedicine(this.addingMedicineData)
       .then((res) => {
@@ -309,6 +339,16 @@ export default {
       if(!this.selectedMedicineData.unit_id){
         showErrorMessage("Unit can not be empty!");
         this.$refs.unit_id.focus();
+        return;
+      }
+      if(!this.selectedMedicineData.purchases_price){
+        showErrorMessage("Purchases price can not be empty!");
+        this.$refs.purchases_price.focus();
+        return;
+      }
+      if(!this.selectedMedicineData.sales_price){
+        showErrorMessage("Sales price can not be empty!");
+        this.$refs.sales_price.focus();
         return;
       }
       this.editingStatus = true;
