@@ -48,6 +48,7 @@
                 <tbody v-if="selectedMedicineDetails">
                   <tr>
                     <td>{{ selectedMedicineDetails.name }}</td>
+                    <td>{{ selectedMedicineDetails.purchases_price }}</td>
                     <td>
                       <TheButton @click="addToCart(selectedMedicineDetails)" class="mt-1">Add to Cart</TheButton>
                     </td>
