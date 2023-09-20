@@ -47,9 +47,11 @@
 
 <script>
 import axios from "axios";
+import { mapState, mapActions } from "pinia";
 import TheButton from "../../components/TheButton.vue";
 import { setPrivateHeaders } from "../../service/axiosInstance";
 import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
+import { useAuthStore } from "../../store/authStore";
 
 export default {
   data: () => ({
@@ -59,10 +61,20 @@ export default {
     },
     loginStatus: false,
   }),
+  computed: {
+    ...mapState(useAuthStore, {
+      authName: "name",
+      authToken: "token",
+      isLoggedIn: "isLoggedIn",
+    })
+  },
   components: {
     TheButton,
   },
   methods: {
+    ...mapActions(useAuthStore, {
+      login: "login",
+    }),
     handleLogin() {
       if(!this.formData.email){
         showErrorMessage("Email can not be empty!")
@@ -83,6 +95,7 @@ export default {
       axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
         showSuccessMessage(res);
+        this.login(res.data.data);
         localStorage.setItem("accessToken", res.data.data.token);
         setPrivateHeaders();
         location.href = "/dashboard";

@@ -1,14 +1,25 @@
 <template>
   <TheBreadcrumb title="Overview"></TheBreadcrumb>
+
+  <div class="bg-info p-5 text-dark">Name: {{ loginName }}</div>
 </template>
 
 <script>
+import { mapState } from "pinia";
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import { useAuthStore } from "../../store/authStore";
 
 export default {
-components: {
-  TheBreadcrumb,
-}
+  data: () => ({
+  }),
+  computed: {
+    ...mapState(useAuthStore, {
+      loginName: "name",
+    }),
+  },
+  components: {
+    TheBreadcrumb,
+  },
 }
 </script>
 
