@@ -58,6 +58,20 @@ export default {
         return axiosPrivate.delete("/unit/" + id);
     },
 
+    // Rack
+    getRack() {
+        return axiosPrivate.get("/rack");
+    },
+    addRack(payload) {
+        return axiosPrivate.post("/rack", payload);
+    },
+    editRack(payload) {
+        return axiosPrivate.put("/rack/" + payload.id, payload);
+    },
+    deleteRack(id) {
+        return axiosPrivate.delete("/rack/" + id);
+    },
+
     // Customer
     getCustomer() {
         return axiosPrivate.get("/customer");

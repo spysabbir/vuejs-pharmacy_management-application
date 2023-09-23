@@ -6,6 +6,7 @@ import Supplier from "../views/dashboard/Supplier.vue";
 import Type from "../views/dashboard/Type.vue";
 import Power from "../views/dashboard/Power.vue";
 import Unit from "../views/dashboard/Unit.vue";
+import Rack from "../views/dashboard/Rack.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
 import Purchase from "../views/dashboard/Purchase.vue";
@@ -23,6 +24,7 @@ const routes = [
       { path: "type", component: Type },
       { path: "power", component: Power },
       { path: "unit", component: Unit },
+      { path: "rack", component: Rack },
       { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
       { path: "purchase", component: Purchase },

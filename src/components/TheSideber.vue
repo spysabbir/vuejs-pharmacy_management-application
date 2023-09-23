@@ -63,6 +63,12 @@
       <span class="link-title">Unit</span>
     </router-link>
   </li>
+  <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/rack' }">
+    <router-link to="/dashboard/rack" class="nav-link">
+      <i class="link-icon" data-feather="message-square"></i>
+      <span class="link-title">Rack</span>
+    </router-link>
+  </li>
   <li class="nav-item" :class="{ 'active': this.$route.path === '/dashboard/medicine' }">
     <router-link to="/dashboard/medicine" class="nav-link">
       <i class="link-icon" data-feather="message-square"></i>
