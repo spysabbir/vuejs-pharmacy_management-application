@@ -11,9 +11,9 @@ export const useAuthStore = defineStore("auth", {
         }
     },
     actions: {
-        login(payload) {
+        authData(payload) {
           this.name = payload.name;
           this.token = payload.token;
         }   
-      }
+    }
 })

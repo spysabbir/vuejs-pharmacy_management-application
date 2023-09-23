@@ -81,6 +81,15 @@
         </select>
       </div>
       <div class="mb-3">
+        <label class="form-label">Select Rack</label>
+        <select ref="rack_id" class="form-control" v-model="addingMedicineData.rack_id">
+          <option value="">Select One</option>
+          <option :value="rack.id" v-for="rack in racks" :key="rack.name">
+            {{ rack.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
         <label class="form-label">Purchases Price</label>
         <input type="number" class="form-control" ref="purchases_price" v-model="addingMedicineData.purchases_price" placeholder="Enter purchases price">
       </div>
@@ -135,6 +144,15 @@
         </select>
       </div>
       <div class="mb-3">
+        <label class="form-label">Select Rack</label>
+        <select ref="rack_id" class="form-control" v-model="selectedMedicineData.rack_id">
+          <option value="">Select One</option>
+          <option :value="rack.id" v-for="rack in racks" :key="rack.name">
+            {{ rack.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
         <label class="form-label">Purchases Price</label>
         <input type="number" class="form-control" ref="purchases_price" v-model="selectedMedicineData.purchases_price" placeholder="Enter purchases price">
       </div>
@@ -175,6 +193,7 @@ export default {
       name: "",
       power_id: "",
       unit_id: "",
+      rack_id: "",
       purchases_price: "",
       sales_price: "",
     },
@@ -188,6 +207,7 @@ export default {
     types: [],
     powers: [],
     units: [],
+    racks: [],
   }),
   components: {
     TheBreadcrumb,
@@ -200,6 +220,7 @@ export default {
     setTimeout(this.getAllTypes, 100);
     setTimeout(this.getAllPowers, 100);
     setTimeout(this.getAllUnits, 100);
+    setTimeout(this.getAllRacks, 100);
   },
   methods: {
     resetForm(){
@@ -209,6 +230,7 @@ export default {
         name: "",
         power_id: "",
         unit_id: "",
+        rack_id: "",
         purchases_price: "",
         sales_price: "",
       }
@@ -252,6 +274,15 @@ export default {
       }).finally(() => {
       });
     },
+    getAllRacks(){
+      privateService.getRack()
+      .then((res) => {
+        this.racks = res.data.data;
+      }).catch(err => {
+        showErrorMessage(err);
+      }).finally(() => {
+      });
+    },
 
     getAllMedicines(){
       this.getMedicines = true;
@@ -289,6 +320,11 @@ export default {
       if(!this.addingMedicineData.unit_id){
         showErrorMessage("Unit can not be empty!");
         this.$refs.unit_id.focus();
+        return;
+      }
+      if(!this.addingMedicineData.rack_id){
+        showErrorMessage("Rack can not be empty!");
+        this.$refs.rack_id.focus();
         return;
       }
       if(!this.addingMedicineData.purchases_price){
@@ -339,6 +375,11 @@ export default {
       if(!this.selectedMedicineData.unit_id){
         showErrorMessage("Unit can not be empty!");
         this.$refs.unit_id.focus();
+        return;
+      }
+      if(!this.selectedMedicineData.rack_id){
+        showErrorMessage("Rack can not be empty!");
+        this.$refs.rack_id.focus();
         return;
       }
       if(!this.selectedMedicineData.purchases_price){

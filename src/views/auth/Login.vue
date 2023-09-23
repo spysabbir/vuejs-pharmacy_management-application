@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     ...mapActions(useAuthStore, {
-      login: "login",
+      authData: "authData",
     }),
     handleLogin() {
       if(!this.formData.email){
@@ -95,10 +95,11 @@ export default {
       axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
         showSuccessMessage(res);
-        this.login(res.data.data);
+        this.authData(res.data.data);
         localStorage.setItem("accessToken", res.data.data.token);
         setPrivateHeaders();
-        location.href = "/dashboard";
+        // location.href = "/dashboard";
+        this.$router.push('/dashboard');
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {
