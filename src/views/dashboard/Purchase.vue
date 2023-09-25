@@ -35,7 +35,7 @@
                   <select ref="medicine_id" class="form-control" v-model="selectedMedicineId">
                     <option value="">Select One</option>
                     <option :value="medicine.id" v-for="medicine in filteredMedicines" :key="medicine.id">
-                      {{ medicine.name }} {{ medicine.power_id }}
+                      {{ medicine.name }} | {{ medicine.power_name }}
                     </option>
                   </select>
                 </div>
@@ -55,10 +55,10 @@
                       </thead>
                       <tbody v-if="selectedMedicineDetails">
                         <tr>
-                          <td>{{ selectedMedicineDetails.name }} | {{ selectedMedicineDetails.power }}</td>
+                          <td>{{ selectedMedicineDetails.name }} | {{ selectedMedicineDetails.power_name }}</td>
                           <td>{{ selectedMedicineDetails.type_name }}</td>
-                          <td>{{ selectedMedicineDetails.unit }}</td>
-                          <td>{{ selectedMedicineDetails.rack }}</td>
+                          <td>{{ selectedMedicineDetails.unit_name }}</td>
+                          <td>{{ selectedMedicineDetails.rack_name }}</td>
                           <td>{{ selectedMedicineDetails.purchases_price }}</td>
                           <td><input type="number" v-model="purchases_quantity" ref="purchases_quantity"></td>
                           <td>
@@ -86,6 +86,7 @@
                         <thead class="table-light">
                           <tr>
                             <th>Name</th>
+                            <th>unit</th>
                             <th>Purchase Price</th>
                             <th>Purchase Qty</th>
                             <th>Total Price</th>
@@ -94,7 +95,8 @@
                         </thead>
                         <tbody>
                           <tr v-for="(item, i) in purchaseCartData" :key="item.id">
-                            <td>{{ item.name }}</td>
+                            <td>{{ item.name }} | {{ item.power_name }}</td>
+                            <td>{{ item.unit_name }}</td>
                             <td>{{ item.purchases_price }}</td>
                             <td><input type="number" v-model="item.purchases_quantity"></td>
                             <td>{{ item.purchases_price * item.purchases_quantity }}</td>

@@ -31,9 +31,9 @@
                   <td>{{ i+1 }}</td>
                   <td>{{ medicine.supplier_name }}</td>
                   <td>{{ medicine.type_name }}</td>
-                  <td>{{ medicine.name }}</td>
-                  <td>{{ medicine.unit }}</td>
-                  <td>{{ medicine.rack }}</td>
+                  <td>{{ medicine.name }} | {{ medicine.power_name }}</td>
+                  <td>{{ medicine.unit_name }}</td>
+                  <td>{{ medicine.rack_name }}</td>
                   <td>{{ medicine.purchases_price }}</td>
                   <td>
                     <TheButton data-bs-toggle="modal" data-bs-target=".editingModel" color="success" @click="selectedMedicineData = medicine">Edit</TheButton>
