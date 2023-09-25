@@ -209,6 +209,7 @@ export default {
       this.editingStatus = true;
       privateService.editCustomer(this.selectedCustomerData)
       .then((res) => {
+        this.getAllCustomers();
         $('.editingModel').modal('hide');
         showSuccessMessage(res);
       }).catch(err => {

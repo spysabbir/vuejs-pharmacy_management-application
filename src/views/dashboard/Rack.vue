@@ -147,6 +147,7 @@
         this.editingStatus = true;
         privateService.editRack(this.selectedRackData)
         .then((res) => {
+          this.getAllRacks();
           $('.editingModel').modal('hide');
           showSuccessMessage(res);
         }).catch(err => {

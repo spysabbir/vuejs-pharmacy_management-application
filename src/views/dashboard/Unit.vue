@@ -169,6 +169,7 @@
         this.editingStatus = true;
         privateService.editUnit(this.selectedUnitData)
         .then((res) => {
+          this.getAllUnits();
           $('.editingModel').modal('hide');
           showSuccessMessage(res);
         }).catch(err => {

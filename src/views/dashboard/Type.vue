@@ -147,6 +147,7 @@ export default {
       this.editingStatus = true;
       privateService.editType(this.selectedTypeData)
       .then((res) => {
+        this.getAllTypes();
         $('.editingModel').modal('hide');
         showSuccessMessage(res);
       }).catch(err => {

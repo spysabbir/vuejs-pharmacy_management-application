@@ -147,6 +147,7 @@
         this.editingStatus = true;
         privateService.editPower(this.selectedPowerData)
         .then((res) => {
+          this.getAllPowers();
           $('.editingModel').modal('hide');
           showSuccessMessage(res);
         }).catch(err => {

@@ -257,6 +257,7 @@ export default {
         this.selectedSupplierData, { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
       .then((res) => {
+        this.getAllSuppliers();
         $('.editingModel').modal('hide');
         eventBus.emit("toast", {
           type: "success",
