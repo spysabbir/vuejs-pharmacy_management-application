@@ -17,14 +17,24 @@
               <thead class="table-light">
                 <tr>
                   <th>Sl No</th>
+                  <th>Supplier Name</th>
+                  <th>Type</th>
                   <th>Name</th>
+                  <th>Unit</th>
+                  <th>Rack</th>
+                  <th>Purchases Price</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(medicine, i) in medicines" :key="medicine.name">
                   <td>{{ i+1 }}</td>
+                  <td>{{ medicine.supplier_name }}</td>
+                  <td>{{ medicine.type_name }}</td>
                   <td>{{ medicine.name }}</td>
+                  <td>{{ medicine.unit }}</td>
+                  <td>{{ medicine.rack }}</td>
+                  <td>{{ medicine.purchases_price }}</td>
                   <td>
                     <TheButton data-bs-toggle="modal" data-bs-target=".editingModel" color="success" @click="selectedMedicineData = medicine">Edit</TheButton>
                     <TheButton data-bs-toggle="modal" data-bs-target=".deletingModel" color="warning" @click="selectedMedicineData = medicine">Delete</TheButton>
@@ -397,6 +407,7 @@ export default {
       .then((res) => {
         $('.editingModel').modal('hide');
         showSuccessMessage(res);
+        this.getAllMedicines();
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {
