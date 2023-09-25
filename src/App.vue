@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
 .alert-box {
-    position: absolute;
+    position: fixed;
     right: 25px;
     top: 25px;
     z-index: 99999999999999999;
@@ -57,6 +57,6 @@ export default {
 .toast-transition-enter-from,
 .toast-transition-leave-to {
   opacity: 0;
-  transform: translateY(-30px);
+  transform: translateX(30px);
 }
 </style>

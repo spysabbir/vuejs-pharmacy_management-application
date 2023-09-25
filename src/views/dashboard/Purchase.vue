@@ -11,7 +11,7 @@
           </div>
           <div class="card-body">
               <div class="row">
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-lg-4 col-md-6  mb-3">
                   <label class="form-label">Select Supplier</label>
                   <select class="form-control" v-model="selectedSupplierId">
                     <option value="">Select One</option>
@@ -21,7 +21,7 @@
                   </select>
                 </div>
 
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-lg-4 col-md-6 mb-3">
                   <label class="form-label">Select Type</label>
                   <select class="form-control" v-model="selectedTypeId">
                     <option value="">Select One</option>
@@ -30,7 +30,7 @@
                     </option>
                   </select>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-lg-4 col-md-6 mb-3">
                   <label class="form-label">Select Medicine</label>
                   <select ref="medicine_id" class="form-control" v-model="selectedMedicineId">
                     <option value="">Select One</option>
