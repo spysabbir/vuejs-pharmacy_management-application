@@ -14,7 +14,7 @@
                 <div class="col-lg-4 col-md-6  mb-3">
                   <label class="form-label">Select Supplier</label>
                   <select class="form-control" v-model="selectedSupplierId">
-                    <option value="">Select One</option>
+                    <option value="">Select Supplier</option>
                     <option :value="item.supplier_id" v-for="item in supplierGroupedItems" :key="item.supplier_id">
                       {{ item.supplier_name }}
                     </option>
@@ -24,7 +24,7 @@
                 <div class="col-lg-4 col-md-6 mb-3">
                   <label class="form-label">Select Type</label>
                   <select class="form-control" v-model="selectedTypeId">
-                    <option value="">Select One</option>
+                    <option value="">Select Type</option>
                     <option :value="item.type_id" v-for="item in filteredTypeGroupedItems" :key="item.type_id">
                       {{ item.type_name }}
                     </option>
@@ -33,7 +33,7 @@
                 <div class="col-lg-4 col-md-6 mb-3">
                   <label class="form-label">Select Medicine</label>
                   <select ref="medicine_id" class="form-control" v-model="selectedMedicineId">
-                    <option value="">Select One</option>
+                    <option value="">Select Medicine</option>
                     <option :value="medicine.id" v-for="medicine in filteredMedicines" :key="medicine.id">
                       {{ medicine.name }} | {{ medicine.power_name }}
                     </option>
@@ -107,8 +107,8 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="3">Total: </td>
-                            <td>{{ totalPurchasePrice }}</td>
+                            <td colspan="4">Total: </td>
+                            <td colspan="2">{{ totalPurchasePrice }}</td>
                           </tr>
                         </tfoot>
                       </table>
@@ -161,26 +161,18 @@
 
       filteredTypeGroupedItems() {
         if (!this.selectedSupplierId) {
-          const grouped = {};
-          this.medicines.forEach(item => {
-            if (!grouped[item.type_id]) {
-              grouped[item.type_id] = item.type_name;
-            }
-          });
-          return Object.entries(grouped).map(([type_id, type_name]) => ({
-            type_id,
-            type_name,
-          }));
+          return null;
         }
 
+        const grouped = {};
         const filteredType = this.medicines.filter(medicine => medicine.supplier_id == this.selectedSupplierId);
 
-        const grouped = {};
         filteredType.forEach(item => {
           if (!grouped[item.type_id]) {
             grouped[item.type_id] = item.type_name;
           }
         });
+
         return Object.entries(grouped).map(([type_id, type_name]) => ({
           type_id,
           type_name,
@@ -188,10 +180,15 @@
       },
 
       filteredMedicines() {
-        if (!this.selectedTypeId) {
-          return this.medicines;
+        if (!this.selectedTypeId || (!this.selectedTypeId && !this.selectedSupplierId)) {
+          return null;
         }
-        return this.medicines.filter(medicine => medicine.type_id == this.selectedTypeId);
+        return this.medicines.filter(medicine => {
+          return (
+            (!this.selectedTypeId || medicine.type_id == this.selectedTypeId) &&
+            (!this.selectedSupplierId || medicine.supplier_id == this.selectedSupplierId)
+          );
+        });
       },
 
       selectedMedicineDetails() {
@@ -203,6 +200,7 @@
       selectedSupplierId(newSupplier) {
         this.filteredTypeGroupedItems = [];
         this.selectedTypeId = "";
+        this.removeAllCartItem();
       },
       selectedTypeId(newType) {
         this.filteredMedicines = [];
@@ -221,6 +219,7 @@
       ...mapActions(useCartStore, {
         addToCartItem: "addMedicine",
         removeCartItem: "removeMedicine",
+        removeAllCartItem: "clearCart",
       }),
   
       getAllMedicines(){

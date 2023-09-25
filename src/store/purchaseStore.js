@@ -24,8 +24,13 @@ export const useCartStore = defineStore("cart", {
                 this.medicines[payload.id] = payload;
             }
         },
-        removeMedicine(id){
-            delete this.medicines[id];
+        removeMedicine(id) {
+            if (this.medicines[id]) {
+                delete this.medicines[id];
+            }
+        },
+        clearCart() {
+            this.medicines = {};
         }
     }
 })
