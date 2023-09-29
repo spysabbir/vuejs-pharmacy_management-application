@@ -72,6 +72,17 @@ export default {
         return axiosPrivate.delete("/rack/" + id);
     },
 
+    // Purchase
+    purchasingNowStore(payload) {
+        return axiosPrivate.post("/purchase", payload);
+    },
+    getPurchaseHistory() {
+        return axiosPrivate.get("/purchase");
+    },
+    deletePurchaseHistory(id) {
+        return axiosPrivate.delete("/purchase/" + id);
+    },
+
     // Customer
     getCustomer() {
         return axiosPrivate.get("/customer");

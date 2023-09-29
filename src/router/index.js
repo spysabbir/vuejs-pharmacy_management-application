@@ -10,6 +10,7 @@ import Rack from "../views/dashboard/Rack.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
 import Purchase from "../views/dashboard/Purchase.vue";
+import PurchaseHistory from "../views/dashboard/PurchaseHistory.vue";
 import Sale from "../views/dashboard/Sale.vue";
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
       { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
       { path: "purchase", component: Purchase },
+      { path: "purchase/history", component: PurchaseHistory },
       { path: "sale", component: Sale },
     ],
   },

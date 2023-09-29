@@ -20,7 +20,6 @@
                     </option>
                   </select>
                 </div>
-
                 <div class="col-lg-4 col-md-6 mb-3">
                   <label class="form-label">Select Type</label>
                   <select class="form-control" v-model="selectedTypeId">
@@ -113,6 +112,7 @@
                         </tfoot>
                       </table>
                     </div>
+                    <TheButton :lodding="purchasing" @click="purchasingNow" class="mt-3">Purchase</TheButton>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,6 @@
   </template>
   
   <script>
-  import axios from "axios";
   import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
   import TheButton from '../../components/TheButton.vue';
   import TheModel from '../../components/TheModel.vue';
@@ -140,6 +139,13 @@
       selectedTypeId: '',
       selectedMedicineId: '',
       purchases_quantity: '',
+      purchasing: false,
+      sub_total: '',
+      discount: '',
+      grand_total: '',
+      payment_status: '',
+      payment_status: '',
+      payment_amount: '',
     }),
     computed: {
       ...mapState(useCartStore, {
@@ -246,6 +252,30 @@
             this.selectedMedicineId = "";
           }
       },
+
+      purchasingNow() {
+        const purchaseData = {
+          supplier_id: this.selectedSupplierId,
+          sub_total: this.sub_total,
+          discount: this.discount,
+          grand_total: this.grand_total,
+          payment_status: this.payment_status,
+          payment_status: this.payment_status,
+          payment_amount: this.payment_amount,
+          purchaseCartData: this.purchaseCartData,
+        }
+
+        this.purchasing = true,
+        privateService.purchasingNowStore(purchaseData)
+        .then((res) => {
+          showSuccessMessage(res);
+          this.$router.push('dashboard/purchase/history')
+        }).catch(err => {
+          showErrorMessage(err)
+        }).finally(() => {
+          this.purchasing = false;
+        });
+      }
     }
   }
   </script>
