@@ -2,6 +2,11 @@ import { axiosPrivate } from "./axiosInstance"
 
 export default {
 
+    // Overview
+    getOverview() {
+        return axiosPrivate.get("/overview");
+    },
+
     // Type
     getType() {
         return axiosPrivate.get("/type");

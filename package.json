@@ -12,7 +12,8 @@
     "mitt": "^3.0.1",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "vue3-charts": "^1.1.33"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.1",
