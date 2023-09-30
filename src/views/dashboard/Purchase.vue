@@ -97,7 +97,12 @@
                             <td>{{ item.name }} | {{ item.power_name }}</td>
                             <td>{{ item.unit_name }}</td>
                             <td>{{ item.purchases_price }}</td>
-                            <td><input type="number" v-model="item.purchases_quantity"></td>
+                            <td>
+                              <input type="number" v-model="item.purchases_quantity" @input="validateQuantity(item)">
+                              <!-- <div v-if="item.invalidQuantity" class="error-message">
+                                Quantity must be greater than or equal to 0.
+                              </div> -->
+                            </td>
                             <td>{{ item.purchases_price * item.purchases_quantity }}</td>
                             <td>
                               <button @click="removeCartItem(item.id)" class="btn btn-danger">Remove</button>
@@ -106,13 +111,21 @@
                         </tbody>
                         <tfoot>
                           <tr>
+                            <td colspan="4">Sub Total: </td>
+                            <td colspan="2">{{ purchaseSubTotal }}</td>
+                          </tr>
+                          <tr>
+                            <td colspan="4">Discount: </td>
+                            <td colspan="2"><input type="number" v-model="discount"></td>
+                          </tr>
+                          <tr>
                             <td colspan="4">Total: </td>
-                            <td colspan="2">{{ totalPurchasePrice }}</td>
+                            <td colspan="2">{{ updatedGrandTotal }}</td>
                           </tr>
                         </tfoot>
                       </table>
                     </div>
-                    <TheButton :lodding="purchasing" @click="purchasingNow" class="mt-3">Purchase</TheButton>
+                    <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 1" class="mt-3">Purchase</TheButton>
                   </div>
                 </div>
               </div>
@@ -140,18 +153,19 @@
       selectedMedicineId: '',
       purchases_quantity: '',
       purchasing: false,
-      sub_total: '',
       discount: '',
-      grand_total: '',
       payment_status: '',
       payment_status: '',
       payment_amount: '',
     }),
     computed: {
       ...mapState(useCartStore, {
-        purchaseCartData: "medicines",
-        totalPurchasePrice: "totalPrice",
+        purchaseCartData: "purchaseCartData",
+        purchaseSubTotal: "purchaseSubTotal",
       }),
+      updatedGrandTotal() {
+        return this.purchaseSubTotal - this.discount
+      },
       supplierGroupedItems() {
         const grouped = {};
         this.medicines.forEach(item => {
@@ -207,10 +221,23 @@
         this.filteredTypeGroupedItems = [];
         this.selectedTypeId = "";
         this.removeAllCartItem();
+        this.discount = '';
       },
       selectedTypeId(newType) {
         this.filteredMedicines = [];
         this.selectedMedicineId = "";
+      },
+      discount(newDiscount, oldDiscount) {
+        if (newDiscount < 0) {
+          showErrorMessage('Please discount amount do not entry less than 0!');
+          this.discount = 0;
+        }
+      },
+      purchases_quantity(newPurchasesQuantity, oldPurchasesQuantity) {
+        if (newPurchasesQuantity < 0) {
+          showErrorMessage('Please purchases quantity do not entry less than 0!');
+          this.purchases_quantity = 0;
+        }
       },
     },
     components: {
@@ -275,7 +302,17 @@
         }).finally(() => {
           this.purchasing = false;
         });
-      }
+      },
+
+      validateQuantity(item) {
+        if (item.purchases_quantity < 1) {
+          item.purchases_quantity = 1;
+          item.invalidQuantity = true;
+          showErrorMessage('Quantity must be greater than or equal to 0.');
+        } else {
+          item.invalidQuantity = false;
+        }
+      },
     }
   }
   </script>

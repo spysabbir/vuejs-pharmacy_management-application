@@ -2,35 +2,35 @@ import { defineStore } from 'pinia';
 
 export const useCartStore = defineStore("cart", {
     state: () => ({
-        medicines: {}
+        purchaseCartData: {}
     }),
     getters: {
-        totalPrice() {
+        purchaseSubTotal() {
             let total = 0;
-            for(const key in this.medicines) {
-                total += this.medicines[key].purchases_price * this.medicines[key].purchases_quantity;
+            for(const key in this.purchaseCartData) {
+                total += this.purchaseCartData[key].purchases_price * this.purchaseCartData[key].purchases_quantity;
             }
             return total;
         }
     },
     actions: {
         addMedicine(payload) {
-            const isDuplicate = this.medicines[payload.id];
+            const isDuplicate = this.purchaseCartData[payload.id];
             if (isDuplicate) {
                 // alert("This item is already in the cart.");
 
-                this.medicines[payload.id].purchases_quantity += payload.purchases_quantity;
+                this.purchaseCartData[payload.id].purchases_quantity += payload.purchases_quantity;
             } else {
-                this.medicines[payload.id] = payload;
+                this.purchaseCartData[payload.id] = payload;
             }
         },
         removeMedicine(id) {
-            if (this.medicines[id]) {
-                delete this.medicines[id];
+            if (this.purchaseCartData[id]) {
+                delete this.purchaseCartData[id];
             }
         },
         clearCart() {
-            this.medicines = {};
+            this.purchaseCartData = {};
         }
     }
 })
