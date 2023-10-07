@@ -1,20 +1,5 @@
 <template>
-	<div class="main-wrapper">
-		<div class="page-wrapper full-page">
-			<div class="page-content d-flex align-items-center justify-content-center">
-				<div class="row w-100 mx-0 auth-page">
-					<div class="col-md-8 col-xl-6 mx-auto">
-						<div class="card">
-							<div class="row">
-                <div class="col-md-4 pe-md-0">
-                  <div class="auth-side-wrapper">
 
-                  </div>
-                </div>
-                <div class="col-md-8 ps-md-0">
-                  <div class="auth-form-wrapper px-4 py-5">
-                    <a href="#" class="noble-ui-logo logo-light d-block mb-2">Spy <span>Pharmacy</span></a>
-                    <h5 class="text-muted fw-normal mb-4">Welcome back! Log in to your account.</h5>
                     <form class="forms-sample" @submit.prevent="handleLogin">
                       <div class="mb-3">
                         <label class="form-label">Email address</label>
@@ -34,24 +19,14 @@
                         <TheButton :lodding="loginStatus">Login</TheButton>
                       </div>
                     </form>
-                  </div>
-                </div>
-              </div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+
 </template>
 
 <script>
 import axios from "axios";
-import { mapState, mapActions } from "pinia";
 import TheButton from "../../components/TheButton.vue";
 import { setPrivateHeaders } from "../../service/axiosInstance";
 import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import { useAuthStore } from "../../store/authStore";
 
 export default {
   data: () => ({
@@ -62,19 +37,12 @@ export default {
     loginStatus: false,
   }),
   computed: {
-    ...mapState(useAuthStore, {
-      authName: "name",
-      authToken: "token",
-      isLoggedIn: "isLoggedIn",
-    })
+
   },
   components: {
     TheButton,
   },
   methods: {
-    ...mapActions(useAuthStore, {
-      authData: "authData",
-    }),
     handleLogin() {
       if(!this.formData.email){
         showErrorMessage("Email can not be empty!")
@@ -98,8 +66,7 @@ export default {
         this.authData(res.data.data);
         localStorage.setItem("accessToken", res.data.data.token);
         setPrivateHeaders();
-        location.href = "/dashboard";
-        // this.$router.push('/dashboard');
+        this.$router.push('/dashboard');
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {
