@@ -1,10 +1,10 @@
 <template>
-  <TheBreadcrumb title="Purchase"></TheBreadcrumb>
+  <TheBreadcrumb title="Purchase Create"></TheBreadcrumb>
 
   <div class="card mb-5 mb-xxl-8">
     <div class="card-header">
       <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
-        <h6 class="card-title mb-0">Purchase</h6>
+        <h6 class="card-title mb-0">Purchase Create</h6>
       </div>
     </div>
     <div class="card-body pt-9 pb-0">
@@ -133,13 +133,13 @@
 </template>
 
 <script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
+import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
+import TheButton from '../../../components/TheButton.vue';
+import TheModel from '../../../components/TheModel.vue';
+import { showErrorMessage, showSuccessMessage } from "../../../utils/functions";
+import privateService from "../../../service/privateService";
 import { mapState, mapActions } from "pinia";
-import { useCartStore } from "../../store/purchaseStore";
+import { useCartStore } from "../../../store/purchaseStore";
 
 export default {
   data: () => ({

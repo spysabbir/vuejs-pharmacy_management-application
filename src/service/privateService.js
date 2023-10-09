@@ -7,6 +7,14 @@ export default {
         return axiosPrivate.get("/overview");
     },
 
+    // Profile
+    getUserProfile() {
+        return axiosPrivate.get("/profile");
+    },
+    editUserProfile(payload) {
+        return axiosPrivate.put("/profile/" + payload.id, payload);
+    },
+
     // Type
     getType() {
         return axiosPrivate.get("/type");
@@ -81,10 +89,10 @@ export default {
     purchasingNowStore(payload) {
         return axiosPrivate.post("/purchase", payload);
     },
-    getPurchaseHistory() {
+    getPurchaseList() {
         return axiosPrivate.get("/purchase");
     },
-    deletePurchaseHistory(id) {
+    deletePurchaseList(id) {
         return axiosPrivate.delete("/purchase/" + id);
     },
 
@@ -100,5 +108,16 @@ export default {
     },
     deleteCustomer(id) {
         return axiosPrivate.delete("/customer/" + id);
+    },
+
+    // Sale
+    saleNowStore(payload) {
+        return axiosPrivate.post("/sale", payload);
+    },
+    getSaleList() {
+        return axiosPrivate.get("/sale");
+    },
+    deleteSaleList(id) {
+        return axiosPrivate.delete("/sale/" + id);
     },
 }

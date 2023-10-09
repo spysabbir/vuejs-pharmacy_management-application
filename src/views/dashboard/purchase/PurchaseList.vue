@@ -1,16 +1,16 @@
 <template>
-  <TheBreadcrumb title="Purchase History"></TheBreadcrumb>
+  <TheBreadcrumb title="Purchase List"></TheBreadcrumb>
   
   <!--begin::Tables-->
   <div class="card mb-5 mb-xl-8">
     <!--begin::Header-->
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
-        <span class="card-label fw-bolder fs-3 mb-1">Purchase History</span>
-        <span class="text-muted mt-1 fw-bold fs-7">{{ purchaseHistory.length }} Items</span>
+        <span class="card-label fw-bolder fs-3 mb-1">Purchase List</span>
+        <span class="text-muted mt-1 fw-bold fs-7">{{ purchaseList.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
-          <RouterLink to="" class="btn btn-primary er fs-6 px-8 py-4">
+          <RouterLink to="/dashboard/purchase/create" class="btn btn-primary er fs-6 px-8 py-4">
             <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
           <span class="svg-icon svg-icon-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -26,7 +26,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getPurchaseHistory">Looding...</div>
+      <div class="text-center" v-if="getPurchaseList">Looding...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -42,7 +42,7 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody>
-            <tr v-for="(purchaseItem, i) in purchaseHistory" :key="purchaseItem.purchases_invoice_no">
+            <tr v-for="(purchaseItem, i) in purchaseList" :key="purchaseItem.purchases_invoice_no">
               <td>{{ i+1 }}</td>
               <td>
                 <div class="d-flex align-items-center">
@@ -59,7 +59,7 @@
                 </div>
               </td>
               <td class="text-end">
-                <TheButton data-bs-toggle="modal" data-bs-target=".viewingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedPurchaseHistory = purchaseItem">
+                <TheButton data-bs-toggle="modal" data-bs-target=".viewingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedPurchaseList = purchaseItem">
                   <!--begin::Svg Icon | path: icons/duotone/Communication/Write.svg-->
                   <span class="svg-icon svg-icon-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -69,7 +69,7 @@
                   </span>
                   <!--end::Svg Icon-->
               </TheButton>
-              <TheButton data-bs-toggle="modal" data-bs-target=".deletingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" color="warning" @click="selectedPurchaseHistory = purchaseItem">
+              <TheButton data-bs-toggle="modal" data-bs-target=".deletingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" color="warning" @click="selectedPurchaseList = purchaseItem">
                   <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
                   <span class="svg-icon svg-icon-3">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -95,10 +95,10 @@
   </div>
   <!--end::Tables-->
 
-  <TheModel hadding="View Purchase History" action="viewingModel">
+  <TheModel hadding="View Purchase List" action="viewingModel">
     <div class="card text-center">
       <div class="card-header">
-          <strong>Invoice No: {{ selectedPurchaseHistory.purchases_invoice_no }}</strong>
+          <strong>Invoice No: {{ selectedPurchaseList.purchases_invoice_no }}</strong>
           <div class="table-responsive">
               <table class="table">
                   <thead>
@@ -109,7 +109,7 @@
                       </tr>
                   </thead>
                   <tbody>
-                      <tr v-for="item in selectedPurchaseHistory.purchaseCartData" :key="item">
+                      <tr v-for="item in selectedPurchaseList.purchaseCartData" :key="item">
                           <td>R1C1</td>
                           <td>R1C2</td>
                           <td>R1C3</td>
@@ -124,34 +124,34 @@
     </div>
   </TheModel>
 
-  <TheModel hadding="Delete Purchase History" action="deletingModel">
+  <TheModel hadding="Delete Purchase List" action="deletingModel">
     <div class="card">
       <div class="card-header d-block text-center">
         <strong>Are you sure you want to delete it?</strong>
         <br>
-        <strong class="text-info">Invoice No: {{ selectedPurchaseHistory.purchases_invoice_no }}</strong>
+        <strong class="text-info">Invoice No: {{ selectedPurchaseList.purchases_invoice_no }}</strong>
       </div>
       <div class="card-body text-center">
         <TheButton data-bs-dismiss="modal">No</TheButton>
-        <TheButton color="danger" @click="deletePurchaseHistory" :loading="deletingStatus">Yes</TheButton>
+        <TheButton color="danger" @click="deletePurchaseList" :loading="deletingStatus">Yes</TheButton>
       </div>
     </div>
   </TheModel>
 </template>
 
 <script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
+import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
+import TheButton from '../../../components/TheButton.vue';
+import TheModel from '../../../components/TheModel.vue';
+import { showErrorMessage, showSuccessMessage } from "../../../utils/functions";
+import privateService from "../../../service/privateService";
 
 export default {
   data: () => ({
-      purchaseHistory: [],
-      getPurchaseHistory: false,
+      purchaseList: [],
+      getPurchaseList: false,
       deletingStatus: false,
-      selectedPurchaseHistory: {},
+      selectedPurchaseList: {},
   }),
   components: {
     TheBreadcrumb,
@@ -159,28 +159,28 @@ export default {
     TheModel,
   },
   mounted() {
-    setTimeout(this.getAllPurchaseHistory, 100)
+    setTimeout(this.getAllPurchaseList, 100)
   },
   methods: {
-    getAllPurchaseHistory(){
-      this.getPurchaseHistory = true;
-      privateService.getPurchaseHistory()
+    getAllPurchaseList(){
+      this.getPurchaseList = true;
+      privateService.getPurchaseList()
       .then((res) => {
-        this.purchaseHistory = res.data.data;
+        this.purchaseList = res.data.data;
       }).catch(err => {
         showErrorMessage(err);
       }).finally(() => {
-        this.getPurchaseHistory = false;
+        this.getPurchaseList = false;
       });
     },
 
-    deletePurchaseHistory() {
+    deletePurchaseList() {
     this.deletingStatus = true;
-    privateService.deletePurchaseHistory(this.selectedPurchaseHistory.id)
+    privateService.deletePurchaseList(this.selectedPurchaseList.id)
     .then((res) => {
       $('.deletingModel').modal('hide');
       showSuccessMessage(res);
-      this.getAllPurchaseHistory();
+      this.getAllPurchaseList();
     }).catch(err => {
       showErrorMessage(err)
     }).finally(() => {
