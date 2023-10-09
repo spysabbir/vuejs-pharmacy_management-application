@@ -12,7 +12,10 @@ export default {
         return axiosPrivate.get("/profile");
     },
     editUserProfile(payload) {
-        return axiosPrivate.put("/profile/" + payload.id, payload);
+        return axiosPrivate.patch("/profile/update/", payload);
+    },
+    editUserPassword(payload) {
+        return axiosPrivate.put("/password/update/", payload);
     },
 
     // Type
