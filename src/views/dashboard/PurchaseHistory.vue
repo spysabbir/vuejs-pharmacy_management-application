@@ -7,10 +7,10 @@
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bolder fs-3 mb-1">Purchase History</span>
-        <span class="text-muted mt-1 fw-bold fs-7">Over 500 members</span>
+        <span class="text-muted mt-1 fw-bold fs-7">{{ purchaseHistory.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
-          <TheButton data-bs-toggle="modal" data-bs-target=".addingModel" class="btn btn-primary er fs-6 px-8 py-4">
+          <RouterLink to="" class="btn btn-primary er fs-6 px-8 py-4">
             <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
           <span class="svg-icon svg-icon-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -19,7 +19,7 @@
             </svg>
           </span>
           <!--end::Svg Icon-->
-          </TheButton>
+          </RouterLink>
       </div>
     </div>
     <!--end::Header-->
@@ -59,7 +59,7 @@
                 </div>
               </td>
               <td class="text-end">
-                <TheButton data-bs-toggle="modal" data-bs-target=".editingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedPurchaseHistory = purchaseItem">
+                <TheButton data-bs-toggle="modal" data-bs-target=".viewingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedPurchaseHistory = purchaseItem">
                   <!--begin::Svg Icon | path: icons/duotone/Communication/Write.svg-->
                   <span class="svg-icon svg-icon-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -118,18 +118,20 @@
               </table>
           </div>
       </div>
-      <div class="card-body">
+      <div class="card-body text-center">
         <TheButton data-bs-dismiss="modal">No</TheButton>
       </div>
     </div>
   </TheModel>
 
   <TheModel hadding="Delete Purchase History" action="deletingModel">
-    <div class="card text-center">
-      <div class="card-header">
-        <strong>Invoice No: {{ selectedPurchaseHistory.purchases_invoice_no }}</strong>
+    <div class="card">
+      <div class="card-header d-block text-center">
+        <strong>Are you sure you want to delete it?</strong>
+        <br>
+        <strong class="text-info">Invoice No: {{ selectedPurchaseHistory.purchases_invoice_no }}</strong>
       </div>
-      <div class="card-body">
+      <div class="card-body text-center">
         <TheButton data-bs-dismiss="modal">No</TheButton>
         <TheButton color="danger" @click="deletePurchaseHistory" :loading="deletingStatus">Yes</TheButton>
       </div>

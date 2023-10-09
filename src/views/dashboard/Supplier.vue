@@ -7,7 +7,7 @@
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bolder fs-3 mb-1">Supplier</span>
-        <span class="text-muted mt-1 fw-bold fs-7">Over 500 members</span>
+        <span class="text-muted mt-1 fw-bold fs-7">{{ suppliers.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
           <TheButton data-bs-toggle="modal" data-bs-target=".addingModel" class="btn btn-primary er fs-6 px-8 py-4">
@@ -111,7 +111,9 @@
         <label class="form-label">Address</label>
         <textarea class="form-control" v-model="addingSupplierData.address" ref="address" placeholder="Enter address"></textarea>
       </div>
-      <TheButton :lodding="addingStatus">Add Supplier</TheButton>
+      <div class="text-center">
+        <TheButton :lodding="addingStatus">Add Supplier</TheButton>
+      </div>
     </form>
   </TheModel>
 
@@ -133,16 +135,20 @@
         <label class="form-label">Address</label>
         <textarea class="form-control" v-model="selectedSupplierData.address" ref="address" placeholder="Enter address"></textarea>
       </div>
-      <TheButton :lodding="editingStatus">Edit Supplier</TheButton>
+      <div class="text-center">
+        <TheButton :lodding="editingStatus">Edit Supplier</TheButton>
+      </div>
     </form>
   </TheModel>
 
   <TheModel hadding="Delete Supplier" action="deletingModel">
-    <div class="card text-center">
-      <div class="card-header">
-        <strong>Supplier Name: {{ selectedSupplierData.name }}</strong>
+    <div class="card">
+      <div class="card-header d-block text-center">
+        <strong>Are you sure you want to delete it?</strong>
+        <br>
+        <strong class="text-info">Supplier Name: {{ selectedSupplierData.name }}</strong>
       </div>
-      <div class="card-body">
+      <div class="card-body text-center">
         <TheButton data-bs-dismiss="modal">No</TheButton>
         <TheButton color="danger" @click="deleteSupplier" :loading="deletingStatus">Yes</TheButton>
       </div>

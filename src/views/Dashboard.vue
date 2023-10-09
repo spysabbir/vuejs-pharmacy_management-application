@@ -200,30 +200,14 @@
 		<div class="card-body" id="kt_explore_body">
 			<!--begin::Content-->
 			<div id="kt_explore_scroll" class="scroll-y me-n5 pe-5" data-kt-scroll="true" data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_explore_body" data-kt-scroll-dependencies="#kt_explore_header, #kt_explore_footer" data-kt-scroll-offset="5px">
-				<!--begin::Demos-->
-				<div class="mb-0">
-					<!--begin::Demo-->
-					<div class="mb-7">
-						<h3 class="fw-bold text-center mb-3">Demo1</h3>
-						<div class="overlay overflow-hidden border border-4 p-2 rounded">
-							<div class="overlay-wrapper rounded">
-								<img src="assets/media/demos/demo1.png" alt="demo" class="w-100 rounded" />
-							</div>
-							<div class="overlay-layer bg-dark bg-opacity-10">
-								<a href="https://preview.keenthemes.com/metronic8/demo1" class="btn btn-primary shadow">Preview</a>
-							</div>
-						</div>
-					</div>
-					<!--end::Demo-->
-				</div>
-				<!--end::Demos-->
+				
 			</div>
 			<!--end::Content-->
 		</div>
 		<!--end::Body-->
 		<!--begin::Footer-->
 		<div class="card-footer py-5 text-center" id="kt_explore_footer">
-			<a href="https://1.envato.market/EA4JP" class="btn btn-primary">Purchase Metronic</a>
+			<a href="#" class="btn btn-primary">All</a>
 		</div>
 		<!--end::Footer-->
 	</div>

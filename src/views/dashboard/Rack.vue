@@ -93,7 +93,9 @@
         <label class="form-label">Name</label>
         <input rack="text" class="form-control" ref="name" v-model="addingRackData.name" placeholder="Enter name">
       </div>
-      <TheButton :lodding="addingStatus">Add Rack</TheButton>
+      <div class="text-center">
+        <TheButton :lodding="addingStatus">Add Rack</TheButton>
+      </div>
     </form>
   </TheModel>
 
@@ -103,16 +105,20 @@
         <label class="form-label">Name</label>
         <input rack="text" class="form-control" ref="name" v-model="selectedRackData.name" placeholder="Enter name">
       </div>
-      <TheButton :lodding="editingStatus">Edit Rack</TheButton>
+      <div class="text-center">
+        <TheButton :lodding="editingStatus">Edit Rack</TheButton>
+      </div>
     </form>
   </TheModel>
 
   <TheModel hadding="Delete Rack" action="deletingModel">
-    <div class="card text-center">
-      <div class="card-header">
-        <strong>Rack Name: {{ selectedRackData.name }}</strong>
+    <div class="card">
+      <div class="card-header d-block text-center">
+        <strong>Are you sure you want to delete it?</strong>
+        <br>
+        <strong class="text-info">Rack Name: {{ selectedRackData.name }}</strong>
       </div>
-      <div class="card-body">
+      <div class="card-body text-center">
         <TheButton data-bs-dismiss="modal">No</TheButton>
         <TheButton color="danger" @click="deleteRack" :loading="deletingStatus">Yes</TheButton>
       </div>
@@ -121,7 +127,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';

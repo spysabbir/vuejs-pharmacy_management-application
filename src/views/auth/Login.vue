@@ -40,12 +40,8 @@
             <!--begin::Heading-->
             <div class="text-center mb-10">
               <!--begin::Title-->
-              <h1 class="text-dark mb-3">Sign In to Metronic</h1>
+              <h1 class="text-dark mb-3">Sign In to Spy Pharmacy</h1>
               <!--end::Title-->
-              <!--begin::Link-->
-              <div class="text-gray-400 fw-bold fs-4">New Here?
-              <router-link to="#" class="link-primary fw-bolder">Create an Account</router-link></div>
-              <!--end::Link-->
             </div>
             <!--begin::Heading-->
             <!--begin::Input group-->
@@ -54,22 +50,15 @@
               <label class="form-label fs-6 fw-bolder text-dark">Email</label>
               <!--end::Label-->
               <!--begin::Input-->
-              <input class="form-control form-control-lg form-control-solid" type="text" v-model="formData.email" ref="email" placeholder="Enter your email" />
+              <input class="form-control form-control-lg form-control-solid" type="email" v-model="formData.email" ref="email" placeholder="Enter your email" />
               <!--end::Input-->
             </div>
             <!--end::Input group-->
             <!--begin::Input group-->
             <div class="fv-row mb-10">
-              <!--begin::Wrapper-->
-              <div class="d-flex flex-stack mb-2">
-                <!--begin::Label-->
-                <label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
-                <!--end::Label-->
-                <!--begin::Link-->
-                <router-link to="#" class="link-primary fs-6 fw-bolder">Forgot Password ?</router-link>
-                <!--end::Link-->
-              </div>
-              <!--end::Wrapper-->
+              <!--begin::Label-->
+              <label class="form-label fs-6 fw-bolder text-dark">Password</label>
+              <!--end::Label-->
               <!--begin::Input-->
               <input class="form-control form-control-lg form-control-solid" type="password" v-model="formData.password" ref="password" placeholder="Enter your password" />
               <!--end::Input-->
