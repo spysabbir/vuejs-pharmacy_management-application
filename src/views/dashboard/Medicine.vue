@@ -318,7 +318,8 @@ export default {
     },
 
     getAllSuppliers(){
-      axios.get("https://pharmacy.spysabbir.com/api/supplier",  
+      // axios.get("https://pharmacy.spysabbir.com/api/supplier",  
+      axios.get("http://127.0.0.1:8000",  
         { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
       )
       .then((res) => {

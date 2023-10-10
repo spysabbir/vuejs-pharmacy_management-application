@@ -276,13 +276,22 @@ export default {
         }
     },
 
+    validateQuantity(item) {
+      if (item.purchases_quantity < 1) {
+        item.purchases_quantity = 1;
+        item.invalidQuantity = true;
+        showErrorMessage('Quantity must be greater than or equal to 0.');
+      } else {
+        item.invalidQuantity = false;
+      }
+    },
+
     purchasingNow() {
       const purchaseData = {
         supplier_id: this.selectedSupplierId,
-        sub_total: this.sub_total,
+        sub_total: this.purchaseSubTotal,
         discount: this.discount,
-        grand_total: this.grand_total,
-        payment_status: this.payment_status,
+        grand_total: this.updatedGrandTotal,
         payment_status: this.payment_status,
         payment_amount: this.payment_amount,
         purchaseCartData: this.purchaseCartData,
@@ -292,22 +301,13 @@ export default {
       privateService.purchasingNowStore(purchaseData)
       .then((res) => {
         showSuccessMessage(res);
-        this.$router.push('dashboard/purchase/history')
+        this.removeAllCartItem();
+        this.$router.push('list')
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {
         this.purchasing = false;
       });
-    },
-
-    validateQuantity(item) {
-      if (item.purchases_quantity < 1) {
-        item.purchases_quantity = 1;
-        item.invalidQuantity = true;
-        showErrorMessage('Quantity must be greater than or equal to 0.');
-      } else {
-        item.invalidQuantity = false;
-      }
     },
   }
 }

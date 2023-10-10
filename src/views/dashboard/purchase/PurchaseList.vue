@@ -35,7 +35,8 @@
             <tr class="fw-bolder text-muted">
               <th class="min-w-150px">Sl No</th>
               <th class="min-w-140px">Invoice No</th>
-              <th class="min-w-140px">Item</th>
+              <th class="min-w-140px">Supplier Name</th>
+              <th class="min-w-140px">Total</th>
               <th class="min-w-100px text-end">Actions</th>
             </tr>
           </thead>
@@ -54,7 +55,14 @@
               <td>
                 <div class="d-flex align-items-center">
                   <div class="d-flex justify-content-start flex-column">
-                    <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ Object.keys(purchaseItem.purchaseCartData).length }}</a>
+                    <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.supplier_id }}</a>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="d-flex justify-content-start flex-column">
+                    <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.grand_total }}</a>
                   </div>
                 </div>
               </td>
@@ -110,9 +118,9 @@
                   </thead>
                   <tbody>
                       <tr v-for="item in selectedPurchaseList.purchaseCartData" :key="item">
-                          <td>R1C1</td>
-                          <td>R1C2</td>
-                          <td>R1C3</td>
+                          <td>{{ purchaseCartData }}</td>
+                          <td>{{ purchaseCartData }}</td>
+                          <td>{{ purchaseCartData }}</td>
                       </tr>
                   </tbody>
               </table>
