@@ -37,9 +37,9 @@
             </select>
           </div>
           <div class="col-lg-12 col-md-12">
-            <div class="table-responsive">
-              <table class="table text-center">
-                <thead>
+            <div class="table-responsive" v-if="selectedMedicineDetails">
+              <table class="table align-middle text-center">
+                <thead class="table-success">
                   <tr>
                     <th>Name</th>
                     <th>Type</th>
@@ -50,7 +50,7 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody v-if="selectedMedicineDetails">
+                <tbody>
                   <tr>
                     <td>{{ selectedMedicineDetails.name }} | {{ selectedMedicineDetails.power_name }}</td>
                     <td>{{ selectedMedicineDetails.type_name }}</td>
@@ -59,72 +59,113 @@
                     <td>{{ selectedMedicineDetails.purchases_price }}</td>
                     <td><input type="number" v-model="purchases_quantity" ref="purchases_quantity"></td>
                     <td>
-                      <TheButton @click="addToCart(selectedMedicineDetails)" class="btn-xs"><i class="link-icon" data-feather="home"></i>Add to Cart</TheButton>
+                      <TheButton @click="addToCart(selectedMedicineDetails)" class="btn-sm">
+                        <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
+                        <span class="svg-icon svg-icon-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                            <path d="M18,8 L16,8 C15.4477153,8 15,7.55228475 15,7 C15,6.44771525 15.4477153,6 16,6 L18,6 L18,4 C18,3.44771525 18.4477153,3 19,3 C19.5522847,3 20,3.44771525 20,4 L20,6 L22,6 C22.5522847,6 23,6.44771525 23,7 C23,7.55228475 22.5522847,8 22,8 L20,8 L20,10 C20,10.5522847 19.5522847,11 19,11 C18.4477153,11 18,10.5522847 18,10 L18,8 Z M9,11 C6.790861,11 5,9.209139 5,7 C5,4.790861 6.790861,3 9,3 C11.209139,3 13,4.790861 13,7 C13,9.209139 11.209139,11 9,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                            <path d="M0.00065168429,20.1992055 C0.388258525,15.4265159 4.26191235,13 8.98334134,13 C13.7712164,13 17.7048837,15.2931929 17.9979143,20.2 C18.0095879,20.3954741 17.9979143,21 17.2466999,21 C13.541124,21 8.03472472,21 0.727502227,21 C0.476712155,21 -0.0204617505,20.45918 0.00065168429,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+                          </svg>
+                        </span>
+                        <!--end::Svg Icon-->
+                      </TheButton>
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else>
-                  <tr>
-                    <td colspan="7">No medicine selected</td>
-                  </tr>
-                </tbody>
               </table>
+            </div>
+            <div v-else class="text-center text-danger">
+                No medicine selected
             </div>
           </div>
         </div>
     </div>
     <div class="card-footer">
-      <div class="row">
-        <div class="col-12 col-xl-12 grid-margin stretch-card">
-          <div class="card overflow-hidden">
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle text-center">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>unit</th>
-                      <th>Purchase Price</th>
-                      <th>Purchase Qty</th>
-                      <th>Total Price</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, i) in purchaseCartData" :key="item.id">
-                      <td>{{ item.name }} | {{ item.power_name }}</td>
-                      <td>{{ item.unit_name }}</td>
-                      <td>{{ item.purchases_price }}</td>
-                      <td>
-                        <input type="number" v-model="item.purchases_quantity" @input="validateQuantity(item)">
-                        <!-- <div v-if="item.invalidQuantity" class="error-message">
-                          Quantity must be greater than or equal to 0.
-                        </div> -->
-                      </td>
-                      <td>{{ item.purchases_price * item.purchases_quantity }}</td>
-                      <td>
-                        <button @click="removeCartItem(item.id)" class="btn btn-danger">Remove</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colspan="4">Sub Total: </td>
-                      <td colspan="2">{{ purchaseSubTotal }}</td>
-                    </tr>
-                    <tr>
-                      <td colspan="4">Discount: </td>
-                      <td colspan="2"><input type="number" v-model="discount"></td>
-                    </tr>
-                    <tr>
-                      <td colspan="4">Total: </td>
-                      <td colspan="2">{{ updatedGrandTotal }}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 1" class="mt-3">Purchase</TheButton>
-            </div>
+      <div class="text-center text-danger" v-if="Object.keys(purchaseCartData).length < 1">Purchase Cart Data is Empty</div>
+      <div class="row" v-else>
+        <div class="col-12 col-xl-12">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle text-center">
+              <thead class="table-info">
+                <tr>
+                  <th>Name</th>
+                  <th>unit</th>
+                  <th>Purchase Price</th>
+                  <th>Purchase Qty</th>
+                  <th>Total Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, i) in purchaseCartData" :key="item.id">
+                  <td>{{ item.name }} | {{ item.power_name }}</td>
+                  <td>{{ item.unit_name }}</td>
+                  <td>{{ item.purchases_price }}</td>
+                  <td>
+                    <input type="number" v-model="item.purchases_quantity" @input="validateQuantity(item)">
+                    <!-- <div v-if="item.invalidQuantity" class="error-message">
+                      Quantity must be greater than or equal to 0.
+                    </div> -->
+                  </td>
+                  <td>{{ item.purchases_price * item.purchases_quantity }}</td>
+                  <td>
+                    <button @click="removeCartItem(item.id)" class="btn btn-danger btn-sm">
+                    <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
+                    <span class="svg-icon svg-icon-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                          <rect x="0" y="0" width="24" height="24" />
+                          <path d="M6,8 L6,20.5 C6,21.3284271 6.67157288,22 7.5,22 L16.5,22 C17.3284271,22 18,21.3284271 18,20.5 L18,8 L6,8 Z" fill="#000000" fill-rule="nonzero" />
+                          <path d="M14,4.5 L14,4 C14,3.44771525 13.5522847,3 13,3 L11,3 C10.4477153,3 10,3.44771525 10,4 L10,4.5 L5.5,4.5 C5.22385763,4.5 5,4.72385763 5,5 L5,5.5 C5,5.77614237 5.22385763,6 5.5,6 L18.5,6 C18.7761424,6 19,5.77614237 19,5.5 L19,5 C19,4.72385763 18.7761424,4.5 18.5,4.5 L14,4.5 Z" fill="#000000" opacity="0.3" />
+                        </g>
+                      </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot class="table-info">
+                <tr>
+                  <td colspan="3"></td>
+                  <td>Sub Total: </td>
+                  <td colspan="2">{{ purchaseSubTotal }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3"></td>
+                  <td>Discount: </td>
+                  <td colspan="2"><input type="number" v-model="discount"></td>
+                </tr>
+                <tr>
+                  <td colspan="3"></td>
+                  <td>Grand Total: </td>
+                  <td colspan="2">{{ updatedGrandTotal }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3"></td>
+                  <td>Payment Status: </td>
+                  <td colspan="2">
+                    <select v-model="payment_status" style="width: 50%;" class="text-center" ref="payment_status">
+                      <option value="">--Select One--</option>
+                      <option value="Unpaid">Unpaid</option>
+                      <option value="Partial Paid">Partial Paid</option>
+                      <option value="Paid">Paid</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3"></td>
+                  <td>Payment Amount: </td>
+                  <td colspan="2"><input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly"></td>
+                </tr>
+                <tr>
+                  <td colspan="4"></td>
+                  <td colspan="2">
+                    <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 1" class="mt-3">Purchase</TheButton>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       </div>
@@ -151,8 +192,8 @@ export default {
     purchasing: false,
     discount: '',
     payment_status: '',
-    payment_status: '',
     payment_amount: '',
+    isPaymentAmountReadOnly: false,
   }),
   computed: {
     ...mapState(useCartStore, {
@@ -224,9 +265,19 @@ export default {
       this.selectedMedicineId = "";
     },
     discount(newDiscount, oldDiscount) {
+      this.payment_amount = 0;
       if (newDiscount < 0) {
         showErrorMessage('Please discount amount do not entry less than 0!');
         this.discount = 0;
+      }
+      if (this.payment_status == 'Paid') {
+        this.payment_amount = this.updatedGrandTotal;
+      }else if(this.payment_status == 'Unpaid'){
+        this.payment_amount = 0;
+      }else if(this.payment_status == 'Partial Paid'){
+        this.payment_amount = '';
+      }else{
+        this.payment_amount = '';
       }
     },
     purchases_quantity(newPurchasesQuantity, oldPurchasesQuantity) {
@@ -235,6 +286,28 @@ export default {
         this.purchases_quantity = 0;
       }
     },
+    payment_status(newPaymentStatus, oldPaymentStatus) {
+      if (newPaymentStatus == 'Paid') {
+        this.payment_amount = this.updatedGrandTotal;
+        this.isPaymentAmountReadOnly = true;
+      }else if(newPaymentStatus == 'Unpaid'){
+        this.payment_amount = 0;
+        this.isPaymentAmountReadOnly = true;
+      }else if(newPaymentStatus == 'Partial Paid'){
+        this.payment_amount = '';
+        this.isPaymentAmountReadOnly = false;
+      }else{
+        this.payment_amount = '';
+        this.isPaymentAmountReadOnly = true;
+      }
+    },
+    payment_amount(newPaymentAmount, oldPaymentAmount) {
+      if (this.payment_status === 'Partial Paid' && (newPaymentAmount >= this.updatedGrandTotal || newPaymentAmount < 1)) {
+        showErrorMessage('Please enter a payment amount greater than 0 or less than the grand total amount!');
+        this.payment_amount = '';
+        this.$refs.payment_amount.focus();
+      }
+    }
   },
   components: {
     TheBreadcrumb,
@@ -295,6 +368,17 @@ export default {
         payment_status: this.payment_status,
         payment_amount: this.payment_amount,
         purchaseCartData: this.purchaseCartData,
+      }
+
+      if(!this.payment_status){
+        showErrorMessage("Payment status can not be empty!");
+        this.$refs.payment_status.focus();
+        return;
+      }
+      if(this.payment_status !== 'Unpaid' && !this.payment_amount){
+        showErrorMessage("Payment amount can not be empty!");
+        this.$refs.payment_amount.focus();
+        return;
       }
 
       this.purchasing = true,
