@@ -156,7 +156,10 @@
                 <tr>
                   <td colspan="3"></td>
                   <td>Payment Amount: </td>
-                  <td colspan="2"><input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly" placeholder="00"></td>
+                  <td colspan="2">
+                    <span class="d-none">{{ updatedPaymentAmount }}</span>
+                    <input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly" placeholder="00">
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="4"></td>
@@ -203,6 +206,15 @@ export default {
     updatedGrandTotal() {
       return this.purchaseSubTotal - this.discount
     },
+    updatedPaymentAmount() {
+      if (this.payment_status == 'Paid') {
+        return this.payment_amount = this.updatedGrandTotal;
+      }else if(this.payment_status == 'Unpaid'){
+        return this.payment_amount = 0;
+      }else{
+        return this.payment_amount = '';
+      }
+    },
     supplierGroupedItems() {
       const grouped = {};
       this.medicines.forEach(item => {
@@ -215,7 +227,6 @@ export default {
         supplier_name,
       }));
     },
-
     filteredTypeGroupedItems() {
       if (!this.selectedSupplierId) {
         return null;
@@ -235,7 +246,6 @@ export default {
         type_name,
       }));
     },
-
     filteredMedicines() {
       if (!this.selectedTypeId || (!this.selectedTypeId && !this.selectedSupplierId)) {
         return null;
@@ -247,7 +257,6 @@ export default {
         );
       });
     },
-
     selectedMedicineDetails() {
       const selectedMedicine = this.medicines.find(medicine => medicine.id === this.selectedMedicineId);
       return selectedMedicine || null;
@@ -274,15 +283,6 @@ export default {
         showErrorMessage('Please discount amount do not entry less than sub total!');
         this.discount = oldDiscount;
       }
-      if (this.payment_status == 'Paid') {
-        this.payment_amount = this.updatedGrandTotal;
-      }else if(this.payment_status == 'Unpaid'){
-        this.payment_amount = 0;
-      }else if(this.payment_status == 'Partial Paid'){
-        this.payment_amount = '';
-      }else{
-        this.payment_amount = '';
-      }
     },
     purchases_quantity(newPurchasesQuantity, oldPurchasesQuantity) {
       if (newPurchasesQuantity < 0) {
@@ -291,27 +291,20 @@ export default {
       }
     },
     payment_status(newPaymentStatus, oldPaymentStatus) {
-      if (newPaymentStatus == 'Paid') {
-        this.payment_amount = this.updatedGrandTotal;
-        this.isPaymentAmountReadOnly = true;
-      }else if(newPaymentStatus == 'Unpaid'){
-        this.payment_amount = 0;
-        this.isPaymentAmountReadOnly = true;
-      }else if(newPaymentStatus == 'Partial Paid'){
-        this.payment_amount = '';
+      if (newPaymentStatus == 'Partial Paid') {
         this.isPaymentAmountReadOnly = false;
       }else{
-        this.payment_amount = '';
         this.isPaymentAmountReadOnly = true;
       }
     },
     payment_amount(newPaymentAmount, oldPaymentAmount) {
-      if (this.payment_status === 'Partial Paid' && (newPaymentAmount >= this.updatedGrandTotal || newPaymentAmount < 1)) {
-        showErrorMessage('Please enter a payment amount greater than 0 or less than the grand total amount!');
-        this.payment_amount = '';
+      if (this.payment_status === 'Partial Paid' && (newPaymentAmount < 1 || newPaymentAmount >= this.updatedGrandTotal)) {
+        showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
         this.$refs.payment_amount.focus();
+        // this.payment_amount = 0;
+        return;
       }
-    }
+    },
   },
   components: {
     TheBreadcrumb,
@@ -339,18 +332,18 @@ export default {
     },
 
     addToCart(selectedMedicine) {
-        if(!this.purchases_quantity){
-          showErrorMessage("Purchases quantity can not be empty!");
-          this.$refs.purchases_quantity.focus();
-          return;
-        } else {
-          this.addToCartItem({ ...selectedMedicine, purchases_quantity: this.purchases_quantity });
-          this.purchases_quantity = '';
-          this.filteredTypeGroupedItems = [];
-          this.selectedTypeId = "";
-          this.filteredMedicines = [];
-          this.selectedMedicineId = "";
-        }
+      if(!this.purchases_quantity){
+        showErrorMessage("Purchases quantity can not be empty!");
+        this.$refs.purchases_quantity.focus();
+        return;
+      } else {
+        this.addToCartItem({ ...selectedMedicine, purchases_quantity: this.purchases_quantity });
+        this.purchases_quantity = '';
+        this.filteredTypeGroupedItems = [];
+        this.selectedTypeId = "";
+        this.filteredMedicines = [];
+        this.selectedMedicineId = "";
+      }
     },
 
     validateQuantity(item) {
