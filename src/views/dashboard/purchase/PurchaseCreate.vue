@@ -134,7 +134,7 @@
                 <tr>
                   <td colspan="3"></td>
                   <td>Discount: </td>
-                  <td colspan="2"><input type="number" v-model="discount"></td>
+                  <td colspan="2"><input type="number" v-model="discount" placeholder="00"></td>
                 </tr>
                 <tr>
                   <td colspan="3"></td>
@@ -156,12 +156,12 @@
                 <tr>
                   <td colspan="3"></td>
                   <td>Payment Amount: </td>
-                  <td colspan="2"><input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly"></td>
+                  <td colspan="2"><input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly" placeholder="00"></td>
                 </tr>
                 <tr>
                   <td colspan="4"></td>
                   <td colspan="2">
-                    <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 1" class="mt-3">Purchase</TheButton>
+                    <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 0" class="mt-3">Purchase</TheButton>
                   </td>
                 </tr>
               </tfoot>
@@ -193,7 +193,7 @@ export default {
     discount: '',
     payment_status: '',
     payment_amount: '',
-    isPaymentAmountReadOnly: false,
+    isPaymentAmountReadOnly: true,
   }),
   computed: {
     ...mapState(useCartStore, {
@@ -269,6 +269,10 @@ export default {
       if (newDiscount < 0) {
         showErrorMessage('Please discount amount do not entry less than 0!');
         this.discount = 0;
+      }
+      if (newDiscount >= this.purchaseSubTotal) {
+        showErrorMessage('Please discount amount do not entry less than sub total!');
+        this.discount = oldDiscount;
       }
       if (this.payment_status == 'Paid') {
         this.payment_amount = this.updatedGrandTotal;
