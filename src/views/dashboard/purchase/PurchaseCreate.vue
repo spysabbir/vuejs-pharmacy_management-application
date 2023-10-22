@@ -301,7 +301,7 @@ export default {
       if (this.payment_status === 'Partial Paid' && (newPaymentAmount < 1 || newPaymentAmount >= this.updatedGrandTotal)) {
         showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
         this.$refs.payment_amount.focus();
-        // this.payment_amount = 0;
+        this.payment_amount = '';
         return;
       }
     },

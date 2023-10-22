@@ -93,7 +93,7 @@ export default {
   data: () => ({
     formData: {
       email: "sabbir@gmail.com",
-      password: "12345678",
+      password: "123456",
     },
     loginStatus: false,
   }),
@@ -128,7 +128,6 @@ export default {
         localStorage.setItem("accessToken", res.data.data.token);
         setPrivateHeaders();
         location.href = "/dashboard";
-        // this.$router.push("/dashboard")
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {
