@@ -97,19 +97,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, i) in purchaseCartData" :key="item.id">
-                  <td>{{ item.name }} | {{ item.power_name }}</td>
-                  <td>{{ item.unit_name }}</td>
-                  <td>{{ item.purchases_price }}</td>
+                <tr v-for="(cartItem, i) in purchaseCartData" :key="cartItem.id">
+                  <td>{{ cartItem.name }} | {{ cartItem.power_name }}</td>
+                  <td>{{ cartItem.unit_name }}</td>
+                  <td>{{ cartItem.purchases_price }}</td>
                   <td>
-                    <input type="number" v-model="item.purchases_quantity" @input="validateQuantity(item)">
-                    <!-- <div v-if="item.invalidQuantity" class="error-message">
+                    <input type="number" v-model="cartItem.purchases_quantity" @input="validateQuantity(cartItem)">
+                    <!-- <div v-if="cartItem.invalidQuantity" class="error-message">
                       Quantity must be greater than or equal to 0.
                     </div> -->
                   </td>
-                  <td>{{ item.purchases_price * item.purchases_quantity }}</td>
+                  <td>{{ cartItem.purchases_price * cartItem.purchases_quantity }}</td>
                   <td>
-                    <button @click="removeCartItem(item.id)" class="btn btn-danger btn-sm">
+                    <button @click="removeCartItem(cartItem.id)" class="btn btn-danger btn-sm">
                     <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
                     <span class="svg-icon svg-icon-3">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -134,7 +134,9 @@
                 <tr>
                   <td colspan="3"></td>
                   <td>Discount: </td>
-                  <td colspan="2"><input type="number" v-model="discount" placeholder="00"></td>
+                  <td colspan="2">
+                    <input type="number" v-model="discount" placeholder="00">
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="3"></td>
@@ -154,10 +156,9 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="3"></td>
+                  <td colspan="3">{{ updatedPaymentAmount }}</td>
                   <td>Payment Amount: </td>
                   <td colspan="2">
-                    <span class="d-none">{{ updatedPaymentAmount }}</span>
                     <input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly" placeholder="00">
                   </td>
                 </tr>
@@ -204,15 +205,17 @@ export default {
       purchaseSubTotal: "purchaseSubTotal",
     }),
     updatedGrandTotal() {
-      return this.purchaseSubTotal - this.discount
+      return this.purchaseSubTotal - this.discount;
     },
     updatedPaymentAmount() {
       if (this.payment_status == 'Paid') {
-        return this.payment_amount = this.updatedGrandTotal;
+        this.payment_amount = this.updatedGrandTotal;
       }else if(this.payment_status == 'Unpaid'){
-        return this.payment_amount = 0;
+        this.payment_amount = 0;
+      }else if (this.payment_status == 'Partial Paid') {
+        this.payment_amount = this.updatedGrandTotal / 2 ;
       }else{
-        return this.payment_amount = '';
+        this.payment_amount = '';
       }
     },
     supplierGroupedItems() {
@@ -263,18 +266,23 @@ export default {
     },
   },
   watch: {
-    selectedSupplierId(newSupplier) {
+    selectedSupplierId() {
       this.filteredTypeGroupedItems = [];
       this.selectedTypeId = "";
       this.removeAllCartItem();
       this.discount = '';
     },
-    selectedTypeId(newType) {
+    selectedTypeId() {
       this.filteredMedicines = [];
       this.selectedMedicineId = "";
     },
+    purchases_quantity(newPurchasesQuantity) {
+      if (newPurchasesQuantity < 0) {
+        showErrorMessage('Please purchases quantity do not entry less than 0!');
+        this.purchases_quantity = 0;
+      }
+    },
     discount(newDiscount, oldDiscount) {
-      this.payment_amount = 0;
       if (newDiscount < 0) {
         showErrorMessage('Please discount amount do not entry less than 0!');
         this.discount = 0;
@@ -284,13 +292,7 @@ export default {
         this.discount = oldDiscount;
       }
     },
-    purchases_quantity(newPurchasesQuantity, oldPurchasesQuantity) {
-      if (newPurchasesQuantity < 0) {
-        showErrorMessage('Please purchases quantity do not entry less than 0!');
-        this.purchases_quantity = 0;
-      }
-    },
-    payment_status(newPaymentStatus, oldPaymentStatus) {
+    payment_status(newPaymentStatus) {
       if (newPaymentStatus == 'Partial Paid') {
         this.isPaymentAmountReadOnly = false;
       }else{
@@ -298,10 +300,10 @@ export default {
       }
     },
     payment_amount(newPaymentAmount, oldPaymentAmount) {
-      if (this.payment_status === 'Partial Paid' && (newPaymentAmount < 1 || newPaymentAmount >= this.updatedGrandTotal)) {
+      if (this.payment_status === 'Partial Paid' && (newPaymentAmount < 0 || newPaymentAmount >= this.updatedGrandTotal)) {
         showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
         this.$refs.payment_amount.focus();
-        this.payment_amount = '';
+        this.payment_amount = oldPaymentAmount;
         return;
       }
     },
@@ -346,13 +348,13 @@ export default {
       }
     },
 
-    validateQuantity(item) {
-      if (item.purchases_quantity < 1) {
-        item.purchases_quantity = 1;
-        item.invalidQuantity = true;
+    validateQuantity(cartItem) {
+      if (cartItem.purchases_quantity < 1) {
+        cartItem.purchases_quantity = 0;
+        cartItem.invalidQuantity = true;
         showErrorMessage('Quantity must be greater than or equal to 0.');
       } else {
-        item.invalidQuantity = false;
+        cartItem.invalidQuantity = false;
       }
     },
 
@@ -373,7 +375,7 @@ export default {
         return;
       }
       if(this.payment_status !== 'Unpaid' && !this.payment_amount){
-        showErrorMessage("Payment amount can not be empty!");
+        showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
         this.$refs.payment_amount.focus();
         return;
       }
