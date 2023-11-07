@@ -95,7 +95,7 @@ export default {
     getPurchaseList() {
         return axiosPrivate.get("/purchase");
     },
-    deletePurchaseList(id) {
+    deletePurchaseItem(id) {
         return axiosPrivate.delete("/purchase/" + id);
     },
 
