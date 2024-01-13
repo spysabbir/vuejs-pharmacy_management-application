@@ -256,7 +256,7 @@ export default {
         return;
       }
       if(!this.userPasswordData.password){
-        showErrorMessage("Password can not be empty!");
+        showErrorMessage("New Password can not be empty!");
         this.$refs.password.focus();
         return;
       }

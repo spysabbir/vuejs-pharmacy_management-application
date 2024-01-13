@@ -92,8 +92,8 @@ import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
 export default {
   data: () => ({
     formData: {
-      email: "sabbir@gmail.com",
-      password: "123456",
+      email: "admin@email.com",
+      password: "12345678",
     },
     loginStatus: false,
   }),
@@ -121,8 +121,7 @@ export default {
         return;
       }
       this.loginStatus = true;
-      // axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
-      axios.post("http://127.0.0.1:8000/api/login", this.formData)
+      axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
       .then((res) => {
         showSuccessMessage(res);
         localStorage.setItem("accessToken", res.data.data.token);
