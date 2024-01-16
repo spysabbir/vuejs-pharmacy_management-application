@@ -48,13 +48,13 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ supplier.name }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6 mb-1">{{ supplier.name }}</p>
                       <span class="text-muted fw-bold text-muted d-block fs-7">{{ supplier.email }}</span>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <a href="#" class="text-dark fw-bolder text-hover-primary d-block fs-6">{{ supplier.phone_number }}</a>
+                  <p class="text-dark fw-bolder text-hover-primary d-block fs-6 mb-1">{{ supplier.phone_number }}</p>
                   <span class="text-muted fw-bold text-muted d-block fs-7">{{ supplier.address }}</span>
                 </td>
                 <td class="text-end">

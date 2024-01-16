@@ -50,30 +50,30 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.supplier_name }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.supplier_name }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.type_name }}</a>
-                      <span class="text-muted fw-bold text-muted d-block fs-7">{{ medicine.name }} | {{ medicine.power_name }}</span>
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.unit_name }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary mb-1">{{ medicine.type_name }}</p>
+                      <strong class="text-info fw-bold d-block text-hover-primary">{{ medicine.name }} | {{ medicine.power_name }}</strong>
+                      <p class="text-dark fw-bolder text-hover-primary">{{ medicine.unit_name }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.rack_name }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.rack_name }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.purchases_price }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ medicine.purchases_price }}</p>
                     </div>
                   </div>
                 </td>

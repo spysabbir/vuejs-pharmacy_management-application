@@ -21,7 +21,7 @@
           <div class="col-lg-4 col-md-6 mb-3">
             <label class="form-label">Select Type</label>
             <select class="form-control" v-model="selectedTypeId">
-              <option value="">Select Type</option>
+              <option value="">Select Supplier First</option>
               <option :value="item.type_id" v-for="item in filteredTypeGroupedItems" :key="item.type_id">
                 {{ item.type_name }}
               </option>
@@ -30,9 +30,9 @@
           <div class="col-lg-4 col-md-6 mb-3">
             <label class="form-label">Select Medicine</label>
             <select ref="medicine_id" class="form-control" v-model="selectedMedicineId">
-              <option value="">Select Medicine</option>
+              <option value="">Select Type First </option>
               <option :value="medicine.id" v-for="medicine in filteredMedicines" :key="medicine.id">
-                {{ medicine.name }} | {{ medicine.power_name }}
+                {{ medicine.name }} - {{ medicine.power_name }}
               </option>
             </select>
           </div>
@@ -41,23 +41,23 @@
               <table class="table align-middle text-center">
                 <thead class="table-success">
                   <tr>
-                    <th>Name</th>
+                    <th>Medicine Name</th>
                     <th>Type</th>
                     <th>Unit</th>
                     <th>Rack</th>
-                    <th>Price</th>
-                    <th>Qty</th>
+                    <th>Purchase Price</th>
+                    <th>Purchase Qty</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>{{ selectedMedicineDetails.name }} | {{ selectedMedicineDetails.power_name }}</td>
+                    <td>{{ selectedMedicineDetails.name }} - <span class="text-info fw-bold text-hover-primary">{{ selectedMedicineDetails.power_name }}</span></td>
                     <td>{{ selectedMedicineDetails.type_name }}</td>
                     <td>{{ selectedMedicineDetails.unit_name }}</td>
                     <td>{{ selectedMedicineDetails.rack_name }}</td>
                     <td>{{ selectedMedicineDetails.purchases_price }}</td>
-                    <td><input type="number" v-model="purchases_quantity" ref="purchases_quantity"></td>
+                    <td><input type="number" v-model="purchases_quantity" @input="addToCartQty(purchases_quantity)" ref="purchases_quantity"></td>
                     <td>
                       <TheButton @click="addToCart(selectedMedicineDetails)" class="btn-sm">
                         <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
@@ -74,7 +74,7 @@
                 </tbody>
               </table>
             </div>
-            <div v-else class="text-center text-danger">
+            <div v-else class="text-center text-danger p-2">
                 No medicine selected
             </div>
           </div>
@@ -88,8 +88,8 @@
             <table class="table table-striped table-hover align-middle text-center">
               <thead class="table-info">
                 <tr>
-                  <th>Name</th>
-                  <th>unit</th>
+                  <th>Medicine Name</th>
+                  <th>Unit</th>
                   <th>Purchase Price</th>
                   <th>Purchase Qty</th>
                   <th>Total Price</th>
@@ -98,12 +98,12 @@
               </thead>
               <tbody>
                 <tr v-for="(cartItem, i) in purchaseCartData" :key="cartItem.id">
-                  <td>{{ cartItem.name }} | {{ cartItem.power_name }}</td>
+                  <td>{{ cartItem.name }} - <span class="text-info fw-bold text-hover-primary">{{ cartItem.power_name }}</span></td>
                   <td>{{ cartItem.unit_name }}</td>
                   <td>{{ cartItem.purchases_price }}</td>
                   <td>
-                    <input type="number" v-model="cartItem.purchases_quantity" @input="validateQuantity(cartItem)">
-                    <!-- <div v-if="cartItem.invalidQuantity" class="error-message">
+                    <input type="number" v-model="cartItem.purchases_quantity" @input="validateCartQuantity(cartItem)">
+                    <!-- <div v-if="cartItem.invalidCartQuantity" class="error-message">
                       Quantity must be greater than or equal to 0.
                     </div> -->
                   </td>
@@ -178,13 +178,13 @@
 </template>
 
 <script>
-import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
-import TheButton from '../../../components/TheButton.vue';
-import TheModel from '../../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../../utils/functions";
-import privateService from "../../../service/privateService";
-import { mapState, mapActions } from "pinia";
-import { useCartStore } from "../../../store/purchaseStore";
+  import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
+  import TheButton from '../../../components/TheButton.vue';
+  import TheModel from '../../../components/TheModel.vue';
+  import { showErrorMessage, showSuccessMessage } from "../../../utils/functions";
+  import privateService from "../../../service/privateService";
+  import { mapState, mapActions } from "pinia";
+  import { useCartStore } from "../../../store/purchaseStore";
 
 export default {
   data: () => ({
@@ -192,7 +192,7 @@ export default {
     selectedSupplierId: '',
     selectedTypeId: '',
     selectedMedicineId: '',
-    purchases_quantity: '',
+    purchases_quantity: 1,
     purchasing: false,
     discount: '',
     payment_status: '',
@@ -204,9 +204,11 @@ export default {
       purchaseCartData: "purchaseCartData",
       purchaseSubTotal: "purchaseSubTotal",
     }),
+
     updatedGrandTotal() {
       return this.purchaseSubTotal - this.discount;
     },
+
     updatedPaymentAmount() {
       if (this.payment_status == 'Paid') {
         this.payment_amount = this.updatedGrandTotal;
@@ -267,21 +269,21 @@ export default {
   },
   watch: {
     selectedSupplierId() {
-      this.filteredTypeGroupedItems = [];
+      this.$data.filteredTypeGroupedItems = [];
       this.selectedTypeId = "";
       this.removeAllCartItem();
       this.discount = '';
     },
     selectedTypeId() {
-      this.filteredMedicines = [];
+      this.$data.filteredMedicines = [];
       this.selectedMedicineId = "";
     },
-    purchases_quantity(newPurchasesQuantity) {
-      if (newPurchasesQuantity < 0) {
-        showErrorMessage('Please purchases quantity do not entry less than 0!');
-        this.purchases_quantity = 0;
-      }
-    },
+    // purchases_quantity(newPurchasesQuantity) {
+    //   if (newPurchasesQuantity < 1) {
+    //     showErrorMessage('Please purchases quantity do not entry less than 1!');
+    //     this.purchases_quantity = 0;
+    //   }
+    // },
     discount(newDiscount, oldDiscount) {
       if (newDiscount < 0) {
         showErrorMessage('Please discount amount do not entry less than 0!');
@@ -333,6 +335,13 @@ export default {
       });
     },
 
+    addToCartQty(purchases_quantity) {
+      if (purchases_quantity < 1) {
+        showErrorMessage('Please purchases quantity do not entry less than 1!');
+        this.purchases_quantity = '';
+      }
+    },
+
     addToCart(selectedMedicine) {
       if(!this.purchases_quantity){
         showErrorMessage("Purchases quantity can not be empty!");
@@ -340,21 +349,22 @@ export default {
         return;
       } else {
         this.addToCartItem({ ...selectedMedicine, purchases_quantity: this.purchases_quantity });
-        this.purchases_quantity = '';
-        this.filteredTypeGroupedItems = [];
+        this.purchases_quantity = 1;
+        this.$data.filteredTypeGroupedItems = [];
         this.selectedTypeId = "";
-        this.filteredMedicines = [];
+        this.$data.filteredMedicines = [];
         this.selectedMedicineId = "";
       }
     },
 
-    validateQuantity(cartItem) {
+    validateCartQuantity(cartItem) {
+      this.discount = '';
       if (cartItem.purchases_quantity < 1) {
-        cartItem.purchases_quantity = 0;
-        cartItem.invalidQuantity = true;
+        cartItem.purchases_quantity = '';
+        cartItem.invalidCartQuantity = true;
         showErrorMessage('Quantity must be greater than or equal to 0.');
       } else {
-        cartItem.invalidQuantity = false;
+        cartItem.invalidCartQuantity = false;
       }
     },
 

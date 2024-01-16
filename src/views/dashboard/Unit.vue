@@ -47,8 +47,7 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ unit.unit_name }}</a>
-                      <span class="text-muted fw-bold text-muted d-block fs-7">{{ unit.piece_in_unit }}</span>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ unit.unit_name }} <strong class="text-info">({{ unit.piece_in_unit }} Pcs)</strong></p>
                     </div>
                   </div>
                 </td>
