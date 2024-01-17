@@ -36,8 +36,11 @@
               <th class="min-w-150px">Sl No</th>
               <th class="min-w-140px">Invoice No</th>
               <th class="min-w-140px">Supplier Name</th>
+              <th class="min-w-140px">Sub Total</th>
+              <th class="min-w-140px">Discount</th>
               <th class="min-w-140px">Grand Total</th>
               <th class="min-w-140px">Payment Status</th>
+              <th class="min-w-140px">Payment Amount</th>
               <th class="min-w-100px text-end">Actions</th>
             </tr>
           </thead>
@@ -50,33 +53,54 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.purchases_invoice_no }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.purchases_invoice_no }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.supplier_id }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.supplier_name }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.grand_total }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.sub_total }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.payment_status }}</a>
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.discount ? purchaseItem.discount : 0 }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex justify-content-start flex-column">
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.grand_total }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex justify-content-start flex-column">
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.payment_status }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex justify-content-start flex-column">
+                      <p class="text-dark fw-bolder text-hover-primary fs-6">{{ purchaseItem.payment_amount }}</p>
                     </div>
                   </div>
                 </td>
                 <td class="text-end">
-                  <TheButton data-bs-toggle="modal" data-bs-target=".viewingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedPurchaseItem = purchaseItem">
+                  <TheButton data-bs-toggle="modal" data-bs-target=".viewingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="viewPurchaseList(purchaseItem)">
                     <!--begin::Svg Icon | path: icons/duotone/General/Settings-1.svg-->
                     <span class="svg-icon svg-icon-3">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -124,24 +148,33 @@
   <TheModel hadding="View Purchase Data" action="viewingModel">
     <div class="card text-center">
       <div class="card-header">
-          <strong>Invoice No: {{ selectedPurchaseItem.purchases_invoice_no }}</strong>
+        <strong class="my-3 text-center text-info">Invoice No: {{ viewPurchaseData.purchases_invoice_no }}</strong>
+      </div>
+      <div class="card-body">
           <div class="table-responsive">
-              <table class="table">
+              <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
                   <thead>
                       <tr>
-                          <th>Column</th>
-                          <th>Column</th>
-                          <th>Column</th>
+                          <th>Type</th>
+                          <th>Medicine Name</th>
+                          <th>Unit</th>
+                          <th>Purchases Quantity</th>
+                          <th>Purchases Price</th>
+                          <th>Total Price</th>
                       </tr>
                   </thead>
                   <tbody>
-                      
+                    <tr v-for="item in viewPurchaseData.purchasesDetails" :key="item.id">
+                      <td>{{ item.type_name }}</td>
+                      <td>{{ item.medicine_name }} - {{ item.power_name }}</td>
+                      <td>{{ item.unit_name }}</td>
+                      <td>{{ item.purchases_quantity }}</td>
+                      <td>{{ item.purchases_price }}</td>
+                      <td>{{ item.purchases_quantity * item.purchases_price }}</td>
+                    </tr>
                   </tbody>
               </table>
           </div>
-      </div>
-      <div class="card-body text-center">
-        <TheButton data-bs-dismiss="modal">No</TheButton>
       </div>
     </div>
   </TheModel>
@@ -173,7 +206,9 @@ export default {
       purchaseList: [],
       getPurchaseList: false,
       deletingStatus: false,
+      viewStatus: false,
       selectedPurchaseItem: {},
+      viewPurchaseData: {},
   }),
   components: {
     TheBreadcrumb,
@@ -196,14 +231,25 @@ export default {
       });
     },
 
+    viewPurchaseList(selectedPurchaseItem){
+      this.viewStatus = true;
+      privateService.viewPurchaseData(selectedPurchaseItem.id)
+      .then((res) => {
+        this.viewPurchaseData = res.data.data;
+      }).catch(err => {
+        showErrorMessage(err);
+      }).finally(() => {
+        this.viewStatus = false;
+      });
+    },
+
     deletePurchaseItem() {
       this.deletingStatus = true;
-      privateService.deletePurchaseItem(this.selectedPurchaseItem.id)
+      privateService.deletePurchaseData(this.selectedPurchaseItem.id)
       .then((res) => {
-        // $('.deletingModel').modal('hide');
-        // showSuccessMessage(res);
-        // this.getAllPurchaseList();
-        console.log(res);
+        $('.deletingModel').modal('hide');
+        showSuccessMessage(res);
+        this.getAllPurchaseList();
       }).catch(err => {
         showErrorMessage(err)
       }).finally(() => {

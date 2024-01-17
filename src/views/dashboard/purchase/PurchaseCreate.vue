@@ -278,15 +278,9 @@ export default {
       this.$data.filteredMedicines = [];
       this.selectedMedicineId = "";
     },
-    // purchases_quantity(newPurchasesQuantity) {
-    //   if (newPurchasesQuantity < 1) {
-    //     showErrorMessage('Please purchases quantity do not entry less than 1!');
-    //     this.purchases_quantity = 0;
-    //   }
-    // },
     discount(newDiscount, oldDiscount) {
       if (newDiscount < 0) {
-        showErrorMessage('Please discount amount do not entry less than 0!');
+        showErrorMessage('Please discount amount do not entry less than 1!');
         this.discount = 0;
       }
       if (newDiscount >= this.purchaseSubTotal) {
@@ -303,7 +297,7 @@ export default {
     },
     payment_amount(newPaymentAmount, oldPaymentAmount) {
       if (this.payment_status === 'Partial Paid' && (newPaymentAmount < 0 || newPaymentAmount >= this.updatedGrandTotal)) {
-        showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
+        showErrorMessage("Payment amount do not entry less than 1 or grand total qty!");
         this.$refs.payment_amount.focus();
         this.payment_amount = oldPaymentAmount;
         return;
@@ -359,10 +353,11 @@ export default {
 
     validateCartQuantity(cartItem) {
       this.discount = '';
+      this.payment_amount = '';
       if (cartItem.purchases_quantity < 1) {
         cartItem.purchases_quantity = '';
         cartItem.invalidCartQuantity = true;
-        showErrorMessage('Quantity must be greater than or equal to 0.');
+        showErrorMessage('Quantity must be greater than or equal to 1.');
       } else {
         cartItem.invalidCartQuantity = false;
       }
@@ -385,8 +380,9 @@ export default {
         return;
       }
       if(this.payment_status !== 'Unpaid' && !this.payment_amount){
-        showErrorMessage("Payment amount do not entry less than 0 or grand total qty!");
+        showErrorMessage("Payment amount do not entry less than 1 or grand total qty!");
         this.$refs.payment_amount.focus();
+        this.payment_amount = '';
         return;
       }
 
