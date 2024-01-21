@@ -117,11 +117,14 @@ export default {
     },
 
     // Sale
-    saleNowStore(payload) {
+    sellingNowStore(payload) {
         return axiosPrivate.post("/sale", payload);
     },
     getSaleList() {
         return axiosPrivate.get("/sale");
+    },
+    viewSaleData(id) {
+        return axiosPrivate.get("/sale/" + id);
     },
     deleteSaleList(id) {
         return axiosPrivate.delete("/sale/" + id);
