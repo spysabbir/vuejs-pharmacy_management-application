@@ -273,6 +273,7 @@ export default {
       this.selectedTypeId = "";
       this.removeAllCartItem();
       this.discount = '';
+      this.payment_amount = '';
     },
     selectedTypeId() {
       this.$data.filteredMedicines = [];
