@@ -45,9 +45,9 @@
                     <th>Type</th>
                     <th>Unit</th>
                     <th>Rack</th>
-                    <th>Sale Price</th>
-                    <th>Stock</th>
-                    <th>Sale Qty</th>
+                    <th>Sale Price (Pcs)</th>
+                    <th>Stock (Pcs)</th>
+                    <th>Sale Qty (Pcs)</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -57,7 +57,7 @@
                     <td>{{ selectedMedicineDetails.type_name }}</td>
                     <td>{{ selectedMedicineDetails.unit_name }}</td>
                     <td>{{ selectedMedicineDetails.rack_name }}</td>
-                    <td>{{ selectedMedicineDetails.sales_price }}</td>
+                    <td>{{ selectedMedicineDetails.sales_price / selectedMedicineDetails.piece_in_unit }}</td>
                     <td>{{ availableQuantity }}</td>
                     <td><input type="number" v-model="sales_quantity" @input="addToCartQty(availableQuantity, sales_quantity)" ref="sales_quantity"></td>
                     <td>
@@ -92,9 +92,9 @@
                 <tr>
                   <th>Medicine Name</th>
                   <th>Unit</th>
-                  <th>Sale Price</th>
-                  <th>Stock Qty</th>
-                  <th>Sale Qty</th>
+                  <th>Sale Price (Pcs)</th>
+                  <th>Stock Qty (Pcs)</th>
+                  <th>Sale Qty (Pcs)</th>
                   <th>Total Price</th>
                   <th>Action</th>
                 </tr>
@@ -103,7 +103,7 @@
                 <tr v-for="(cartItem, i) in saleCartData" :key="cartItem.id">
                   <td>{{ cartItem.name }} - <span class="text-info fw-bold text-hover-primary">{{ cartItem.power_name }}</span></td>
                   <td>{{ cartItem.unit_name }}</td>
-                  <td>{{ cartItem.sales_price }}</td>
+                  <td>{{ cartItem.sales_price / cartItem.piece_in_unit }}</td>
                   <td>{{ cartItem.stock_quantity }}</td>
                   <td>
                     <input type="number" v-model="cartItem.sales_quantity" @input="validateCartQuantity(cartItem.stock_quantity, cartItem)">
@@ -111,7 +111,7 @@
                       Quantity must be greater than or equal to 0.
                     </div> -->
                   </td>
-                  <td>{{ cartItem.sales_price * cartItem.sales_quantity }}</td>
+                  <td>{{ (cartItem.sales_price / cartItem.piece_in_unit) * cartItem.sales_quantity }}</td>
                   <td>
                     <button @click="removeCartItem(cartItem.id)" class="btn btn-danger btn-sm">
                     <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
@@ -207,6 +207,7 @@ export default {
     selectedMedicineDetailsData: {
       purchases_quantity: 0,
       sales_quantity: 0,
+      piece_in_unit: 0,
     },
   }),
   computed: {
@@ -216,7 +217,7 @@ export default {
     }),
 
     availableQuantity() {
-      return this.selectedMedicineDetailsData.purchases_quantity - this.selectedMedicineDetailsData.sales_quantity;
+      return (this.selectedMedicineDetailsData.purchases_quantity - this.selectedMedicineDetailsData.sales_quantity) * this.selectedMedicineDetailsData.piece_in_unit;
     },
 
     updatedGrandTotal() {
@@ -234,6 +235,7 @@ export default {
         this.payment_amount = '';
       }
     },
+
     filteredTypeGroupedItems() {
       const grouped = {};
       const filteredType = this.medicines;
@@ -249,6 +251,7 @@ export default {
         type_name,
       }));
     },
+
     filteredMedicines() {
       if (!this.selectedTypeId) {
         return null;
@@ -259,11 +262,13 @@ export default {
         );
       });
     },
+
     selectedMedicineDetails() {
       const selectedMedicine = this.medicines.find(medicine => medicine.id === this.selectedMedicineId);
       if (selectedMedicine) {
         this.selectedMedicineDetailsData.purchases_quantity = selectedMedicine.purchases_quantity;
         this.selectedMedicineDetailsData.sales_quantity = selectedMedicine.sales_quantity;
+        this.selectedMedicineDetailsData.piece_in_unit = selectedMedicine.piece_in_unit;
       }
       return selectedMedicine || null;
     },

@@ -8,7 +8,7 @@ export const useCartStore = defineStore("cart", {
         saleSubTotal() {
             let total = 0;
             for(const key in this.saleCartData) {
-                total += this.saleCartData[key].sales_price * this.saleCartData[key].sales_quantity;
+                total += (this.saleCartData[key].sales_price / this.saleCartData[key].piece_in_unit) * this.saleCartData[key].sales_quantity;
             }
             return total;
         }
