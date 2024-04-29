@@ -1,3 +1,28 @@
+<script setup>
+import { ref } from 'vue'
+import TheButton from "../../components/TheButton.vue";
+
+import showAlert from '../../helpers/alert'
+
+import { authStore } from '../../store/store';
+const auth = authStore 
+
+const email = ref('admin@email.com')
+const password =  ref('12345678')
+const loginStatus = ref(false)
+
+const login = () => {
+  if (!email.value || !password.value) {
+    showAlert('error', 'Please enter both email and password.');
+    this.$refs.email.focus();
+    this.$refs.password.focus();
+    return
+  }
+  loginStatus.value = true
+  auth.authenticate(email.value, password.value)
+}
+</script>
+
 <template>
 <div class="d-flex flex-column flex-root">
   <!--begin::Authentication - Sign-in -->
@@ -36,7 +61,7 @@
         <!--begin::Wrapper-->
         <div class="w-lg-500px p-10 p-lg-15 mx-auto">
           <!--begin::Form-->
-          <form class="form w-100" @submit.prevent="handleLogin">
+          <form class="form w-100" @submit.prevent="login()">
             <!--begin::Heading-->
             <div class="text-center mb-10">
               <!--begin::Title-->
@@ -50,7 +75,7 @@
               <label class="form-label fs-6 fw-bolder text-dark">Email</label>
               <!--end::Label-->
               <!--begin::Input-->
-              <input class="form-control form-control-lg form-control-solid" type="email" v-model="formData.email" ref="email" placeholder="Enter your email" />
+              <input class="form-control form-control-lg form-control-solid" v-model="email" type="email" placeholder="Enter your email" />
               <!--end::Input-->
             </div>
             <!--end::Input group-->
@@ -60,7 +85,7 @@
               <label class="form-label fs-6 fw-bolder text-dark">Password</label>
               <!--end::Label-->
               <!--begin::Input-->
-              <input class="form-control form-control-lg form-control-solid" type="password" v-model="formData.password" ref="password" placeholder="Enter your password" />
+              <input class="form-control form-control-lg form-control-solid" v-model="password" type="password" placeholder="Enter your password" />
               <!--end::Input-->
             </div>
             <!--end::Input group-->
@@ -82,61 +107,6 @@
   <!--end::Authentication - Sign-in-->
 </div>
 </template>
-
-<script>
-import axios from "axios";
-import TheButton from "../../components/TheButton.vue";
-import { setPrivateHeaders } from "../../service/axiosInstance";
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-
-export default {
-  data: () => ({
-    formData: {
-      email: "admin@email.com",
-      password: "12345678",
-    },
-    loginStatus: false,
-  }),
-  computed: {
-
-  },
-  components: {
-    TheButton,
-  },
-  methods: {
-    handleLogin() {
-      if(!this.formData.email){
-        showErrorMessage("Email can not be empty!")
-        this.$refs.email.focus();
-        return;
-      }
-      if(!this.formData.password){
-        showErrorMessage("Password can not be empty!")
-        this.$refs.password.focus();
-        return;
-      }
-      if(this.formData.password.length < 6){
-        showErrorMessage("Password must be at least 6 characters long!")
-        this.$refs.password.focus();
-        return;
-      }
-      this.loginStatus = true;
-      // axios.post("https://pharmacy.spysabbir.com/api/login", this.formData)
-      axios.post("http://127.0.0.1:8000/api/login", this.formData)
-      .then((res) => {
-        showSuccessMessage(res);
-        localStorage.setItem("accessToken", res.data.data.token);
-        setPrivateHeaders();
-        location.href = "/dashboard";
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.loginStatus = false;
-      });
-    },
-  },
-}
-</script>
 
 <style scoped>
 .flex-root {

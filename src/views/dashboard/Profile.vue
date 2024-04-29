@@ -1,3 +1,88 @@
+<script setup>
+import { ref } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+const userProfileData = ref({
+  name: "",
+  email: "",
+});
+const userPasswordData = ref({
+  current_password: "",
+  password: "",
+  confirm_password: "",
+});
+const editingStatus = ref(false);
+const getUserProfile = ref(false);
+
+const resetForm = () => {
+  userPasswordData.value = {
+    current_password: "",
+    password: "",
+    confirm_password: "",
+  };
+};
+
+const getUserProfileData = async () => {
+  getUserProfile.value = true;
+  try {
+    const res = await authStore.fetchProtectedApi('profile', {}, 'GET');
+    if (res.success) {
+      userProfileData.value = res.data;
+    } else {
+      showAlert('error', res.message || 'Failed to fetch user profile.');
+    }
+  } catch (error) {
+    showAlert('error', error.message || 'An error occurred while fetching user profile.');
+  } finally {
+    getUserProfile.value = false;
+  }
+};
+getUserProfileData();
+
+const editUserProfileData = () => {
+  if (!userProfileData.value.name) {
+    showAlert('error', "Name cannot be empty!");
+    return;
+  }
+  editingStatus.value = true;
+  // Assuming you have a service called `privateService` to handle API requests
+  privateService.editUserProfile(userProfileData.value)
+    .then((res) => {
+      getUserProfileData();
+      showAlert('success', res.message || 'User profile updated successfully.');
+    }).catch(err => {
+      showAlert('error', err.message || 'Failed to update user profile.');
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const editUserPasswordData = () => {
+  const { current_password, password, confirm_password } = userPasswordData.value;
+  if (!current_password || !password || !confirm_password) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+  if (password !== confirm_password) {
+    showAlert('error', "Passwords do not match!");
+    return;
+  }
+  editingStatus.value = true;
+  // Assuming you have a service called `privateService` to handle API requests
+  privateService.editUserPassword(userPasswordData.value)
+    .then((res) => {
+      showAlert('success', res.message || 'Password updated successfully.');
+      resetForm();
+    }).catch(err => {
+      showAlert('error', err.message || 'Failed to update password.');
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+</script>
+
+
 <template>
 	<TheBreadcrumb title="Profile"></TheBreadcrumb>
 	<!--begin::Post-->
@@ -182,100 +267,3 @@
 	</div>
 	<!--end::Post-->
 </template>
-
-<script>
-import TheBreadcrumb from '../components/TheBreadcrumb.vue';
-import TheButton from '../components/TheButton.vue';
-import { showErrorMessage, showSuccessMessage } from "../utils/functions";
-import privateService from "../service/privateService";
-
-export default {
-  data: () => ({
-    userProfileData: {
-      name: "",
-      email: "",
-    },
-    userPasswordData: {
-		current_password: "",
-		password: "",
-		confirm_password: "",
-    },
-    editingStatus: false,
-    getUserProfile: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-  },
-  mounted() {
-    setTimeout(this.getUserProfileData, 100)
-  },
-  methods: {
-	resetForm(){
-      this.userPasswordData = {
-        current_password: "",
-        password: "",
-        confirm_password: "",
-      }
-    },
-
-    getUserProfileData(){
-      this.getUserProfile = true;
-      privateService.getUserProfile()
-      .then((res) => {
-        this.userProfileData = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getUserProfile = false;
-      });
-    },
-
-    editUserProfileData() {
-      if(!this.userProfileData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editUserProfile(this.userProfileData)
-      .then((res) => {
-        this.getUserProfileData();
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    editUserPasswordData() {
-      if(!this.userPasswordData.current_password){
-        showErrorMessage("Current password can not be empty!");
-        this.$refs.current_password.focus();
-        return;
-      }
-      if(!this.userPasswordData.password){
-        showErrorMessage("New Password can not be empty!");
-        this.$refs.password.focus();
-        return;
-      }
-      if(!this.userPasswordData.confirm_password){
-        showErrorMessage("Confirm password can not be empty!");
-        this.$refs.confirm_password.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editUserPassword(this.userPasswordData)
-      .then((res) => {
-        showSuccessMessage(res);
-		this.resetForm();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-  }
-}
-</script>

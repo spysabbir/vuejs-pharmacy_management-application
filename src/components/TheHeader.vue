@@ -1,3 +1,9 @@
+<script setup>
+import { authStore } from "../store/store";
+import { cart } from "../store/cart";
+const auth = authStore;
+</script>
+
 <template>
 <div id="kt_header" style="" class="header align-items-stretch">
   <!--begin::Container-->
@@ -67,8 +73,7 @@
                   <!--end::Avatar-->
                   <!--begin::Username-->
                   <div class="d-flex flex-column">
-                    <div class="fw-bolder d-flex align-items-center fs-5">Max Smith</div>
-                    <a href="#" class="fw-bold text-muted text-hover-primary fs-7">max@kt.com</a>
+                    <div class="fw-bolder d-flex align-items-center fs-5">{{ auth.user?.name }}</div>
                   </div>
                   <!--end::Username-->
                 </div>
@@ -92,7 +97,7 @@
               <!--end::Menu item-->
               <!--begin::Menu item-->
               <div class="menu-item px-5">
-                <router-link to="#" class="menu-link px-5" @click="logout">Sign Out</router-link>
+                <router-link to="#" class="menu-link px-5" @click="auth.logout()">Sign Out</router-link>
               </div>
               <!--end::Menu item-->
             </div>
@@ -117,17 +122,3 @@
   <!--end::Container-->
 </div>
 </template>
-
-<script>
-export default {
-  data: () => ({
-    
-  }),
-  methods: {
-    logout() {
-      localStorage.removeItem("accessToken");
-      location.href = "/";
-    }
-  }
-}
-</script>

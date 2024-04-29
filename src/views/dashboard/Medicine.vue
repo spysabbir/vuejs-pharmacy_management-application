@@ -1,3 +1,158 @@
+<script setup>
+import { ref } from 'vue';
+
+const addingMedicineData = ref({
+  supplier_id: "",
+  type_id: "",
+  name: "",
+  power_id: "",
+  unit_id: "",
+  rack_id: "",
+  purchases_price: "",
+  sales_price: "",
+});
+
+const selectedMedicineData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const medicines = ref([]);
+const getMedicines = ref(false);
+const suppliers = ref([]);
+const types = ref([]);
+const powers = ref([]);
+const units = ref([]);
+const racks = ref([]);
+
+const resetForm = () => {
+  addingMedicineData.value = {
+    supplier_id: "",
+    type_id: "",
+    name: "",
+    power_id: "",
+    unit_id: "",
+    rack_id: "",
+    purchases_price: "",
+    sales_price: "",
+  }
+};
+
+const getAllSuppliers = async () => {
+  try {
+    const res = await axios.get("https://pharmacy.spysabbir.com/api/supplier", {
+      headers: { authorization: `Bearer ${localStorage.getItem("accessToken")}` }
+    });
+    suppliers.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  }
+};
+
+const getAllTypes = async () => {
+  try {
+    const res = await privateService.getType();
+    types.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  }
+};
+
+const getAllPowers = async () => {
+  try {
+    const res = await privateService.getPower();
+    powers.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  }
+};
+
+const getAllUnits = async () => {
+  try {
+    const res = await privateService.getUnit();
+    units.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  }
+};
+
+const getAllRacks = async () => {
+  try {
+    const res = await privateService.getRack();
+    racks.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  }
+};
+
+const getAllMedicines = async () => {
+  getMedicines.value = true;
+  try {
+    const res = await privateService.getMedicine();
+    medicines.value = res.data.data;
+  } catch (err) {
+    showErrorMessage(err);
+  } finally {
+    getMedicines.value = false;
+  }
+};
+
+const addMedicine = async () => {
+  const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = addingMedicineData.value;
+  if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
+    showErrorMessage("Please fill in all fields!");
+    return;
+  }
+
+  addingStatus.value = true;
+  try {
+    const res = await privateService.addMedicine(addingMedicineData.value);
+    $('.addingModel').modal('hide');
+    showSuccessMessage(res);
+    resetForm();
+    getAllMedicines();
+  } catch (err) {
+    showErrorMessage(err);
+  } finally {
+    addingStatus.value = false;
+  }
+};
+
+const editMedicine = async () => {
+  const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = selectedMedicineData.value;
+  if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
+    showErrorMessage("Please fill in all fields!");
+    return;
+  }
+
+  editingStatus.value = true;
+  try {
+    const res = await privateService.editMedicine(selectedMedicineData.value);
+    $('.editingModel').modal('hide');
+    showSuccessMessage(res);
+    getAllMedicines();
+  } catch (err) {
+    showErrorMessage(err);
+  } finally {
+    editingStatus.value = false;
+  }
+};
+
+const deleteMedicine = async () => {
+  deletingStatus.value = true;
+  try {
+    const res = await privateService.deleteMedicine(selectedMedicineData.value.id);
+    $('.deletingModel').modal('hide');
+    showSuccessMessage(res);
+    getAllMedicines();
+  } catch (err) {
+    showErrorMessage(err);
+  } finally {
+    deletingStatus.value = false;
+  }
+};
+</script>
+
+
 <template>
   <TheBreadcrumb title="Medicine"></TheBreadcrumb>
 
@@ -265,247 +420,3 @@
   </TheModel>
 </template>
 
-<script>
-import axios from "axios";
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingMedicineData: {
-      supplier_id: "",
-      type_id: "",
-      name: "",
-      power_id: "",
-      unit_id: "",
-      rack_id: "",
-      purchases_price: "",
-      sales_price: "",
-    },
-    selectedMedicineData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    medicines: [],
-    getMedicines: false,
-    suppliers: [],
-    types: [],
-    powers: [],
-    units: [],
-    racks: [],
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllMedicines, 100);
-    setTimeout(this.getAllSuppliers, 100);
-    setTimeout(this.getAllTypes, 100);
-    setTimeout(this.getAllPowers, 100);
-    setTimeout(this.getAllUnits, 100);
-    setTimeout(this.getAllRacks, 100);
-  },
-  methods: {
-    resetForm(){
-      this.addingMedicineData = {
-        supplier_id: "",
-        type_id: "",
-        name: "",
-        power_id: "",
-        unit_id: "",
-        rack_id: "",
-        purchases_price: "",
-        sales_price: "",
-      }
-    },
-
-    getAllSuppliers(){
-      axios.get("https://pharmacy.spysabbir.com/api/supplier",  
-        { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
-      )
-      .then((res) => {
-        this.suppliers = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-    getAllTypes(){
-      privateService.getType()
-      .then((res) => {
-        this.types = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-    getAllPowers(){
-      privateService.getPower()
-      .then((res) => {
-        this.powers = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-    getAllUnits(){
-      privateService.getUnit()
-      .then((res) => {
-        this.units = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-    getAllRacks(){
-      privateService.getRack()
-      .then((res) => {
-        this.racks = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-      });
-    },
-
-    getAllMedicines(){
-      this.getMedicines = true;
-      privateService.getMedicine()
-      .then((res) => {
-        this.medicines = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getMedicines = false;
-      });
-    },
-
-    addMedicine(){
-      if(!this.addingMedicineData.supplier_id){
-        showErrorMessage("Supplier can not be empty!");
-        this.$refs.supplier_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.type_id){
-        showErrorMessage("Type can not be empty!");
-        this.$refs.type_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.name){
-        showErrorMessage("Medicine Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.addingMedicineData.power_id){
-        showErrorMessage("Power can not be empty!");
-        this.$refs.power_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.unit_id){
-        showErrorMessage("Unit can not be empty!");
-        this.$refs.unit_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.rack_id){
-        showErrorMessage("Rack can not be empty!");
-        this.$refs.rack_id.focus();
-        return;
-      }
-      if(!this.addingMedicineData.purchases_price){
-        showErrorMessage("Purchases price can not be empty!");
-        this.$refs.purchases_price.focus();
-        return;
-      }
-      if(!this.addingMedicineData.sales_price){
-        showErrorMessage("Sales price can not be empty!");
-        this.$refs.sales_price.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addMedicine(this.addingMedicineData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllMedicines();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editMedicine() {
-      if(!this.selectedMedicineData.supplier_id){
-        showErrorMessage("Supplier can not be empty!");
-        this.$refs.supplier_id.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.type_id){
-        showErrorMessage("Type can not be empty!");
-        this.$refs.type_id.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.name){
-        showErrorMessage("Medicine Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.power_id){
-        showErrorMessage("Power can not be empty!");
-        this.$refs.power_id.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.unit_id){
-        showErrorMessage("Unit can not be empty!");
-        this.$refs.unit_id.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.rack_id){
-        showErrorMessage("Rack can not be empty!");
-        this.$refs.rack_id.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.purchases_price){
-        showErrorMessage("Purchases price can not be empty!");
-        this.$refs.purchases_price.focus();
-        return;
-      }
-      if(!this.selectedMedicineData.sales_price){
-        showErrorMessage("Sales price can not be empty!");
-        this.$refs.sales_price.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editMedicine(this.selectedMedicineData)
-      .then((res) => {
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllMedicines();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteMedicine() {
-      this.deletingStatus = true;
-      privateService.deleteMedicine(this.selectedMedicineData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllMedicines();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>

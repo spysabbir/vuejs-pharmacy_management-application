@@ -2,15 +2,7 @@ import { axiosPrivate } from "./axiosInstance"
 
 export default {
 
-    // Overview
-    getOverview() {
-        return axiosPrivate.get("/overview");
-    },
-
-    // Profile
-    getUserProfile() {
-        return axiosPrivate.get("/profile");
-    },
+  
     editUserProfile(payload) {
         return axiosPrivate.patch("/profile/update/", payload);
     },

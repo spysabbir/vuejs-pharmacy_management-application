@@ -1,3 +1,107 @@
+<script setup>
+import { ref } from 'vue';
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingCustomerData = ref({
+  name: "",
+  email: "",
+  phone_number: "",
+  address: "",
+});
+
+const selectedCustomerData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const customers = ref([]);
+const getCustomers = ref(false);
+
+const resetForm = () => {
+  addingCustomerData.value = {
+    name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+  };
+};
+
+const getAllCustomers = () => {
+  getCustomers.value = true;
+  privateService.getCustomer()
+    .then((res) => {
+      customers.value = res.data.data;
+    })
+    .catch(err => {
+      showErrorMessage(err);
+    })
+    .finally(() => {
+      getCustomers.value = false;
+    });
+};
+
+const addCustomer = () => {
+  const { name, email, phone_number, address } = addingCustomerData.value;
+  if (!name || !email || !phone_number || !address) {
+    showErrorMessage("Please fill in all fields!");
+    return;
+  }
+  
+  addingStatus.value = true;
+  privateService.addCustomer(addingCustomerData.value)
+    .then((res) => {
+      $('.addingModel').modal('hide');
+      showSuccessMessage(res);
+      resetForm();
+      getAllCustomers();
+    })
+    .catch(err => {
+      showErrorMessage(err);
+    })
+    .finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editCustomer = () => {
+  const { name, email, phone_number, address } = selectedCustomerData.value;
+  if (!name || !email || !phone_number || !address) {
+    showErrorMessage("Please fill in all fields!");
+    return;
+  }
+  
+  editingStatus.value = true;
+  privateService.editCustomer(selectedCustomerData.value)
+    .then((res) => {
+      getAllCustomers();
+      $('.editingModel').modal('hide');
+      showSuccessMessage(res);
+    })
+    .catch(err => {
+      showErrorMessage(err);
+    })
+    .finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deleteCustomer = () => {
+  deletingStatus.value = true;
+  privateService.deleteCustomer(selectedCustomerData.value.id)
+    .then((res) => {
+      $('.deletingModel').modal('hide');
+      showSuccessMessage(res);
+      getAllCustomers();
+    })
+    .catch(err => {
+      showErrorMessage(err);
+    })
+    .finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
 <template>
   <TheBreadcrumb title="Customer"></TheBreadcrumb>
 
@@ -163,140 +267,3 @@
   </TheModel>
 </template>
 
-<script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingCustomerData: {
-      name: "",
-      email: "",
-      phone_number: "",
-      address: "",
-    },
-    selectedCustomerData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    customers: [],
-    getCustomers: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllCustomers, 100)
-  },
-  methods: {
-    resetForm(){
-      this.addingCustomerData = {
-        name: "",
-        email: "",
-        phone_number: "",
-        address: "",
-      }
-    },
-
-    getAllCustomers(){
-      this.getCustomers = true;
-      privateService.getCustomer()
-      .then((res) => {
-        this.customers = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getCustomers = false;
-      });
-    },
-
-    addCustomer(){
-      if(!this.addingCustomerData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.addingCustomerData.email){
-        showErrorMessage("Email can not be empty!");
-        this.$refs.email.focus();
-        return;
-      }
-      if(!this.addingCustomerData.phone_number){
-        showErrorMessage("Phone number can not be empty!");
-        this.$refs.phone_number.focus();
-        return;
-      }
-      if(!this.addingCustomerData.address){
-        showErrorMessage("Address can not be empty!");
-        this.$refs.address.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addCustomer(this.addingCustomerData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllCustomers();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editCustomer() {
-      if(!this.selectedCustomerData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.selectedCustomerData.email){
-        showErrorMessage("Email can not be empty!");
-        this.$refs.email.focus();
-        return;
-      }
-      if(!this.selectedCustomerData.phone_number){
-        showErrorMessage("Phone number can not be empty!");
-        this.$refs.phone_number.focus();
-        return;
-      }
-      if(!this.selectedCustomerData.address){
-        showErrorMessage("Address can not be empty!");
-        this.$refs.address.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editCustomer(this.selectedCustomerData)
-      .then((res) => {
-        this.getAllCustomers();
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteCustomer() {
-      this.deletingStatus = true;
-      privateService.deleteCustomer(this.selectedCustomerData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllCustomers();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>

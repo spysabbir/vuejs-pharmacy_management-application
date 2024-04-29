@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <TheBreadcrumb title="Sale Create"></TheBreadcrumb>
 
   <div class="card mb-5 mb-xxl-8">
@@ -424,4 +424,4 @@ export default {
     },
   }
 }
-</script>
+</script> -->
