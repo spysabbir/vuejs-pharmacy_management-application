@@ -1,3 +1,107 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingSupplierData = ref({
+  name: "",
+  email: "",
+  phone_number: "",
+  address: "",
+});
+
+const selectedSupplierData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const suppliers = ref([]);
+
+const resetForm = () => {
+  addingSupplierData.value = {
+    name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+  };
+};
+
+const fetchSuppliers = () => {
+  authStore.fetchProtectedApi('supplier', {}, 'GET')
+  .then((res) => {
+    suppliers.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch suppliers");
+    })
+    .finally(() => {
+    });
+};
+
+onBeforeMount(fetchSuppliers);
+
+const addSupplier = () => {
+  const { name, email, phone_number, address } = addingSupplierData.value;
+  if (!name || !email || !phone_number || !address) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+
+  addingStatus.value = true;
+  authStore.fetchProtectedApi('supplier', addingSupplierData.value, 'POST')
+    .then(() => {
+      fetchSuppliers();
+      resetForm();
+      $('.addingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to add supplier");
+    })
+    .finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editSupplier = () => {
+  const { name, email, phone_number, address } = selectedSupplierData.value;
+  if (!name || !email || !phone_number || !address) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+
+  editingStatus.value = true;
+  authStore.fetchProtectedApi(`supplier/${selectedSupplierData.value.id}`, selectedSupplierData.value, 'PUT')
+    .then(() => {
+      fetchSuppliers();
+      $('.editingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to edit supplier");
+    })
+    .finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deleteSupplier = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`supplier/${selectedSupplierData.value.id}`, {}, 'DELETE')
+    .then(() => {
+      fetchSuppliers();
+      $('.deletingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to delete supplier");
+    })
+    .finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
 <template>
   <TheBreadcrumb title="Supplier"></TheBreadcrumb>
 
@@ -7,7 +111,7 @@
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bolder fs-3 mb-1">Supplier</span>
-        <span class="text-muted mt-1 fw-bold fs-7">{{ suppliers.length }} Items</span>
+        <!-- <span class="text-muted mt-1 fw-bold fs-7">{{ suppliers.length }} Items</span> -->
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
           <TheButton data-bs-toggle="modal" data-bs-target=".addingModel" class="btn btn-primary er fs-6 px-8 py-4">
@@ -26,7 +130,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getSuppliers">Looding...</div>
+      <div class="text-center" v-if="suppliers.length === 0">No suppliers found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -162,214 +266,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import axios from "axios";
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { eventBus } from "../../utils/eventBus";
-
-export default {
-  data: () => ({
-    addingSupplierData: {
-      name: "",
-      email: "",
-      phone_number: "",
-      address: "",
-    },
-    selectedSupplierData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    suppliers: [],
-    getSuppliers: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    this.getAllSuppliers();
-  },
-  methods: {
-    resetForm(){
-      this.addingSupplierData = {
-        name: "",
-        email: "",
-        phone_number: "",
-        address: "",
-      }
-    },
-
-    getAllSuppliers(){
-      this.getSuppliers = true;
-      axios.get("https://pharmacy.spysabbir.com/api/supplier",  
-        { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
-      )
-      .then((res) => {
-        this.suppliers = res.data.data;
-      }).catch(err => {
-        let errorMessage = "Something went wrong.";
-        if(err.response){
-          errorMessage = err.response.data.message;
-        }
-
-        eventBus.emit("toast", {
-          type: "danger",
-          message: errorMessage,
-        })
-      }).finally(() => {
-        this.getSuppliers = false;
-      });
-    },
-
-    addSupplier(){
-      if(!this.addingSupplierData.name){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Name can not be empty.",
-        })
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.addingSupplierData.email){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Email can not be empty.",
-        })
-        this.$refs.email.focus();
-        return;
-      }
-      if(!this.addingSupplierData.phone_number){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Phone number can not be empty.",
-        })
-        this.$refs.phone_number.focus();
-        return;
-      }
-      if(!this.addingSupplierData.address){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Address can not be empty.",
-        })
-        this.$refs.address.focus();
-        return;
-      }
-      this.addingStatus = true;
-      axios.post("https://pharmacy.spysabbir.com/api/supplier", 
-        this.addingSupplierData, { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
-      )
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        eventBus.emit("toast", {
-          type: "success",
-          message: res.data.message,
-        })
-        this.resetForm();
-        this.getAllSuppliers();
-      }).catch(err => {
-        let errorMessage = "Something went wrong.";
-        if(err.response){
-          errorMessage = err.response.data.message;
-        }
-
-        eventBus.emit("toast", {
-          type: "danger",
-          message: errorMessage,
-        })
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editSupplier() {
-      if(!this.selectedSupplierData.name){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Name can not be empty.",
-        })
-        this.$refs.name.focus();
-        return;
-      }
-      if(!this.selectedSupplierData.email){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Email can not be empty.",
-        })
-        this.$refs.email.focus();
-        return;
-      }
-      if(!this.selectedSupplierData.phone_number){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Phone number can not be empty.",
-        })
-        this.$refs.phone_number.focus();
-        return;
-      }
-      if(!this.selectedSupplierData.address){
-        eventBus.emit("toast", {
-          type: "danger",
-          message: "Address can not be empty.",
-        })
-        this.$refs.address.focus();
-        return;
-      }
-      this.editingStatus = true;
-      axios.put("https://pharmacy.spysabbir.com/api/supplier/" + this.selectedSupplierData.id, 
-        this.selectedSupplierData, { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
-      )
-      .then((res) => {
-        this.getAllSuppliers();
-        $('.editingModel').modal('hide');
-        eventBus.emit("toast", {
-          type: "success",
-          message: res.data.message,
-        })
-      }).catch(err => {
-        let errorMessage = "Something went wrong.";
-        if(err.response){
-          errorMessage = err.response.data.message;
-        }
-
-        eventBus.emit("toast", {
-          type: "danger",
-          message: errorMessage,
-        })
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteSupplier() {
-      this.deletingStatus = true;
-      axios.delete("https://pharmacy.spysabbir.com/api/supplier/" + this.selectedSupplierData.id,  
-      { headers: { authorization : `Bearer ${localStorage.getItem("accessToken")}` } }
-      )
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        eventBus.emit("toast", {
-          type: "success",
-          message: res.data.message,
-        })
-        this.getAllSuppliers();
-      }).catch(err => {
-        let errorMessage = "Something went wrong.";
-        if(err.response){
-          errorMessage = err.response.data.message;
-        }
-
-        eventBus.emit("toast", {
-          type: "danger",
-          message: errorMessage,
-        })
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>

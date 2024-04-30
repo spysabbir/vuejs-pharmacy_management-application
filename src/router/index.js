@@ -6,7 +6,7 @@ import LoginPage from "../views/auth/Login.vue";
 import DashboardView from "../views/Dashboard.vue";
 import OverviewView from "../views/dashboard/Overview.vue";
 import ProfileView from "../views/dashboard/Profile.vue";
-// import Supplier from "../views/dashboard/Supplier.vue";
+import Supplier from "../views/dashboard/Supplier.vue";
 // import Type from "../views/dashboard/Type.vue";
 // import Power from "../views/dashboard/Power.vue";
 // import Unit from "../views/dashboard/Unit.vue";
@@ -44,7 +44,7 @@ const routes = [
         name: 'Profile',
         component: ProfileView
       },
-    //   { path: "supplier", component: Supplier },
+      { path: "supplier", component: Supplier },
     //   { path: "type", component: Type },
     //   { path: "power", component: Power },
     //   { path: "unit", component: Unit },
