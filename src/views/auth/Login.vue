@@ -14,8 +14,6 @@ const loginStatus = ref(false)
 const login = () => {
   if (!email.value || !password.value) {
     showAlert('error', 'Please enter both email and password.');
-    this.$refs.email.focus();
-    this.$refs.password.focus();
     return
   }
   loginStatus.value = true

@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { authStore } from '../../store/store';
-import showAlert from '../../helpers/alert';
 
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import { Chart, Grid, Line } from "vue3-charts";
@@ -11,7 +10,6 @@ const overview = ref({
   countCustomer: 0,
   countMedicine: 0,
 });
-const gettingOverview = ref(false);
 const plByMonth = [
   { name: 'Jan', purchase: 1000, avg: 500, inc: 300 },
   { name: 'Feb', purchase: 2000, avg: 900, inc: 400 },
@@ -29,23 +27,12 @@ const margin = {
   bottom: 0
 };
 
-const getOverview = async () => {
-  gettingOverview.value = true;
-  try {
-    const res = await authStore.fetchProtectedApi('overview', {}, 'GET');
-    if (res.success) {
-      overview.value = res.data;
-    } else {
-      showAlert('error', res.message);
-    }
-  } catch (error) {
-    showAlert('error', error.message);
-  } finally {
-    gettingOverview.value = false;
-  }
-};
-
-getOverview();
+onBeforeMount(() => {
+  const res = authStore.fetchProtectedApi('overview', {}, 'GET')
+  res.then((result) => {
+    overview.value = result.data;
+  });
+});
 </script>
 
 

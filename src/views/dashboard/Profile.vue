@@ -1,6 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+
 import { authStore } from '../../store/store';
+
 import showAlert from '../../helpers/alert';
 
 const userProfileData = ref({
@@ -12,8 +16,6 @@ const userPasswordData = ref({
   password: "",
   confirm_password: "",
 });
-const editingStatus = ref(false);
-const getUserProfile = ref(false);
 
 const resetForm = () => {
   userPasswordData.value = {
@@ -23,61 +25,51 @@ const resetForm = () => {
   };
 };
 
-const getUserProfileData = async () => {
-  getUserProfile.value = true;
-  try {
-    const res = await authStore.fetchProtectedApi('profile', {}, 'GET');
-    if (res.success) {
-      userProfileData.value = res.data;
-    } else {
-      showAlert('error', res.message || 'Failed to fetch user profile.');
-    }
-  } catch (error) {
-    showAlert('error', error.message || 'An error occurred while fetching user profile.');
-  } finally {
-    getUserProfile.value = false;
-  }
-};
-getUserProfileData();
+onBeforeMount(() => {
+	const res = authStore.fetchProtectedApi('profile', {}, 'GET')
+	res.then((result) => {
+		// userProfileData.value = result.data;
+	});
+
+});
 
 const editUserProfileData = () => {
-  if (!userProfileData.value.name) {
-    showAlert('error', "Name cannot be empty!");
-    return;
-  }
-  editingStatus.value = true;
-  // Assuming you have a service called `privateService` to handle API requests
-  privateService.editUserProfile(userProfileData.value)
+	const { name } = userProfileData.value;
+	if (!name) {
+		showAlert('error', "Please fill in all fields!");
+		return;
+	}
+
+  	authStore.fetchProtectedApi('profile/update', userProfileData.value, 'PATCH')
     .then((res) => {
-      getUserProfileData();
-      showAlert('success', res.message || 'User profile updated successfully.');
+      	showAlert('success', res.message || 'Profile updated successfully.');
+      	resetForm();
     }).catch(err => {
-      showAlert('error', err.message || 'Failed to update user profile.');
+      	showAlert('error', err.message || 'Failed to update profile.');
     }).finally(() => {
-      editingStatus.value = false;
+
     });
 };
 
 const editUserPasswordData = () => {
-  const { current_password, password, confirm_password } = userPasswordData.value;
-  if (!current_password || !password || !confirm_password) {
-    showAlert('error', "Please fill in all fields!");
-    return;
-  }
-  if (password !== confirm_password) {
-    showAlert('error', "Passwords do not match!");
-    return;
-  }
-  editingStatus.value = true;
-  // Assuming you have a service called `privateService` to handle API requests
-  privateService.editUserPassword(userPasswordData.value)
+	const { current_password, password, confirm_password } = userPasswordData.value;
+	if (!current_password || !password || !confirm_password) {
+		showAlert('error', "Please fill in all fields!");
+		return;
+	}
+	if (password !== confirm_password) {
+		showAlert('error', "Password and confirm password do not match!");
+		return;
+	}
+
+  	authStore.fetchProtectedApi('password/update', userPasswordData.value, 'PUT')
     .then((res) => {
-      showAlert('success', res.message || 'Password updated successfully.');
-      resetForm();
+      	showAlert('success', res.message || 'Password updated successfully.');
+      	resetForm();
     }).catch(err => {
-      showAlert('error', err.message || 'Failed to update password.');
+      	showAlert('error', err.message || 'Failed to update password.');
     }).finally(() => {
-      editingStatus.value = false;
+
     });
 };
 </script>
@@ -115,25 +107,29 @@ const editUserPasswordData = () => {
 									<!--begin::Info-->
 									<div class="d-flex flex-wrap fw-bold fs-6 mb-4 pe-2">
 										<a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
-										<!--begin::Svg Icon | path: icons/duotone/General/User.svg-->
-										<span class="svg-icon svg-icon-4 me-1">
-											<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-												<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-													<polygon points="0 0 24 0 24 24 0 24" />
-													<path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
-													<path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
-												</g>
-											</svg>
-										</span>
-										<!--end::Svg Icon-->Admin</a>
+											<!--begin::Svg Icon | path: icons/duotone/General/User.svg-->
+											<span class="svg-icon svg-icon-4 me-1">
+												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+													<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+														<polygon points="0 0 24 0 24 24 0 24" />
+														<path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+														<path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+													</g>
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+											{{ userProfileData.name }}
+										</a>
 										<a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2">
-										<!--begin::Svg Icon | path: icons/duotone/Communication/Mail-at.svg-->
-										<span class="svg-icon svg-icon-4 me-1">
-											<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-												<path d="M11.575,21.2 C6.175,21.2 2.85,17.4 2.85,12.575 C2.85,6.875 7.375,3.05 12.525,3.05 C17.45,3.05 21.125,6.075 21.125,10.85 C21.125,15.2 18.825,16.925 16.525,16.925 C15.4,16.925 14.475,16.4 14.075,15.65 C13.3,16.4 12.125,16.875 11,16.875 C8.25,16.875 6.85,14.925 6.85,12.575 C6.85,9.55 9.05,7.1 12.275,7.1 C13.2,7.1 13.95,7.35 14.525,7.775 L14.625,7.35 L17,7.35 L15.825,12.85 C15.6,13.95 15.85,14.825 16.925,14.825 C18.25,14.825 19.025,13.725 19.025,10.8 C19.025,6.9 15.95,5.075 12.5,5.075 C8.625,5.075 5.05,7.75 5.05,12.575 C5.05,16.525 7.575,19.1 11.575,19.1 C13.075,19.1 14.625,18.775 15.975,18.075 L16.8,20.1 C15.25,20.8 13.2,21.2 11.575,21.2 Z M11.4,14.525 C12.05,14.525 12.7,14.35 13.225,13.825 L14.025,10.125 C13.575,9.65 12.925,9.425 12.3,9.425 C10.65,9.425 9.45,10.7 9.45,12.375 C9.45,13.675 10.075,14.525 11.4,14.525 Z" fill="#000000" />
-											</svg>
-										</span>
-										<!--end::Svg Icon-->{{ userProfileData.email }}</a>
+											<!--begin::Svg Icon | path: icons/duotone/Communication/Mail-at.svg-->
+											<span class="svg-icon svg-icon-4 me-1">
+												<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+													<path d="M11.575,21.2 C6.175,21.2 2.85,17.4 2.85,12.575 C2.85,6.875 7.375,3.05 12.525,3.05 C17.45,3.05 21.125,6.075 21.125,10.85 C21.125,15.2 18.825,16.925 16.525,16.925 C15.4,16.925 14.475,16.4 14.075,15.65 C13.3,16.4 12.125,16.875 11,16.875 C8.25,16.875 6.85,14.925 6.85,12.575 C6.85,9.55 9.05,7.1 12.275,7.1 C13.2,7.1 13.95,7.35 14.525,7.775 L14.625,7.35 L17,7.35 L15.825,12.85 C15.6,13.95 15.85,14.825 16.925,14.825 C18.25,14.825 19.025,13.725 19.025,10.8 C19.025,6.9 15.95,5.075 12.5,5.075 C8.625,5.075 5.05,7.75 5.05,12.575 C5.05,16.525 7.575,19.1 11.575,19.1 C13.075,19.1 14.625,18.775 15.975,18.075 L16.8,20.1 C15.25,20.8 13.2,21.2 11.575,21.2 Z M11.4,14.525 C12.05,14.525 12.7,14.35 13.225,13.825 L14.025,10.125 C13.575,9.65 12.925,9.425 12.3,9.425 C10.65,9.425 9.45,10.7 9.45,12.375 C9.45,13.675 10.075,14.525 11.4,14.525 Z" fill="#000000" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+											{{ userProfileData.email }}
+										</a>
 									</div>
 									<!--end::Info-->
 								</div>
@@ -171,7 +167,7 @@ const editUserPasswordData = () => {
 								<!--end::Label-->
 								<!--begin::Col-->
 								<div class="col-lg-8 fv-row">
-									<input type="text" class="form-control form-control-lg form-control-solid" v-model="userProfileData.name" ref="name" placeholder="Enter Name" />
+									<input type="text" class="form-control form-control-lg form-control-solid" v-model="userProfileData.name" placeholder="Enter Name" />
 								</div>
 								<!--end::Col-->
 							</div>
@@ -227,19 +223,19 @@ const editUserPasswordData = () => {
 												<div class="col-lg-4">
 													<div class="fv-row mb-0">
 														<label class="form-label fs-6 fw-bolder mb-3">Current Password</label>
-														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.current_password" ref="current_password" placeholder="Current Password"/>
+														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.current_password" placeholder="Current Password"/>
 													</div>
 												</div>
 												<div class="col-lg-4">
 													<div class="fv-row mb-0">
 														<label class="form-label fs-6 fw-bolder mb-3">New Password</label>
-														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.password" ref="password" placeholder="New Password"/>
+														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.password" placeholder="New Password"/>
 													</div>
 												</div>
 												<div class="col-lg-4">
 													<div class="fv-row mb-0">
 														<label class="form-label fs-6 fw-bolder mb-3">Confirm New Password</label>
-														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.confirm_password" ref="confirm_password" placeholder="Confirm New Password"/>
+														<input type="password" class="form-control form-control-lg form-control-solid" v-model="userPasswordData.confirm_password" placeholder="Confirm New Password"/>
 													</div>
 												</div>
 											</div>

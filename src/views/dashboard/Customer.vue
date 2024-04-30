@@ -1,5 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 import TheModel from '../../components/TheModel.vue';
@@ -16,7 +19,6 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const customers = ref([]);
-const getCustomers = ref(false);
 
 const resetForm = () => {
   addingCustomerData.value = {
@@ -27,37 +29,36 @@ const resetForm = () => {
   };
 };
 
-const getAllCustomers = () => {
-  getCustomers.value = true;
-  privateService.getCustomer()
+const fetchCustomers = () => {
+  authStore.fetchProtectedApi('customer', {}, 'GET')
     .then((res) => {
-      customers.value = res.data.data;
+      customers.value = res.data;
     })
     .catch(err => {
-      showErrorMessage(err);
+      showAlert('error', err.message || "Failed to fetch customers");
     })
     .finally(() => {
-      getCustomers.value = false;
     });
 };
+
+onBeforeMount(fetchCustomers);
 
 const addCustomer = () => {
   const { name, email, phone_number, address } = addingCustomerData.value;
   if (!name || !email || !phone_number || !address) {
-    showErrorMessage("Please fill in all fields!");
+    showAlert('error', "Please fill in all fields!");
     return;
   }
   
   addingStatus.value = true;
-  privateService.addCustomer(addingCustomerData.value)
-    .then((res) => {
-      $('.addingModel').modal('hide');
-      showSuccessMessage(res);
+  authStore.fetchProtectedApi('customer', addingCustomerData.value, 'POST')
+    .then(() => {
+      fetchCustomers();
       resetForm();
-      getAllCustomers();
+      $('.addingModel').modal('hide');
     })
     .catch(err => {
-      showErrorMessage(err);
+      showAlert('error', err.message || "Failed to add customer");
     })
     .finally(() => {
       addingStatus.value = false;
@@ -67,19 +68,18 @@ const addCustomer = () => {
 const editCustomer = () => {
   const { name, email, phone_number, address } = selectedCustomerData.value;
   if (!name || !email || !phone_number || !address) {
-    showErrorMessage("Please fill in all fields!");
+    showAlert('error', "Please fill in all fields!");
     return;
   }
   
   editingStatus.value = true;
-  privateService.editCustomer(selectedCustomerData.value)
-    .then((res) => {
-      getAllCustomers();
+  authStore.fetchProtectedApi(`customer/${selectedCustomerData.value.id}`, selectedCustomerData.value, 'PUT')
+    .then(() => {
+      fetchCustomers();
       $('.editingModel').modal('hide');
-      showSuccessMessage(res);
     })
     .catch(err => {
-      showErrorMessage(err);
+      showAlert('error', err.message || "Failed to edit customer");
     })
     .finally(() => {
       editingStatus.value = false;
@@ -88,20 +88,20 @@ const editCustomer = () => {
 
 const deleteCustomer = () => {
   deletingStatus.value = true;
-  privateService.deleteCustomer(selectedCustomerData.value.id)
-    .then((res) => {
+  authStore.fetchProtectedApi(`customer/${selectedCustomerData.value.id}`, {}, 'DELETE')
+    .then(() => {
+      fetchCustomers();
       $('.deletingModel').modal('hide');
-      showSuccessMessage(res);
-      getAllCustomers();
     })
     .catch(err => {
-      showErrorMessage(err);
+      showAlert('error', err.message || "Failed to delete customer");
     })
     .finally(() => {
       deletingStatus.value = false;
     });
 };
 </script>
+
 <template>
   <TheBreadcrumb title="Customer"></TheBreadcrumb>
 
@@ -130,7 +130,7 @@ const deleteCustomer = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getCustomers">Looding...</div>
+      <div class="text-center" v-if="customers.length === 0">No customers found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
