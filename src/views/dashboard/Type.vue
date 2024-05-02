@@ -1,3 +1,92 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingTypeData = ref({
+  name: "",
+});
+
+const selectedTypeData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const types = ref([]);
+
+const resetForm = () => {
+  addingTypeData.value = {
+    name: "",
+  };
+};
+
+const fetchTypes = () => {
+  authStore.fetchProtectedApi('type', {}, 'GET')
+    .then((res) => {
+      types.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch types");
+    }).finally(() => {
+    });
+};
+
+onBeforeMount(fetchTypes);
+
+const addType = () => {
+  const { name } = addingTypeData.value;
+  if (!name) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+
+  addingStatus.value = true;
+  authStore.fetchProtectedApi('type', addingTypeData.value, 'POST')
+    .then(() => {
+      fetchTypes();
+      resetForm();
+      $('.addingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to add type");
+    }).finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editType = () => {
+  const { name } = selectedTypeData.value;
+  if (!name) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+  editingStatus.value = true;
+  authStore.fetchProtectedApi(`type/${selectedTypeData.value.id}`, selectedTypeData.value, 'PUT')
+    .then(() => {
+      fetchTypes();
+      $('.editingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to edit type");
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deleteType = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`type/${selectedTypeData.value.id}`, {}, 'DELETE')
+    .then(() => {
+      fetchTypes();
+      $('.deletingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to delete type");
+    }).finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
 <template>
   <TheBreadcrumb title="Type"></TheBreadcrumb>
 
@@ -26,7 +115,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getTypes">Looding...</div>
+      <div class="text-center" v-if="types.length === 0">No customers found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -98,7 +187,7 @@
     <form @submit.prevent="addType">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="addingTypeData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="addingTypeData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Type</TheButton>
@@ -110,7 +199,7 @@
     <form @submit.prevent="editType">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="selectedTypeData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="selectedTypeData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Type</TheButton>
@@ -132,105 +221,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingTypeData: {
-      name: "",
-    },
-    selectedTypeData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    types: [],
-    getTypes: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllTypes, 100)
-  },
-  methods: {
-    resetForm(){
-      this.addingTypeData = {
-        name: "",
-      }
-    },
-
-    getAllTypes(){
-      this.getTypes = true;
-      privateService.getType()
-      .then((res) => {
-        this.types = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getTypes = false;
-      });
-    },
-
-    addType(){
-      if(!this.addingTypeData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addType(this.addingTypeData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllTypes();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editType() {
-      if(!this.selectedTypeData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editType(this.selectedTypeData)
-      .then((res) => {
-        this.getAllTypes();
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteType() {
-      this.deletingStatus = true;
-      privateService.deleteType(this.selectedTypeData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllTypes();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>
