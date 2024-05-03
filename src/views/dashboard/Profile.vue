@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
-
-import { authStore } from '../../store/store';
-
-import showAlert from '../../helpers/alert';
 
 const userProfileData = ref({
   name: "",
@@ -28,9 +27,8 @@ const resetForm = () => {
 onBeforeMount(() => {
 	const res = authStore.fetchProtectedApi('profile', {}, 'GET')
 	res.then((result) => {
-		// userProfileData.value = result.data;
+		userProfileData.value = result.data;
 	});
-
 });
 
 const editUserProfileData = () => {
@@ -40,7 +38,7 @@ const editUserProfileData = () => {
 		return;
 	}
 
-  	authStore.fetchProtectedApi('profile/update', userProfileData.value, 'PATCH')
+  	authStore.fetchProtectedApi('profile/update', userProfileData.value, 'PUT')
     .then((res) => {
       	showAlert('success', res.message || 'Profile updated successfully.');
       	resetForm();
@@ -73,7 +71,6 @@ const editUserPasswordData = () => {
     });
 };
 </script>
-
 
 <template>
 	<TheBreadcrumb title="Profile"></TheBreadcrumb>
