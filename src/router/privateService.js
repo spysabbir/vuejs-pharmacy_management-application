@@ -10,19 +10,6 @@ export default {
         return axiosPrivate.put("/password/update/", payload);
     },
 
-    // Type
-    getType() {
-        return axiosPrivate.get("/type");
-    },
-    addType(payload) {
-        return axiosPrivate.post("/type", payload);
-    },
-    editType(payload) {
-        return axiosPrivate.put("/type/" + payload.id, payload);
-    },
-    deleteType(id) {
-        return axiosPrivate.delete("/type/" + id);
-    },
 
     // Medicine
     getMedicine() {
@@ -38,20 +25,6 @@ export default {
         return axiosPrivate.delete("/medicine/" + id);
     },
     
-    // Power
-    getPower() {
-        return axiosPrivate.get("/power");
-    },
-    addPower(payload) {
-        return axiosPrivate.post("/power", payload);
-    },
-    editPower(payload) {
-        return axiosPrivate.put("/power/" + payload.id, payload);
-    },
-    deletePower(id) {
-        return axiosPrivate.delete("/power/" + id);
-    },
-
     // Unit
     getUnit() {
         return axiosPrivate.get("/unit");

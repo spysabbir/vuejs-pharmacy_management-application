@@ -8,7 +8,7 @@ import OverviewView from "../views/dashboard/Overview.vue";
 import ProfileView from "../views/dashboard/Profile.vue";
 import Supplier from "../views/dashboard/Supplier.vue";
 import Type from "../views/dashboard/Type.vue";
-// import Power from "../views/dashboard/Power.vue";
+import Power from "../views/dashboard/Power.vue";
 // import Unit from "../views/dashboard/Unit.vue";
 // import Rack from "../views/dashboard/Rack.vue";
 // import Medicine from "../views/dashboard/Medicine.vue";
@@ -46,7 +46,7 @@ const routes = [
       },
       { path: "supplier", component: Supplier },
       { path: "type", component: Type },
-    //   { path: "power", component: Power },
+      { path: "power", component: Power },
     //   { path: "unit", component: Unit },
     //   { path: "rack", component: Rack },
     //   { path: "medicine", component: Medicine },

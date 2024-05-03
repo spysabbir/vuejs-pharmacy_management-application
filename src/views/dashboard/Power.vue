@@ -1,3 +1,94 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingPowerData = ref({
+  name: "",
+});
+
+const selectedPowerData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const powers = ref([]);
+
+const resetForm = () => {
+  addingPowerData.value = {
+    name: "",
+  };
+};
+
+const fetchPowers = () => {
+  authStore.fetchProtectedApi('power', {}, 'GET')
+    .then((res) => {
+      powers.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch powers");
+    }).finally(() => {
+    });
+};
+
+onBeforeMount(fetchPowers);
+
+const addPower = () => {
+  const { name } = addingPowerData.value;
+  if (!name) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+
+  addingStatus.value = true;
+  authStore.fetchProtectedApi('power', addingPowerData.value, 'POST')
+    .then((res) => {
+      fetchPowers();
+      resetForm();
+      $('.addingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to add power");
+    })
+    .finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editPower = () => {
+  const { name } = selectedPowerData.value;
+  if (!name) {
+    showAlert('error', "Please fill in all fields!");
+    return;
+  }
+
+  editingStatus.value = true;
+  authStore.fetchProtectedApi(`power/${selectedPowerData.value.id}`, selectedPowerData.value, 'PUT')
+    .then((res) => {
+      fetchPowers();
+      $('.editingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to edit power");
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deletePower = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`power/${selectedPowerData.value.id}`, {}, 'DELETE')
+    .then((res) => {
+      fetchPowers();
+      $('.deletingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to delete power");
+    }).finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
 <template>
   <TheBreadcrumb title="Power"></TheBreadcrumb>
   
@@ -26,7 +117,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getPowers">Looding...</div>
+      <div class="text-center" v-if="powers.length === 0">No powers found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -132,105 +223,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingPowerData: {
-      name: "",
-    },
-    selectedPowerData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    powers: [],
-    getPowers: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllPowers, 100)
-  },
-  methods: {
-    resetForm(){
-      this.addingPowerData = {
-        name: "",
-      }
-    },
-
-    getAllPowers(){
-      this.getPowers = true;
-      privateService.getPower()
-      .then((res) => {
-        this.powers = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getPowers = false;
-      });
-    },
-
-    addPower(){
-      if(!this.addingPowerData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addPower(this.addingPowerData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllPowers();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editPower() {
-      if(!this.selectedPowerData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editPower(this.selectedPowerData)
-      .then((res) => {
-        this.getAllPowers();
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deletePower() {
-      this.deletingStatus = true;
-      privateService.deletePower(this.selectedPowerData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllPowers();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>
