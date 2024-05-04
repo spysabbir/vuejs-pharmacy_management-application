@@ -1,3 +1,105 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingUnitData = ref({
+  unit_name: "",
+  piece_in_unit: "",
+});
+
+const selectedUnitData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const units = ref([]);
+
+const resetForm = () => {
+  addingUnitData.value = {
+    unit_name: "",
+    piece_in_unit: "",
+  };
+};
+
+const fetchUnits = () => {
+  authStore.fetchProtectedApi('unit', {}, 'GET')
+    .then((res) => {
+      units.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch units");
+    })
+    .finally(() => {
+    });
+};
+
+onBeforeMount(fetchUnits);
+
+const addUnit = () => {
+  const { unit_name, piece_in_unit } = addingUnitData.value;
+  if (!unit_name) {
+    showAlert('error', "Unit name can not be empty!");
+    return;
+  }
+  if (!piece_in_unit) {
+    showAlert('error', "Piece in unit can not be empty!");
+    return;
+  }
+
+  addingStatus.value = true;
+  authStore.fetchProtectedApi('unit', addingUnitData.value, 'POST')
+    .then((res) => {
+      fetchUnits();
+      resetForm();
+      $('.addingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to add unit");
+    }).finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editUnit = () => {
+  const { unit_name, piece_in_unit } = selectedUnitData.value;
+  if (!unit_name) {
+    showAlert('error', "Unit name can not be empty!");
+    return;
+  }
+  if (!piece_in_unit) {
+    showAlert('error', "Piece in unit can not be empty!");
+    return;
+  }
+
+  editingStatus.value = true;
+  authStore.fetchProtectedApi(`unit/${selectedUnitData.value.id}`, selectedUnitData.value, 'PUT')
+    .then((res) => {
+      fetchUnits();
+      $('.editingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to edit unit");
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deleteUnit = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`unit/${selectedUnitData.value.id}`, {}, 'DELETE')
+    .then((res) => {
+      fetchUnits();
+      $('.deletingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to delete unit");
+    }).finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
 <template>
   <TheBreadcrumb title="Unit"></TheBreadcrumb>
   
@@ -26,7 +128,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getUnits">Looding...</div>
+      <div class="text-center" v-if="units.length === 0">No units found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -98,11 +200,11 @@
     <form @submit.prevent="addUnit">
       <div class="mb-3">
         <label class="form-label">Unit Name</label>
-        <input unit="text" class="form-control" ref="unit_name" v-model="addingUnitData.unit_name" placeholder="Enter unit name">
+        <input type="text" class="form-control" v-model="addingUnitData.unit_name" placeholder="Enter unit name">
       </div>
       <div class="mb-3">
         <label class="form-label">Piece in Unit</label>
-        <input unit="number" class="form-control" ref="piece_in_unit" v-model="addingUnitData.piece_in_unit" placeholder="Enter piece in unit">
+        <input type="number" class="form-control" v-model="addingUnitData.piece_in_unit" placeholder="Enter piece in unit">
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Unit</TheButton>
@@ -114,11 +216,11 @@
     <form @submit.prevent="editUnit">
       <div class="mb-3">
         <label class="form-label">Unit Name</label>
-        <input unit="text" class="form-control" ref="unit_name" v-model="selectedUnitData.unit_name" placeholder="Enter unit name">
+        <input type="text" class="form-control" v-model="selectedUnitData.unit_name" placeholder="Enter unit name">
       </div>
       <div class="mb-3">
         <label class="form-label">Piece in Unit</label>
-        <input unit="number" class="form-control" ref="piece_in_unit" v-model="selectedUnitData.piece_in_unit" placeholder="Enter piece in unit">
+        <input type="number" class="form-control" v-model="selectedUnitData.piece_in_unit" placeholder="Enter piece in unit">
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Unit</TheButton>
@@ -140,117 +242,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingUnitData: {
-      unit_name: "",
-      piece_in_unit: "",
-    },
-    selectedUnitData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    units: [],
-    getUnits: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllUnits, 100)
-  },
-  methods: {
-    resetForm(){
-      this.addingUnitData = {
-        unit_name: "",
-        piece_in_unit: "",
-      }
-    },
-
-    getAllUnits(){
-      this.getUnits = true;
-      privateService.getUnit()
-      .then((res) => {
-        this.units = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getUnits = false;
-      });
-    },
-
-    addUnit(){
-      if(!this.addingUnitData.unit_name){
-        showErrorMessage("Unit name can not be empty!");
-        this.$refs.unit_name.focus();
-        return;
-      }
-      if(!this.addingUnitData.piece_in_unit){
-        showErrorMessage("Piece in unit can not be empty!");
-        this.$refs.piece_in_unit.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addUnit(this.addingUnitData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllUnits();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editUnit() {
-      if(!this.selectedUnitData.unit_name){
-        showErrorMessage("Unit name can not be empty!");
-        this.$refs.unit_name.focus();
-        return;
-      }
-      if(!this.selectedUnitData.piece_in_unit){
-        showErrorMessage("Piece in unit can not be empty!");
-        this.$refs.piece_in_unit.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editUnit(this.selectedUnitData)
-      .then((res) => {
-        this.getAllUnits();
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteUnit() {
-      this.deletingStatus = true;
-      privateService.deleteUnit(this.selectedUnitData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllUnits();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>
