@@ -2,56 +2,7 @@ import { axiosPrivate } from "./axiosInstance"
 
 export default {
 
-  
-    editUserProfile(payload) {
-        return axiosPrivate.patch("/profile/update/", payload);
-    },
-    editUserPassword(payload) {
-        return axiosPrivate.put("/password/update/", payload);
-    },
 
-
-    // Medicine
-    getMedicine() {
-        return axiosPrivate.get("/medicine");
-    },
-    addMedicine(payload) {
-        return axiosPrivate.post("/medicine", payload);
-    },
-    editMedicine(payload) {
-        return axiosPrivate.put("/medicine/" + payload.id, payload);
-    },
-    deleteMedicine(id) {
-        return axiosPrivate.delete("/medicine/" + id);
-    },
-    
-    // Unit
-    getUnit() {
-        return axiosPrivate.get("/unit");
-    },
-    addUnit(payload) {
-        return axiosPrivate.post("/unit", payload);
-    },
-    editUnit(payload) {
-        return axiosPrivate.put("/unit/" + payload.id, payload);
-    },
-    deleteUnit(id) {
-        return axiosPrivate.delete("/unit/" + id);
-    },
-
-    // Rack
-    getRack() {
-        return axiosPrivate.get("/rack");
-    },
-    addRack(payload) {
-        return axiosPrivate.post("/rack", payload);
-    },
-    editRack(payload) {
-        return axiosPrivate.put("/rack/" + payload.id, payload);
-    },
-    deleteRack(id) {
-        return axiosPrivate.delete("/rack/" + id);
-    },
 
     // Purchase
     purchasingNowStore(payload) {

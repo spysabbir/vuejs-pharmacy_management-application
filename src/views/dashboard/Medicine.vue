@@ -1,5 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
 
 const addingMedicineData = ref({
   supplier_id: "",
@@ -17,7 +23,6 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const medicines = ref([]);
-const getMedicines = ref(false);
 const suppliers = ref([]);
 const types = ref([]);
 const powers = ref([]);
@@ -34,121 +39,134 @@ const resetForm = () => {
     rack_id: "",
     purchases_price: "",
     sales_price: "",
-  }
+  };
 };
 
-const getAllSuppliers = async () => {
-  try {
-    const res = await axios.get("https://pharmacy.spysabbir.com/api/supplier", {
-      headers: { authorization: `Bearer ${localStorage.getItem("accessToken")}` }
+const fetchSuppliers = () => {
+  authStore.fetchProtectedApi('supplier', {}, 'GET')
+    .then((res) => {
+      suppliers.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch suppliers");
     });
-    suppliers.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  }
 };
 
-const getAllTypes = async () => {
-  try {
-    const res = await privateService.getType();
-    types.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  }
+const fetchTypes = () => {
+  authStore.fetchProtectedApi('type', {}, 'GET')
+    .then((res) => {
+      types.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch types");
+    });
 };
 
-const getAllPowers = async () => {
-  try {
-    const res = await privateService.getPower();
-    powers.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  }
+const fetchPowers = () => {
+  authStore.fetchProtectedApi('power', {}, 'GET')
+    .then((res) => {
+      powers.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch powers");
+    });
 };
 
-const getAllUnits = async () => {
-  try {
-    const res = await privateService.getUnit();
-    units.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  }
+const fetchUnits = () => {
+  authStore.fetchProtectedApi('unit', {}, 'GET')
+    .then((res) => {
+      units.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch units");
+    });
 };
 
-const getAllRacks = async () => {
-  try {
-    const res = await privateService.getRack();
-    racks.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  }
+const fetchRacks = () => {
+  authStore.fetchProtectedApi('rack', {}, 'GET')
+    .then((res) => {
+      racks.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch racks");
+    });
 };
 
-const getAllMedicines = async () => {
-  getMedicines.value = true;
-  try {
-    const res = await privateService.getMedicine();
-    medicines.value = res.data.data;
-  } catch (err) {
-    showErrorMessage(err);
-  } finally {
-    getMedicines.value = false;
-  }
+const fetchMedicines = () => {
+  authStore.fetchProtectedApi('medicine', {}, 'GET')
+    .then((res) => {
+      medicines.value = res.data;
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to fetch medicines");
+    });
 };
 
-const addMedicine = async () => {
+onBeforeMount(() => {
+  fetchMedicines();
+  fetchSuppliers();
+  fetchTypes();
+  fetchPowers();
+  fetchUnits();
+  fetchRacks();
+});
+
+const addMedicine = () => {
   const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = addingMedicineData.value;
   if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
-    showErrorMessage("Please fill in all fields!");
+    showAlert('error', "Please fill in all fields!");
     return;
   }
 
   addingStatus.value = true;
-  try {
-    const res = await privateService.addMedicine(addingMedicineData.value);
-    $('.addingModel').modal('hide');
-    showSuccessMessage(res);
-    resetForm();
-    getAllMedicines();
-  } catch (err) {
-    showErrorMessage(err);
-  } finally {
-    addingStatus.value = false;
-  }
+  authStore.fetchProtectedApi('medicine', addingMedicineData.value, 'POST')
+    .then((res) => {
+      fetchMedicines();
+      resetForm();
+      $('.addingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to add medicine");
+    })
+    .finally(() => {
+      addingStatus.value = false;
+    });
 };
 
-const editMedicine = async () => {
+const editMedicine = () => {
   const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = selectedMedicineData.value;
   if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
-    showErrorMessage("Please fill in all fields!");
+    showAlert('error', "Please fill in all fields!");
     return;
   }
 
   editingStatus.value = true;
-  try {
-    const res = await privateService.editMedicine(selectedMedicineData.value);
-    $('.editingModel').modal('hide');
-    showSuccessMessage(res);
-    getAllMedicines();
-  } catch (err) {
-    showErrorMessage(err);
-  } finally {
-    editingStatus.value = false;
-  }
+  authStore.fetchProtectedApi(`medicine/${selectedMedicineData.value.id}`, selectedMedicineData.value, 'PUT')
+    .then((res) => {
+      fetchMedicines();
+      $('.editingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to edit medicine");
+    })
+    .finally(() => {
+      editingStatus.value = false;
+    });
 };
 
-const deleteMedicine = async () => {
+const deleteMedicine = () => {
   deletingStatus.value = true;
-  try {
-    const res = await privateService.deleteMedicine(selectedMedicineData.value.id);
-    $('.deletingModel').modal('hide');
-    showSuccessMessage(res);
-    getAllMedicines();
-  } catch (err) {
-    showErrorMessage(err);
-  } finally {
-    deletingStatus.value = false;
-  }
+  authStore.fetchProtectedApi(`medicine/${selectedMedicineData.value.id}`, {}, 'DELETE')
+    .then((res) => {
+      fetchMedicines();
+      $('.deletingModel').modal('hide');
+    })
+    .catch(err => {
+      showAlert('error', err.message || "Failed to delete medicine");
+    })
+    .finally(() => {
+      deletingStatus.value = false;
+    });
 };
 </script>
 
@@ -181,7 +199,7 @@ const deleteMedicine = async () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getMedicines">Looding...</div>
+      <div class="text-center" v-if="medicines.length === 0">No medicine found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -279,7 +297,7 @@ const deleteMedicine = async () => {
     <form @submit.prevent="addMedicine">
       <div class="mb-3">
         <label class="form-label">Select Supplier</label>
-        <select ref="supplier_id" class="form-control" v-model="addingMedicineData.supplier_id">
+        <select class="form-control" v-model="addingMedicineData.supplier_id">
           <option value="">Select One</option>
           <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.name">
             {{ supplier.name }}
@@ -288,7 +306,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Type</label>
-        <select ref="type_id" class="form-control" v-model="addingMedicineData.type_id">
+        <select class="form-control" v-model="addingMedicineData.type_id">
           <option value="">Select One</option>
           <option :value="item.id" v-for="item in types" :key="item.name">
             {{ item.name }}
@@ -297,7 +315,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="addingMedicineData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="addingMedicineData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Select Power</label>
@@ -310,7 +328,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Unit</label>
-        <select ref="unit_id" class="form-control" v-model="addingMedicineData.unit_id">
+        <select class="form-control" v-model="addingMedicineData.unit_id">
           <option value="">Select One</option>
           <option :value="unit.id" v-for="unit in units" :key="unit.unit_name">
             {{ unit.unit_name }}
@@ -319,7 +337,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Rack</label>
-        <select ref="rack_id" class="form-control" v-model="addingMedicineData.rack_id">
+        <select class="form-control" v-model="addingMedicineData.rack_id">
           <option value="">Select One</option>
           <option :value="rack.id" v-for="rack in racks" :key="rack.name">
             {{ rack.name }}
@@ -328,11 +346,11 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Purchases Price</label>
-        <input type="number" class="form-control" ref="purchases_price" v-model="addingMedicineData.purchases_price" placeholder="Enter purchases price">
+        <input type="number" class="form-control" v-model="addingMedicineData.purchases_price" placeholder="Enter purchases price">
       </div>
       <div class="mb-3">
         <label class="form-label">Sales Price</label>
-        <input type="number" class="form-control" ref="sales_price" v-model="addingMedicineData.sales_price" placeholder="Enter sales price">
+        <input type="number" class="form-control" v-model="addingMedicineData.sales_price" placeholder="Enter sales price">
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Medicine</TheButton>
@@ -344,7 +362,7 @@ const deleteMedicine = async () => {
     <form @submit.prevent="editMedicine">
       <div class="mb-3">
         <label class="form-label">Select Supplier</label>
-        <select ref="supplier_id" class="form-control" v-model="selectedMedicineData.supplier_id">
+        <select class="form-control" v-model="selectedMedicineData.supplier_id">
           <option value="">Select One</option>
           <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.name">
             {{ supplier.name }}
@@ -353,7 +371,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Type</label>
-        <select ref="type_id" class="form-control" v-model="selectedMedicineData.type_id">
+        <select class="form-control" v-model="selectedMedicineData.type_id">
           <option value="">Select One</option>
           <option :value="item.id" v-for="item in types" :key="item.name">
             {{ item.name }}
@@ -362,7 +380,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="selectedMedicineData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="selectedMedicineData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Select Power</label>
@@ -375,7 +393,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Unit</label>
-        <select ref="unit_id" class="form-control" v-model="selectedMedicineData.unit_id">
+        <select class="form-control" v-model="selectedMedicineData.unit_id">
           <option value="">Select One</option>
           <option :value="unit.id" v-for="unit in units" :key="unit.unit_name">
             {{ unit.unit_name }}
@@ -384,7 +402,7 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Rack</label>
-        <select ref="rack_id" class="form-control" v-model="selectedMedicineData.rack_id">
+        <select class="form-control" v-model="selectedMedicineData.rack_id">
           <option value="">Select One</option>
           <option :value="rack.id" v-for="rack in racks" :key="rack.name">
             {{ rack.name }}
@@ -393,11 +411,11 @@ const deleteMedicine = async () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Purchases Price</label>
-        <input type="number" class="form-control" ref="purchases_price" v-model="selectedMedicineData.purchases_price" placeholder="Enter purchases price">
+        <input type="number" class="form-control" v-model="selectedMedicineData.purchases_price" placeholder="Enter purchases price">
       </div>
       <div class="mb-3">
         <label class="form-label">Sales Price</label>
-        <input type="number" class="form-control" ref="sales_price" v-model="selectedMedicineData.sales_price" placeholder="Enter sales price">
+        <input type="number" class="form-control" v-model="selectedMedicineData.sales_price" placeholder="Enter sales price">
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Medicine</TheButton>
