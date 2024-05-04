@@ -1,3 +1,93 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../store/store';
+import showAlert from '../../helpers/alert';
+
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+import TheButton from '../../components/TheButton.vue';
+import TheModel from '../../components/TheModel.vue';
+
+const addingRackData = ref({
+  name: "",
+});
+
+const selectedRackData = ref({});
+const addingStatus = ref(false);
+const editingStatus = ref(false);
+const deletingStatus = ref(false);
+const racks = ref([]);
+
+const resetForm = () => {
+  addingRackData.value = {
+    name: "",
+  };
+};
+
+const fetchRacks = () => {
+  authStore.fetchProtectedApi('rack', {}, 'GET')
+    .then((res) => {
+      racks.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch racks");
+    }).finally(() => {
+    });
+};
+
+onBeforeMount(fetchRacks);
+
+const addRack = () => {
+  const { name } = addingRackData.value;
+  if (!name) {
+    showAlert('error', "Name can not be empty!");
+    return;
+  }
+  addingStatus.value = true;
+  authStore.fetchProtectedApi('rack', addingRackData.value, 'POST')
+    .then((res) => {
+      fetchRacks();
+      resetForm();
+      $('.addingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to add rack");
+    }).finally(() => {
+      addingStatus.value = false;
+    });
+};
+
+const editRack = () => {
+  const { name } = selectedRackData.value;
+  if (!name) {
+    showAlert('error', "Name can not be empty!");
+    return;
+  }
+
+  editingStatus.value = true;
+  authStore.fetchProtectedApi(`rack/${selectedRackData.value.id}`, selectedRackData.value, 'PUT')
+    .then((res) => {
+      fetchRacks();
+      $('.editingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to edit rack");
+    }).finally(() => {
+      editingStatus.value = false;
+    });
+};
+
+const deleteRack = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`rack/${selectedRackData.value.id}`, {}, 'DELETE')
+    .then((res) => {
+      fetchRacks();
+      $('.deletingModel').modal('hide');
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to delete rack");
+    }).finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
+
 <template>
   <TheBreadcrumb title="Rack"></TheBreadcrumb>
   
@@ -7,7 +97,7 @@
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bolder fs-3 mb-1">Rack</span>
-        <span class="text-muted mt-1 fw-bold fs-7">Over 500 members</span>
+        <span class="text-muted mt-1 fw-bold fs-7">{{ racks.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
           <TheButton data-bs-toggle="modal" data-bs-target=".addingModel" class="btn btn-primary er fs-6 px-8 py-4">
@@ -26,7 +116,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getRacks">Looding...</div>
+      <div class="text-center" v-if="racks.length === 0">No racks found!</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -98,7 +188,7 @@
     <form @submit.prevent="addRack">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input rack="text" class="form-control" ref="name" v-model="addingRackData.name" placeholder="Enter name">
+        <input rack="text" class="form-control" v-model="addingRackData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Rack</TheButton>
@@ -110,7 +200,7 @@
     <form @submit.prevent="editRack">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input rack="text" class="form-control" ref="name" v-model="selectedRackData.name" placeholder="Enter name">
+        <input rack="text" class="form-control" v-model="selectedRackData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Rack</TheButton>
@@ -132,105 +222,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
-import TheButton from '../../components/TheButton.vue';
-import TheModel from '../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../utils/functions";
-import privateService from "../../service/privateService";
-
-export default {
-  data: () => ({
-    addingRackData: {
-      name: "",
-    },
-    selectedRackData: {},
-    addingStatus: false,
-    editingStatus: false,
-    deletingStatus: false,
-    racks: [],
-    getRacks: false,
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllRacks, 100)
-  },
-  methods: {
-    resetForm(){
-      this.addingRackData = {
-        name: "",
-      }
-    },
-
-    getAllRacks(){
-      this.getRacks = true;
-      privateService.getRack()
-      .then((res) => {
-        this.racks = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getRacks = false;
-      });
-    },
-
-    addRack(){
-      if(!this.addingRackData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.addingStatus = true;
-      privateService.addRack(this.addingRackData)
-      .then((res) => {
-        $('.addingModel').modal('hide');
-        showSuccessMessage(res);
-        this.resetForm();
-        this.getAllRacks();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.addingStatus = false;
-      });
-    },
-
-    editRack() {
-      if(!this.selectedRackData.name){
-        showErrorMessage("Name can not be empty!");
-        this.$refs.name.focus();
-        return;
-      }
-      this.editingStatus = true;
-      privateService.editRack(this.selectedRackData)
-      .then((res) => {
-        this.getAllRacks();
-        $('.editingModel').modal('hide');
-        showSuccessMessage(res);
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.editingStatus = false;
-      });
-    },
-
-    deleteRack() {
-      this.deletingStatus = true;
-      privateService.deleteRack(this.selectedRackData.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllRacks();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>
