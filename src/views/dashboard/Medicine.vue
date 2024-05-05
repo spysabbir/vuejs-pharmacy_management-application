@@ -23,6 +23,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const medicines = ref([]);
+const getMedicines = ref(false)
 const suppliers = ref([]);
 const types = ref([]);
 const powers = ref([]);
@@ -46,8 +47,7 @@ const fetchSuppliers = () => {
   authStore.fetchProtectedApi('supplier', {}, 'GET')
     .then((res) => {
       suppliers.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch suppliers");
     });
 };
@@ -56,8 +56,7 @@ const fetchTypes = () => {
   authStore.fetchProtectedApi('type', {}, 'GET')
     .then((res) => {
       types.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch types");
     });
 };
@@ -66,8 +65,7 @@ const fetchPowers = () => {
   authStore.fetchProtectedApi('power', {}, 'GET')
     .then((res) => {
       powers.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch powers");
     });
 };
@@ -76,8 +74,7 @@ const fetchUnits = () => {
   authStore.fetchProtectedApi('unit', {}, 'GET')
     .then((res) => {
       units.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch units");
     });
 };
@@ -86,19 +83,21 @@ const fetchRacks = () => {
   authStore.fetchProtectedApi('rack', {}, 'GET')
     .then((res) => {
       racks.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch racks");
     });
 };
 
 const fetchMedicines = () => {
+  getMedicines.value = false;
   authStore.fetchProtectedApi('medicine', {}, 'GET')
     .then((res) => {
+      getMedicines.value = true;
       medicines.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch medicines");
+    }).finally(() => {
+      getMedicines.value = true;
     });
 };
 
@@ -111,45 +110,74 @@ onBeforeMount(() => {
   fetchRacks();
 });
 
+const validateFields = (data) => {
+    const errors = [];
+    if (!data.supplier_id) {
+        errors.push("Supplier name is required!");
+    }
+    if (!data.type_id) {
+        errors.push("Type name is required!");
+    }
+    if (!data.name) {
+        errors.push("Medicine name is required!");
+    }
+    if (!data.power_id) {
+        errors.push("Power name is required!");
+    }
+    if (!data.unit_id) {
+        errors.push("Unit name is required!");
+    }
+    if (!data.rack_id) {
+        errors.push("Rack name is required!");
+    }
+    if (!data.purchases_price) {
+        errors.push("Purchases price is required!");
+    }
+    if (!data.sales_price) {
+        errors.push("Sales price is required!");
+    }
+    return errors;
+};
+
 const addMedicine = () => {
-  const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = addingMedicineData.value;
-  if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
-    showAlert('error', "Please fill in all fields!");
+  const errors = validateFields(addingMedicineData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   addingStatus.value = true;
   authStore.fetchProtectedApi('medicine', addingMedicineData.value, 'POST')
     .then((res) => {
+      showAlert('success', res.message || "Medicine added successfully!");
       fetchMedicines();
       resetForm();
       $('.addingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to add medicine");
-    })
-    .finally(() => {
+    }).finally(() => {
       addingStatus.value = false;
     });
 };
 
 const editMedicine = () => {
-  const { supplier_id, type_id, name, power_id, unit_id, rack_id, purchases_price, sales_price } = selectedMedicineData.value;
-  if (!supplier_id || !type_id || !name || !power_id || !unit_id || !rack_id || !purchases_price || !sales_price) {
-    showAlert('error', "Please fill in all fields!");
+  const errors = validateFields(selectedMedicineData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   editingStatus.value = true;
   authStore.fetchProtectedApi(`medicine/${selectedMedicineData.value.id}`, selectedMedicineData.value, 'PUT')
     .then((res) => {
+      showAlert('success', res.message || "Medicine edited successfully!");
       fetchMedicines();
       $('.editingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to edit medicine");
-    })
-    .finally(() => {
+    }).finally(() => {
       editingStatus.value = false;
     });
 };
@@ -158,18 +186,16 @@ const deleteMedicine = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`medicine/${selectedMedicineData.value.id}`, {}, 'DELETE')
     .then((res) => {
+      showAlert('success', res.message || "Medicine deleted successfully!");
       fetchMedicines();
       $('.deletingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to delete medicine");
-    })
-    .finally(() => {
+    }).finally(() => {
       deletingStatus.value = false;
     });
 };
 </script>
-
 
 <template>
   <TheBreadcrumb title="Medicine"></TheBreadcrumb>
@@ -199,7 +225,7 @@ const deleteMedicine = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="medicines.length === 0">No medicine found!</div>
+      <div class="text-center" v-if="!getMedicines">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

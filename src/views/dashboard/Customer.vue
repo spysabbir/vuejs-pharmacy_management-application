@@ -33,55 +33,69 @@ const fetchCustomers = () => {
   authStore.fetchProtectedApi('customer', {}, 'GET')
     .then((res) => {
       customers.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch customers");
     })
-    .finally(() => {
-    });
 };
 
 onBeforeMount(fetchCustomers);
 
+const validateFields = (data) => {
+    const errors = [];
+    if (!data.name) {
+        errors.push("Name is required!");
+    }
+    if (!data.email) {
+        errors.push("Email is required!");
+    }
+    if (!data.phone_number) {
+        errors.push("Phone number is required!");
+    }
+    if (!data.address) {
+        errors.push("Address is required!");
+    }
+    return errors;
+};
+
 const addCustomer = () => {
-  const { name, email, phone_number, address } = addingCustomerData.value;
-  if (!name || !email || !phone_number || !address) {
-    showAlert('error', "Please fill in all fields!");
+  const errors = validateFields(addingCustomerData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
   
   addingStatus.value = true;
   authStore.fetchProtectedApi('customer', addingCustomerData.value, 'POST')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Customer added successfully!");
       fetchCustomers();
       resetForm();
       $('.addingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to add customer");
-    })
-    .finally(() => {
+    }).finally(() => {
       addingStatus.value = false;
     });
 };
 
 const editCustomer = () => {
-  const { name, email, phone_number, address } = selectedCustomerData.value;
-  if (!name || !email || !phone_number || !address) {
-    showAlert('error', "Please fill in all fields!");
+  const errors = validateFields(selectedCustomerData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
   
   editingStatus.value = true;
   authStore.fetchProtectedApi(`customer/${selectedCustomerData.value.id}`, selectedCustomerData.value, 'PUT')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Customer edited successfully!");
       fetchCustomers();
       $('.editingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to edit customer");
-    })
-    .finally(() => {
+    }).finally(() => {
       editingStatus.value = false;
     });
 };
@@ -90,13 +104,12 @@ const deleteCustomer = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`customer/${selectedCustomerData.value.id}`, {}, 'DELETE')
     .then(() => {
+      showAlert('success', "Customer deleted successfully!");
       fetchCustomers();
       $('.deletingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to delete customer");
-    })
-    .finally(() => {
+    }).finally(() => {
       deletingStatus.value = false;
     });
 };

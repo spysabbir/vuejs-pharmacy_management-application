@@ -16,6 +16,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const powers = ref([]);
+const getPowers = ref(false);
 
 const resetForm = () => {
   addingPowerData.value = {
@@ -24,12 +25,15 @@ const resetForm = () => {
 };
 
 const fetchPowers = () => {
+  getPowers.value = false;
   authStore.fetchProtectedApi('power', {}, 'GET')
     .then((res) => {
+      getPowers.value = true;
       powers.value = res.data;
     }).catch(err => {
       showAlert('error', err.message || "Failed to fetch powers");
     }).finally(() => {
+      getPowers.value = true;
     });
 };
 
@@ -38,13 +42,14 @@ onBeforeMount(fetchPowers);
 const addPower = () => {
   const { name } = addingPowerData.value;
   if (!name) {
-    showAlert('error', "Please fill in all fields!");
+    showAlert('error', "Power name can not be empty!");
     return;
   }
 
   addingStatus.value = true;
   authStore.fetchProtectedApi('power', addingPowerData.value, 'POST')
     .then((res) => {
+      showAlert('success', res.message || "Power added successfully!");
       fetchPowers();
       resetForm();
       $('.addingModel').modal('hide');
@@ -59,13 +64,14 @@ const addPower = () => {
 const editPower = () => {
   const { name } = selectedPowerData.value;
   if (!name) {
-    showAlert('error', "Please fill in all fields!");
+    showAlert('error', "Power name can not be empty!");
     return;
   }
 
   editingStatus.value = true;
   authStore.fetchProtectedApi(`power/${selectedPowerData.value.id}`, selectedPowerData.value, 'PUT')
     .then((res) => {
+      showAlert('success', res.message || "Power edited successfully!");
       fetchPowers();
       $('.editingModel').modal('hide');
     }).catch(err => {
@@ -79,6 +85,7 @@ const deletePower = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`power/${selectedPowerData.value.id}`, {}, 'DELETE')
     .then((res) => {
+      showAlert('success', res.message || "Power deleted successfully!");
       fetchPowers();
       $('.deletingModel').modal('hide');
     }).catch(err => {
@@ -117,7 +124,7 @@ const deletePower = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="powers.length === 0">No powers found!</div>
+      <div class="text-center" v-if="!getPowers">Loading</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { authStore } from '../../store/store';
-import showAlert from '../../helpers/alert';
 
+import showAlert from '../../helpers/alert';
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import TheButton from '../../components/TheButton.vue';
 
@@ -44,9 +44,7 @@ const editUserProfileData = () => {
       	resetForm();
     }).catch(err => {
       	showAlert('error', err.message || 'Failed to update profile.');
-    }).finally(() => {
-
-    });
+    })
 };
 
 const editUserPasswordData = () => {
@@ -66,9 +64,7 @@ const editUserPasswordData = () => {
       	resetForm();
     }).catch(err => {
       	showAlert('error', err.message || 'Failed to update password.');
-    }).finally(() => {
-
-    });
+    })
 };
 </script>
 

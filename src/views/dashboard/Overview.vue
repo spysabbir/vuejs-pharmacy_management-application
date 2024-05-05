@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { authStore } from '../../store/store';
-
-import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 import { Chart, Grid, Line } from "vue3-charts";
 
-const overview = ref({
+import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
+
+const overviewData = ref({
   countSupplier: 0,
   countCustomer: 0,
   countMedicine: 0,
@@ -30,7 +30,7 @@ const margin = {
 onBeforeMount(() => {
   const res = authStore.fetchProtectedApi('overview', {}, 'GET')
   res.then((result) => {
-    overview.value = result.data;
+    overviewData.value = result.data;
   });
 });
 </script>
@@ -89,7 +89,7 @@ onBeforeMount(() => {
               </svg>
             </span>
             <!--end::Svg Icon-->
-            <div class="text-inverse-dark fw-bolder fs-2 mb-2 mt-5">{{ overview.countSupplier }}</div>
+            <div class="text-inverse-dark fw-bolder fs-2 mb-2 mt-5">{{ overviewData.countSupplier }}</div>
             <div class="fw-bold text-inverse-dark fs-7">Total Supplier</div>
           </div>
           <!--end::Body-->
@@ -109,7 +109,7 @@ onBeforeMount(() => {
               </svg>
             </span>
             <!--end::Svg Icon-->
-            <div class="text-inverse-warning fw-bolder fs-2 mb-2 mt-5">{{ overview.countCustomer }}</div>
+            <div class="text-inverse-warning fw-bolder fs-2 mb-2 mt-5">{{ overviewData.countCustomer }}</div>
             <div class="fw-bold text-inverse-warning fs-7">Total Customer</div>
           </div>
           <!--end::Body-->
@@ -132,7 +132,7 @@ onBeforeMount(() => {
               </svg>
             </span>
             <!--end::Svg Icon-->
-            <div class="text-inverse-info fw-bolder fs-2 mb-2 mt-5">{{ overview.countMedicine }}</div>
+            <div class="text-inverse-info fw-bolder fs-2 mb-2 mt-5">{{ overviewData.countMedicine }}</div>
             <div class="fw-bold text-inverse-info fs-7">Total Medicine</div>
           </div>
           <!--end::Body-->

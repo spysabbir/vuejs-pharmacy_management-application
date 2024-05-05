@@ -16,6 +16,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const racks = ref([]);
+const getRacks = ref(false);
 
 const resetForm = () => {
   addingRackData.value = {
@@ -24,12 +25,15 @@ const resetForm = () => {
 };
 
 const fetchRacks = () => {
+  getRacks.value = false;
   authStore.fetchProtectedApi('rack', {}, 'GET')
     .then((res) => {
+      getRacks.value = true;
       racks.value = res.data;
     }).catch(err => {
       showAlert('error', err.message || "Failed to fetch racks");
     }).finally(() => {
+      getRacks.value = true;
     });
 };
 
@@ -38,12 +42,14 @@ onBeforeMount(fetchRacks);
 const addRack = () => {
   const { name } = addingRackData.value;
   if (!name) {
-    showAlert('error', "Name can not be empty!");
+    showAlert('error', "Rack name can not be empty!");
     return;
   }
+
   addingStatus.value = true;
   authStore.fetchProtectedApi('rack', addingRackData.value, 'POST')
     .then((res) => {
+      showAlert('success', res.message || "Rack added successfully!");
       fetchRacks();
       resetForm();
       $('.addingModel').modal('hide');
@@ -57,13 +63,14 @@ const addRack = () => {
 const editRack = () => {
   const { name } = selectedRackData.value;
   if (!name) {
-    showAlert('error', "Name can not be empty!");
+    showAlert('error', "Rack name can not be empty!");
     return;
   }
 
   editingStatus.value = true;
   authStore.fetchProtectedApi(`rack/${selectedRackData.value.id}`, selectedRackData.value, 'PUT')
     .then((res) => {
+      showAlert('success', res.message || "Rack edited successfully!");
       fetchRacks();
       $('.editingModel').modal('hide');
     }).catch(err => {
@@ -77,6 +84,7 @@ const deleteRack = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`rack/${selectedRackData.value.id}`, {}, 'DELETE')
     .then((res) => {
+      showAlert('success', res.message || "Rack deleted successfully!");
       fetchRacks();
       $('.deletingModel').modal('hide');
     }).catch(err => {
@@ -116,7 +124,7 @@ const deleteRack = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="racks.length === 0">No racks found!</div>
+      <div class="text-center" v-if="!getRacks">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

@@ -17,6 +17,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const units = ref([]);
+const getUnits = ref(false);
 
 const resetForm = () => {
   addingUnitData.value = {
@@ -26,33 +27,43 @@ const resetForm = () => {
 };
 
 const fetchUnits = () => {
+  getUnits.value = false
   authStore.fetchProtectedApi('unit', {}, 'GET')
     .then((res) => {
+      getUnits.value = true;
       units.value = res.data;
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to fetch units");
-    })
-    .finally(() => {
+    }).finally(() => {
+      getUnits.value = true;
     });
 };
 
 onBeforeMount(fetchUnits);
 
+const validateFields = (data) => {
+    const errors = [];
+    if (!data.unit_name) {
+        errors.push("Unit name is required.");
+    }
+    if (!data.piece_in_unit) {
+        errors.push("Piece in unit is required.");
+    }
+    return errors;
+};
+
 const addUnit = () => {
-  const { unit_name, piece_in_unit } = addingUnitData.value;
-  if (!unit_name) {
-    showAlert('error', "Unit name can not be empty!");
-    return;
-  }
-  if (!piece_in_unit) {
-    showAlert('error', "Piece in unit can not be empty!");
+  const errors = validateFields(addingUnitData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   addingStatus.value = true;
   authStore.fetchProtectedApi('unit', addingUnitData.value, 'POST')
     .then((res) => {
+      showAlert('success', res.message || "Unit added successfully!");
       fetchUnits();
       resetForm();
       $('.addingModel').modal('hide');
@@ -64,19 +75,17 @@ const addUnit = () => {
 };
 
 const editUnit = () => {
-  const { unit_name, piece_in_unit } = selectedUnitData.value;
-  if (!unit_name) {
-    showAlert('error', "Unit name can not be empty!");
-    return;
-  }
-  if (!piece_in_unit) {
-    showAlert('error', "Piece in unit can not be empty!");
+  const errors = validateFields(selectedUnitData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   editingStatus.value = true;
   authStore.fetchProtectedApi(`unit/${selectedUnitData.value.id}`, selectedUnitData.value, 'PUT')
     .then((res) => {
+      showAlert('success', res.message || "Unit edited successfully!");
       fetchUnits();
       $('.editingModel').modal('hide');
     }).catch(err => {
@@ -90,6 +99,7 @@ const deleteUnit = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`unit/${selectedUnitData.value.id}`, {}, 'DELETE')
     .then((res) => {
+      showAlert('success', res.message || "Unit deleted successfully!");
       fetchUnits();
       $('.deletingModel').modal('hide');
     }).catch(err => {
@@ -128,7 +138,7 @@ const deleteUnit = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="units.length === 0">No units found!</div>
+      <div class="text-center" v-if="!getUnits">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

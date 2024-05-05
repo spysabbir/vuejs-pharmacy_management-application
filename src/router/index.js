@@ -18,15 +18,10 @@ import Customer from "../views/dashboard/Customer.vue";
 // import SaleCreate from "../views/dashboard/sale/SaleCreate.vue";
 // import SaleList from "../views/dashboard/sale/SaleList.vue";
 
+
 const routes = [
-  { 
-    path: "/", 
-    component: HomePage 
-  },
-  { 
-    path: "/login", 
-    component: LoginPage 
-  },
+  { path: "/", component: HomePage },
+  { path: "/login", component: LoginPage },
   { 
     path: '/dashboard',
     name: 'Dashboard',
@@ -34,16 +29,8 @@ const routes = [
     meta: { requiresAuth: true },
     redirect: "/dashboard/overview",
     children: [
-      {
-        path: 'overview',
-        name: 'Overview',
-        component: OverviewView
-      },
-      {
-        path: 'profile',
-        name: 'Profile',
-        component: ProfileView
-      },
+      { path: 'overview', name: 'Overview', component: OverviewView },
+      { path: 'profile', name: 'Profile', component: ProfileView },
       { path: "supplier", component: Supplier },
       { path: "type", component: Type },
       { path: "power", component: Power },
@@ -51,10 +38,10 @@ const routes = [
       { path: "rack", component: Rack },
       { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
-    //   { path: "purchase/create", component: PurchaseCreate },
-    //   { path: "purchase/list", component: PurchaseList },
-    //   { path: "sale/create", component: SaleCreate },
-    //   { path: "sale/list", component: SaleList },
+      // { path: "purchase/create", component: PurchaseCreate },
+      // { path: "purchase/list", component: PurchaseList },
+      // { path: "sale/create", component: SaleCreate },
+      // { path: "sale/list", component: SaleList },
     ]
   },
 ];
@@ -65,11 +52,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.meta.requiresAuth && !authStore.isAuthenticated){
-      next('/login')
-  }else{
-      next()
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login');
+  } else if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/dashboard');
+  } else {
+    next();
   }
-})
+});
 
 export default router;

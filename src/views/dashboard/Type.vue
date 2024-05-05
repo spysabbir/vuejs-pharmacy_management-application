@@ -16,6 +16,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const types = ref([]);
+const getTypes = ref(false);
 
 const resetForm = () => {
   addingTypeData.value = {
@@ -24,12 +25,15 @@ const resetForm = () => {
 };
 
 const fetchTypes = () => {
+  getTypes.value = false;
   authStore.fetchProtectedApi('type', {}, 'GET')
     .then((res) => {
+      getTypes.value = true;
       types.value = res.data;
     }).catch(err => {
       showAlert('error', err.message || "Failed to fetch types");
     }).finally(() => {
+      getTypes.value = true;
     });
 };
 
@@ -38,13 +42,14 @@ onBeforeMount(fetchTypes);
 const addType = () => {
   const { name } = addingTypeData.value;
   if (!name) {
-    showAlert('error', "Please fill in all fields!");
+    showAlert('error', "Type name can not be empty!");
     return;
   }
 
   addingStatus.value = true;
   authStore.fetchProtectedApi('type', addingTypeData.value, 'POST')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Type added successfully!");
       fetchTypes();
       resetForm();
       $('.addingModel').modal('hide');
@@ -58,12 +63,13 @@ const addType = () => {
 const editType = () => {
   const { name } = selectedTypeData.value;
   if (!name) {
-    showAlert('error', "Please fill in all fields!");
+    showAlert('error', "Type name can not be empty!");
     return;
   }
   editingStatus.value = true;
   authStore.fetchProtectedApi(`type/${selectedTypeData.value.id}`, selectedTypeData.value, 'PUT')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Type edited successfully!");
       fetchTypes();
       $('.editingModel').modal('hide');
     }).catch(err => {
@@ -76,7 +82,8 @@ const editType = () => {
 const deleteType = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`type/${selectedTypeData.value.id}`, {}, 'DELETE')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Type deleted successfully!");
       fetchTypes();
       $('.deletingModel').modal('hide');
     }).catch(err => {
@@ -115,7 +122,7 @@ const deleteType = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="types.length === 0">No customers found!</div>
+      <div class="text-center" v-if="!getTypes">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

@@ -19,6 +19,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const suppliers = ref([]);
+const getSuppliers = ref(false);
 
 const resetForm = () => {
   addingSupplierData.value = {
@@ -30,29 +31,49 @@ const resetForm = () => {
 };
 
 const fetchSuppliers = () => {
+  getSuppliers.value = false;
   authStore.fetchProtectedApi('supplier', {}, 'GET')
   .then((res) => {
+    getSuppliers.value = true;
     suppliers.value = res.data;
-    })
-    .catch(err => {
-      showAlert('error', err.message || "Failed to fetch suppliers");
-    })
-    .finally(() => {
-    });
+  }).catch(err => {
+    showAlert('error', err.message || "Failed to fetch suppliers");
+  }).finally(() => {
+    getSuppliers.value = true;
+  });
 };
 
 onBeforeMount(fetchSuppliers);
 
+const validateFields = (data) => {
+    const errors = [];
+    if (!data.name) {
+        errors.push("Name is required!");
+    }
+    if (!data.email) {
+        errors.push("Email is required!");
+    }
+    if (!data.phone_number) {
+        errors.push("Phone number is required!");
+    }
+    if (!data.address) {
+        errors.push("Address is required!");
+    }
+    return errors;
+};
+
 const addSupplier = () => {
-  const { name, email, phone_number, address } = addingSupplierData.value;
-  if (!name || !email || !phone_number || !address) {
-    showAlert('error', "Please fill in all fields!");
+  const errors = validateFields(addingSupplierData.value);
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   addingStatus.value = true;
   authStore.fetchProtectedApi('supplier', addingSupplierData.value, 'POST')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Supplier added successfully!");
       fetchSuppliers();
       resetForm();
       $('.addingModel').modal('hide');
@@ -66,22 +87,21 @@ const addSupplier = () => {
 };
 
 const editSupplier = () => {
-  const { name, email, phone_number, address } = selectedSupplierData.value;
-  if (!name || !email || !phone_number || !address) {
-    showAlert('error', "Please fill in all fields!");
+  if (errors.length > 0) {
+    const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
+    showAlert('error', errorMessage);
     return;
   }
 
   editingStatus.value = true;
   authStore.fetchProtectedApi(`supplier/${selectedSupplierData.value.id}`, selectedSupplierData.value, 'PUT')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Supplier edited successfully!");
       fetchSuppliers();
       $('.editingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to edit supplier");
-    })
-    .finally(() => {
+    }).finally(() => {
       editingStatus.value = false;
     });
 };
@@ -89,14 +109,13 @@ const editSupplier = () => {
 const deleteSupplier = () => {
   deletingStatus.value = true;
   authStore.fetchProtectedApi(`supplier/${selectedSupplierData.value.id}`, {}, 'DELETE')
-    .then(() => {
+    .then((res) => {
+      showAlert('success', res.message || "Supplier deleted successfully!");
       fetchSuppliers();
       $('.deletingModel').modal('hide');
-    })
-    .catch(err => {
+    }).catch(err => {
       showAlert('error', err.message || "Failed to delete supplier");
-    })
-    .finally(() => {
+    }).finally(() => {
       deletingStatus.value = false;
     });
 };
@@ -111,7 +130,7 @@ const deleteSupplier = () => {
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bolder fs-3 mb-1">Supplier</span>
-        <!-- <span class="text-muted mt-1 fw-bold fs-7">{{ suppliers.length }} Items</span> -->
+        <span class="text-muted mt-1 fw-bold fs-7">{{ suppliers.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
           <TheButton data-bs-toggle="modal" data-bs-target=".addingModel" class="btn btn-primary er fs-6 px-8 py-4">
@@ -130,7 +149,7 @@ const deleteSupplier = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="suppliers.length === 0">No suppliers found!</div>
+      <div class="text-center" v-if="!getSuppliers">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">

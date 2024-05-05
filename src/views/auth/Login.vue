@@ -1,12 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import TheButton from "../../components/TheButton.vue";
+import { authStore } from '../../store/store';
 
+import TheButton from "../../components/TheButton.vue";
 import showAlert from '../../helpers/alert'
 
-import { authStore } from '../../store/store';
 const auth = authStore 
-
 const email = ref('admin@email.com')
 const password =  ref('12345678')
 const loginStatus = ref(false)
