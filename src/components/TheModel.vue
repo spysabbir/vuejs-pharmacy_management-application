@@ -32,9 +32,9 @@
             </div>
             <!--end::Modal body-->
             <!--begin::Modal footer-->
-            <div class="modal-footer flex-center">
+            <!-- <div class="modal-footer flex-center">
                 <button type="button" class="btn btn-info me-3" data-bs-dismiss="modal">Close</button>
-            </div>
+            </div> -->
             <!--end::Modal footer-->
         </div>
         <!--end::Modal content-->

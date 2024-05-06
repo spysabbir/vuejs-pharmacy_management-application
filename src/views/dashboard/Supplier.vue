@@ -87,6 +87,7 @@ const addSupplier = () => {
 };
 
 const editSupplier = () => {
+  const errors = validateFields(selectedSupplierData.value);
   if (errors.length > 0) {
     const errorMessage = errors.length > 1 ? errors.join("\n\n") : errors.join("\n");
     showAlert('error', errorMessage);
