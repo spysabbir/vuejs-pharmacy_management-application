@@ -16,7 +16,7 @@ const cart = reactive({
         }
         return parseFloat(total.toFixed(2))
     }),
-    addItem(product){
+    addToCartItem(selectedMedicine){
         if(this.items[product.id]){
             this.items[product.id].quantity++
         }else{

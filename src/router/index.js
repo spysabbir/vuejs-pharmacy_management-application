@@ -13,7 +13,7 @@ import Unit from "../views/dashboard/Unit.vue";
 import Rack from "../views/dashboard/Rack.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
-// import PurchaseCreate from "../views/dashboard/purchase/PurchaseCreate.vue";
+import PurchaseCreate from "../views/dashboard/purchase/PurchaseCreate.vue";
 // import PurchaseList from "../views/dashboard/purchase/PurchaseList.vue";
 // import SaleCreate from "../views/dashboard/sale/SaleCreate.vue";
 // import SaleList from "../views/dashboard/sale/SaleList.vue";
@@ -38,7 +38,7 @@ const routes = [
       { path: "rack", component: Rack },
       { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
-      // { path: "purchase/create", component: PurchaseCreate },
+      { path: "purchase/create", component: PurchaseCreate },
       // { path: "purchase/list", component: PurchaseList },
       // { path: "sale/create", component: SaleCreate },
       // { path: "sale/list", component: SaleList },
