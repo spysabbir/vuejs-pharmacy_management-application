@@ -1,9 +1,6 @@
 <script setup>
 
-// const purchasing = ref(false);
-// const discount = ref('');
-// const payment_status = ref('');
-// const payment_amount = ref('');
+
 // const isPaymentAmountReadOnly = ref(true);
 
 
@@ -165,93 +162,7 @@
       <div class="text-center text-danger" v-if="Object.keys(purchaseCartData).length < 1">Purchase Cart Data is Empty</div>
       <div class="row" v-else>
         <div class="col-12 col-xl-12">
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle text-center">
-              <thead class="table-info">
-                <tr>
-                  <th>Medicine Name</th>
-                  <th>Unit</th>
-                  <th>Purchase Price</th>
-                  <th>Purchase Qty</th>
-                  <th>Total Price</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(cartItem, i) in purchaseCartData" :key="cartItem.id">
-                  <td>{{ cartItem.name }} - <span class="text-info fw-bold text-hover-primary">{{ cartItem.power_name }}</span></td>
-                  <td>{{ cartItem.unit_name }}</td>
-                  <td>{{ cartItem.purchases_price }}</td>
-                  <td>
-                    <input type="number" v-model="cartItem.purchases_quantity" @input="validateCartQuantity(cartItem)">
-                    <!-- <div v-if="cartItem.invalidCartQuantity" class="error-message">
-                      Quantity must be greater than or equal to 0.
-                    </div> -->
-                  </td>
-                  <td>{{ cartItem.purchases_price * cartItem.purchases_quantity }}</td>
-                  <td>
-                    <button @click="removeCartItem(cartItem.id)" class="btn btn-danger btn-sm">
-                    <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
-                    <span class="svg-icon svg-icon-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                          <rect x="0" y="0" width="24" height="24" />
-                          <path d="M6,8 L6,20.5 C6,21.3284271 6.67157288,22 7.5,22 L16.5,22 C17.3284271,22 18,21.3284271 18,20.5 L18,8 L6,8 Z" fill="#000000" fill-rule="nonzero" />
-                          <path d="M14,4.5 L14,4 C14,3.44771525 13.5522847,3 13,3 L11,3 C10.4477153,3 10,3.44771525 10,4 L10,4.5 L5.5,4.5 C5.22385763,4.5 5,4.72385763 5,5 L5,5.5 C5,5.77614237 5.22385763,6 5.5,6 L18.5,6 C18.7761424,6 19,5.77614237 19,5.5 L19,5 C19,4.72385763 18.7761424,4.5 18.5,4.5 L14,4.5 Z" fill="#000000" opacity="0.3" />
-                        </g>
-                      </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot class="table-info">
-                <tr>
-                  <td colspan="3"></td>
-                  <td>Sub Total: </td>
-                  <td colspan="2">{{ purchaseSubTotal }}</td>
-                </tr>
-                <tr>
-                  <td colspan="3"></td>
-                  <td>Discount: </td>
-                  <td colspan="2">
-                    <input type="number" v-model="discount" placeholder="00">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3"></td>
-                  <td>Grand Total: </td>
-                  <td colspan="2">{{ updatedGrandTotal }}</td>
-                </tr>
-                <tr>
-                  <td colspan="3"></td>
-                  <td>Payment Status: </td>
-                  <td colspan="2">
-                    <select v-model="payment_status" style="width: 50%;" class="text-center" ref="payment_status">
-                      <option value="">--Select One--</option>
-                      <option value="Unpaid">Unpaid</option>
-                      <option value="Partial Paid">Partial Paid</option>
-                      <option value="Paid">Paid</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">{{ updatedPaymentAmount }}</td>
-                  <td>Payment Amount: </td>
-                  <td colspan="2">
-                    <input type="number" v-model="payment_amount" ref="payment_amount" :readonly="isPaymentAmountReadOnly" placeholder="00">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="4"></td>
-                  <td colspan="2">
-                    <TheButton :lodding="purchasing" @click="purchasingNow" v-if="updatedGrandTotal > 0" class="mt-3">Purchase</TheButton>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+         
         </div>
       </div>
     </div>

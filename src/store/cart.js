@@ -1,5 +1,5 @@
-import {reactive, computed} from 'vue'
-import {order} from './order'
+import { reactive, computed } from 'vue'
+import { order } from './order'
 const cart = reactive({
     items:{},
     totalCartItems:computed(()=>{
@@ -12,16 +12,17 @@ const cart = reactive({
     totalPrice:computed(()=>{
         let total = 0
         for(let id in cart.items){
-            total += cart.items[id].product.price * cart.items[id].quantity
+            total += cart.items[id].medicine.price * cart.items[id].quantity
         }
         return parseFloat(total.toFixed(2))
     }),
     addToCartItem(selectedMedicine){
-        if(this.items[product.id]){
-            this.items[product.id].quantity++
-        }else{
-            this.items[product.id] = {
-                product,
+        if(cart.items[selectedMedicine.id]){
+            cart.items[selectedMedicine.id].quantity++
+        }
+        else{
+            cart.items[selectedMedicine.id] = {
+                medicine:selectedMedicine,
                 quantity:1
             }
         }
@@ -42,4 +43,4 @@ const cart = reactive({
     }
 })
 cart.getCartFromLocalStorage()
-export {cart}
+export { cart }
