@@ -1,6 +1,6 @@
 <script setup>
 import { authStore } from "../store/store";
-import { cart } from "../store/cart";
+import { purchase } from "../store/purchase";
 const auth = authStore;
 </script>
 

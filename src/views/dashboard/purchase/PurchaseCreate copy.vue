@@ -1,10 +1,10 @@
 <script setup>
 
 
-// const isPaymentAmountReadOnly = ref(true);
 
 
-// const updatedGrandTotal = computed(() => purchaseSubTotal.value - discount.value);
+
+
 
 // const updatedPaymentAmount = computed(() => {
 //   if (payment_status.value == 'Paid') {

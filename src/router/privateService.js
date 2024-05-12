@@ -4,20 +4,6 @@ export default {
 
 
 
-    // Purchase
-    purchasingNowStore(payload) {
-        return axiosPrivate.post("/purchase", payload);
-    },
-    getPurchaseList() {
-        return axiosPrivate.get("/purchase");
-    },
-    viewPurchaseData(id) {
-        return axiosPrivate.get("/purchase/" + id);
-    },
-    deletePurchaseData(id) {
-        return axiosPrivate.delete("/purchase/" + id);
-    },
-
     // Customer
     getCustomer() {
         return axiosPrivate.get("/customer");

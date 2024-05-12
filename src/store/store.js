@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import router from '../router'
-import { cart } from './cart'
+import { purchase } from './purchase'
 import { wishlist } from './wishlist'
 const authStore = reactive({
     apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
@@ -64,8 +64,8 @@ const authStore = reactive({
         authStore.user = {}
         localStorage.setItem('auth', 0)
         localStorage.setItem('user', '{}')
-        cart.items = {}
-        cart.saveCartInLocalStorage()
+        purchase.items = {}
+        purchase.saveCartInLocalStorage()
         wishlist.items = []
         router.push('/login')
     },
