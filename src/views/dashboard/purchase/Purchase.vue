@@ -16,6 +16,7 @@ const purchasing = ref(false);
 const discount = ref(0);
 const payment_status = ref('');
 const payment_amount = ref(0);
+const payment_amount_status = ref(true);
 
 const fetchMedicines = () => {
   getMedicines.value = false;
@@ -73,12 +74,51 @@ const filteredMedicines = computed(() => {
 watch(selectedSupplierId, () => {
   selectedTypeId.value = "";
   selectedMedicineId.value = "";
+  discount.value = 0;
+  payment_status.value = '';
+  payment_amount.value = 0;
   purchase.emptyCart();
 });
 
 watch(selectedTypeId, () => {
   selectedMedicineId.value = "";
 });
+
+watch(discount, () => {
+  if (discount.value < 0) {
+    discount.value = 0;
+    showAlert('error', 'Discount should be greater than 0')
+  }
+  if (discount.value > purchase.subTotalPrice) {
+    discount.value = purchase.subTotalPrice;
+    showAlert('error', 'Discount should be less than sub total price')
+  }
+});
+watch(payment_status, () => {
+  payment_amount.value = 0;
+  if (payment_status.value === 'Unpaid') {
+    payment_amount.value = 0;
+    payment_amount_status.value = true;
+  }
+  if (payment_status.value === 'Paid') {
+    payment_amount.value = grandTotalPrice.value;
+    payment_amount_status.value = true;
+  }
+  if (payment_status.value === 'Partial Paid') {
+    payment_amount_status.value = false;
+  }
+});
+
+watch(payment_amount, () => {
+  if(payment_amount.value < 0) {
+    payment_amount.value = 0;
+    showAlert('error', 'Payment amount should be greater than 0');
+  }
+  if (payment_amount.value > grandTotalPrice.value) {
+    payment_amount.value = grandTotalPrice.value;
+    showAlert('error', 'Payment amount should be less than grand total');
+  }
+})
 
 const addToCart = (medicine) => {
   purchase.selectedSupplierId = selectedSupplierId.value;
@@ -90,16 +130,20 @@ const grandTotalPrice = computed(() => {
 });
 
 const purchasingNow = () => {
+  if (selectedSupplierId.value === "") {
+      showAlert('error', 'Please select a supplier');
+      return;
+  }
+  if (Object.keys(purchase.items).length === 0) {
+      showAlert('error', 'Please add items to cart');
+      return;
+  }
   if (!payment_status.value) {
     showAlert('error', 'Please select payment status');
     return;
   }
-  if (!payment_amount.value) {
+  if (payment_status.value != 'Unpaid' && !payment_amount.value) {
     showAlert('error', 'Please enter payment amount');
-    return;
-  }
-  if (payment_amount.value > grandTotalPrice.value) {
-    showAlert('error', 'Payment amount should be less than grand total');
     return;
   }
   const purchaseData = {
@@ -109,6 +153,10 @@ const purchasingNow = () => {
   }
 
   purchase.checkout(purchaseData)
+  discount.value = 0;
+  payment_status.value = '';
+  payment_amount.value = 0;
+  selectedSupplierId.value = '';
 };
 </script>
 
@@ -243,7 +291,7 @@ const purchasingNow = () => {
                   <tr>
                     <td>Payment Amount: </td>
                     <td>
-                      <input type="number" v-model="payment_amount">
+                      <input type="number" v-model="payment_amount" :readonly="payment_amount_status">
                     </td>
                   </tr>
                   <tr>

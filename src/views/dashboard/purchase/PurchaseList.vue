@@ -1,6 +1,68 @@
+<script setup>
+import { ref, onBeforeMount } from 'vue';
+import { authStore } from '../../../store/store';
+import { purchase } from '../../../store/purchase';
+import showAlert from '../../../helpers/alert';
+
+import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
+import TheButton from '../../../components/TheButton.vue';
+import TheModel from '../../../components/TheModel.vue';
+
+const purchaseList = ref([]);
+const getPurchaseList = ref(false);
+
+const deletingStatus = ref(false);
+const viewStatus = ref(false);
+const selectedPurchaseItem = ref({});
+const viewPurchaseData = ref({});
+
+const getAllPurchaseList = () => {
+  getPurchaseList.value = false;
+  authStore.fetchProtectedApi('purchase', {}, 'GET')
+    .then((res) => {
+      getPurchaseList.value = true;
+      purchaseList.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch purchase list");
+    }).finally(() => {
+      getPurchaseList.value = true;
+    });
+};
+
+onBeforeMount(() => {
+  getAllPurchaseList();
+});
+
+const viewPurchaseList = (purchaseItem) => {
+  viewStatus.value = true;
+  authStore.fetchProtectedApi(`purchase/${purchaseItem.id}`, {}, 'GET')
+    .then((res) => {
+      viewPurchaseData.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch purchase list");
+    }).finally(() => {
+      viewStatus.value = false;
+    });
+};
+
+const deletePurchaseItem = () => {
+  deletingStatus.value = true;
+  authStore.fetchProtectedApi(`purchase/${selectedPurchaseItem.value.id}`, {}, 'DELETE')
+    .then((res) => {
+      $('.deletingModel').modal('hide');
+      showAlert('success', res.message || "Purchase list deleted successfully");
+      getAllPurchaseList();
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to delete purchase list");
+    }).finally(() => {
+      deletingStatus.value = false;
+    });
+};
+</script>
+
 <template>
   <TheBreadcrumb title="Purchase List"></TheBreadcrumb>
-  
+
   <!--begin::Tables-->
   <div class="card mb-5 mb-xl-8">
     <!--begin::Header-->
@@ -10,7 +72,7 @@
         <span class="text-muted mt-1 fw-bold fs-7">{{ purchaseList.length }} Items</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Click to add">
-          <RouterLink to="/dashboard/purchase/create" class="btn btn-primary">
+          <RouterLink to="/dashboard/purchase" class="btn btn-primary">
             <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
             <span class="svg-icon svg-icon-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -26,7 +88,7 @@
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="getPurchaseList">Looding...</div>
+      <div class="text-center" v-if="!getPurchaseList">Looding...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -193,69 +255,3 @@
     </div>
   </TheModel>
 </template>
-
-<script>
-import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
-import TheButton from '../../../components/TheButton.vue';
-import TheModel from '../../../components/TheModel.vue';
-import { showErrorMessage, showSuccessMessage } from "../../../utils/functions";
-import privateService from "../../../service/privateService";
-
-export default {
-  data: () => ({
-      purchaseList: [],
-      getPurchaseList: false,
-      deletingStatus: false,
-      viewStatus: false,
-      selectedPurchaseItem: {},
-      viewPurchaseData: {},
-  }),
-  components: {
-    TheBreadcrumb,
-    TheButton,
-    TheModel,
-  },
-  mounted() {
-    setTimeout(this.getAllPurchaseList, 100)
-  },
-  methods: {
-    getAllPurchaseList(){
-      this.getPurchaseList = true;
-      privateService.getPurchaseList()
-      .then((res) => {
-        this.purchaseList = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.getPurchaseList = false;
-      });
-    },
-
-    viewPurchaseList(selectedPurchaseItem){
-      this.viewStatus = true;
-      privateService.viewPurchaseData(selectedPurchaseItem.id)
-      .then((res) => {
-        this.viewPurchaseData = res.data.data;
-      }).catch(err => {
-        showErrorMessage(err);
-      }).finally(() => {
-        this.viewStatus = false;
-      });
-    },
-
-    deletePurchaseItem() {
-      this.deletingStatus = true;
-      privateService.deletePurchaseData(this.selectedPurchaseItem.id)
-      .then((res) => {
-        $('.deletingModel').modal('hide');
-        showSuccessMessage(res);
-        this.getAllPurchaseList();
-      }).catch(err => {
-        showErrorMessage(err)
-      }).finally(() => {
-        this.deletingStatus = false;
-      });
-    }
-  }
-}
-</script>

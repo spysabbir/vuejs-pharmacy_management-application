@@ -1,10 +1,9 @@
 import { reactive } from 'vue'
 import router from '../router'
 import { purchase } from './purchase'
-import { wishlist } from './wishlist'
 const authStore = reactive({
-    apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
-    // apiBase: 'http://127.0.0.1:8000/api/',
+    // apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
+    apiBase: 'http://127.0.0.1:8000/api/',
     isAuthenticated: localStorage.getItem('auth') == 1,
     user: JSON.parse(localStorage.getItem('user')),
     async fetchPublicApi(endPoint = "", params = {}, requestType = "GET") {

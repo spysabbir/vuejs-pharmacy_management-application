@@ -24,6 +24,11 @@ const purchase = reactive({
         this.saveCartInLocalStorage()
     },
     updateQuantity(id, quantity){
+        if(quantity <= 0){
+            showAlert('error', 'Quantity must be greater than 0')
+            purchase.items[id].purchases_quantity = 1
+            return
+        }
         purchase.items[id].purchases_quantity = quantity
         this.saveCartInLocalStorage()
     },
@@ -48,21 +53,11 @@ const purchase = reactive({
         this.selectedSupplierId = parseInt(localStorage.getItem('selectedSupplierId')) || ""
     },
     checkout(purchaseData) {
-        if (Object.keys(this.items).length === 0) {
-            showAlert('error', 'Please add items to cart');
-            return;
-        }
-    
-        if (this.selectedSupplierId === "") {
-            showAlert('error', 'Please select a supplier');
-            return;
-        }
-    
         const products = Object.values(this.items).map(item => {
             return {
                 medicine_id: item.medicine.id,
-                quantity: item.purchases_quantity,
-                price: item.medicine.purchases_price
+                purchases_quantity: item.purchases_quantity,
+                purchases_price: item.medicine.purchases_price
             };
         });
     
@@ -76,10 +71,13 @@ const purchase = reactive({
             purchaseCartData: products
         };
     
-        const res = authStore.fetchProtectedApi('purchase', order, 'POST');
-        res.then(response => {
+        authStore.fetchProtectedApi('purchase', order, 'POST')
+        .then((res) => {
             this.emptyCart();
-        });
+            showAlert('success', res.message || "Purchasing successfully.");
+        }).catch(err => {
+            showAlert('error', err.message || "Purchase failed");
+        })
     }
 })
 purchase.getCartFromLocalStorage()

@@ -14,7 +14,7 @@ import Rack from "../views/dashboard/Rack.vue";
 import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
 import Purchase from "../views/dashboard/purchase/Purchase.vue";
-// import PurchaseList from "../views/dashboard/purchase/PurchaseList.vue";
+import PurchaseList from "../views/dashboard/purchase/PurchaseList.vue";
 // import SaleCreate from "../views/dashboard/sale/SaleCreate.vue";
 // import SaleList from "../views/dashboard/sale/SaleList.vue";
 
@@ -39,7 +39,7 @@ const routes = [
       { path: "medicine", component: Medicine },
       { path: "customer", component: Customer },
       { path: "purchase", component: Purchase },
-      // { path: "purchase/list", component: PurchaseList },
+      { path: "purchase/list", component: PurchaseList },
       // { path: "sale/create", component: SaleCreate },
       // { path: "sale/list", component: SaleList },
     ]
