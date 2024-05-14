@@ -196,7 +196,7 @@ const deletePower = () => {
     <form @submit.prevent="addPower">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input power="text" class="form-control" ref="name" v-model="addingPowerData.name" placeholder="Enter name">
+        <input power="text" class="form-control" v-model="addingPowerData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Power</TheButton>
@@ -208,7 +208,7 @@ const deletePower = () => {
     <form @submit.prevent="editPower">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input power="text" class="form-control" ref="name" v-model="selectedPowerData.name" placeholder="Enter name">
+        <input power="text" class="form-control" v-model="selectedPowerData.name" placeholder="Enter name">
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Power</TheButton>

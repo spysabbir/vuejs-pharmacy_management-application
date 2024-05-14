@@ -345,7 +345,7 @@ const deleteMedicine = () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Power</label>
-        <select ref="power_id" class="form-control" v-model="addingMedicineData.power_id">
+        <select class="form-control" v-model="addingMedicineData.power_id">
           <option value="">Select One</option>
           <option :value="power.id" v-for="power in powers" :key="power.name">
             {{ power.name }}
@@ -410,7 +410,7 @@ const deleteMedicine = () => {
       </div>
       <div class="mb-3">
         <label class="form-label">Select Power</label>
-        <select ref="power_id" class="form-control" v-model="selectedMedicineData.power_id">
+        <select class="form-control" v-model="selectedMedicineData.power_id">
           <option value="">Select One</option>
           <option :value="power.id" v-for="power in powers" :key="power.name">
             {{ power.name }}

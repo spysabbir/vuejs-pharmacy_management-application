@@ -228,19 +228,19 @@ const deleteSupplier = () => {
     <form @submit.prevent="addSupplier">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="addingSupplierData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="addingSupplierData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" ref="email" v-model="addingSupplierData.email" placeholder="Enter email">
+        <input type="email" class="form-control" v-model="addingSupplierData.email" placeholder="Enter email">
       </div>
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input type="text" class="form-control" ref="phone_number" v-model="addingSupplierData.phone_number" placeholder="Enter phone number">
+        <input type="text" class="form-control" v-model="addingSupplierData.phone_number" placeholder="Enter phone number">
       </div>
       <div class="mb-3">
         <label class="form-label">Address</label>
-        <textarea class="form-control" v-model="addingSupplierData.address" ref="address" placeholder="Enter address"></textarea>
+        <textarea class="form-control" v-model="addingSupplierData.address" placeholder="Enter address"></textarea>
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Supplier</TheButton>
@@ -252,19 +252,19 @@ const deleteSupplier = () => {
     <form @submit.prevent="editSupplier">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="selectedSupplierData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="selectedSupplierData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" ref="email" v-model="selectedSupplierData.email" placeholder="Enter email">
+        <input type="email" class="form-control" v-model="selectedSupplierData.email" placeholder="Enter email">
       </div>
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input type="text" class="form-control" ref="phone_number" v-model="selectedSupplierData.phone_number" placeholder="Enter phone number">
+        <input type="text" class="form-control" v-model="selectedSupplierData.phone_number" placeholder="Enter phone number">
       </div>
       <div class="mb-3">
         <label class="form-label">Address</label>
-        <textarea class="form-control" v-model="selectedSupplierData.address" ref="address" placeholder="Enter address"></textarea>
+        <textarea class="form-control" v-model="selectedSupplierData.address" placeholder="Enter address"></textarea>
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Supplier</TheButton>

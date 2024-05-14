@@ -19,6 +19,7 @@ const addingStatus = ref(false);
 const editingStatus = ref(false);
 const deletingStatus = ref(false);
 const customers = ref([]);
+const getCustomers = ref(false);
 
 const resetForm = () => {
   addingCustomerData.value = {
@@ -30,12 +31,16 @@ const resetForm = () => {
 };
 
 const fetchCustomers = () => {
+  getCustomers.value = false;
   authStore.fetchProtectedApi('customer', {}, 'GET')
     .then((res) => {
+      getCustomers.value = true;
       customers.value = res.data;
     }).catch(err => {
       showAlert('error', err.message || "Failed to fetch customers");
-    })
+    }).finally(() => {
+      getCustomers.value = true;
+    });
 };
 
 onBeforeMount(fetchCustomers);
@@ -143,7 +148,7 @@ const deleteCustomer = () => {
     <!--begin::Body-->
     <div class="card-body py-3">
       <!--begin::Table container-->
-      <div class="text-center" v-if="customers.length === 0">No customers found!</div>
+      <div class="text-center" v-if="!getCustomers">Loading...</div>
       <div class="table-responsive" v-else>
         <!--begin::Table-->
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
@@ -221,19 +226,19 @@ const deleteCustomer = () => {
     <form @submit.prevent="addCustomer">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="addingCustomerData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="addingCustomerData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" ref="email" v-model="addingCustomerData.email" placeholder="Enter email">
+        <input type="email" class="form-control" v-model="addingCustomerData.email" placeholder="Enter email">
       </div>
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input type="text" class="form-control" ref="phone_number" v-model="addingCustomerData.phone_number" placeholder="Enter phone number">
+        <input type="text" class="form-control" v-model="addingCustomerData.phone_number" placeholder="Enter phone number">
       </div>
       <div class="mb-3">
         <label class="form-label">Address</label>
-        <textarea class="form-control" v-model="addingCustomerData.address" ref="address" placeholder="Enter address"></textarea>
+        <textarea class="form-control" v-model="addingCustomerData.address" placeholder="Enter address"></textarea>
       </div>
       <div class="text-center">
         <TheButton :lodding="addingStatus">Add Customer</TheButton>
@@ -245,19 +250,19 @@ const deleteCustomer = () => {
     <form @submit.prevent="editCustomer">
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control" ref="name" v-model="selectedCustomerData.name" placeholder="Enter name">
+        <input type="text" class="form-control" v-model="selectedCustomerData.name" placeholder="Enter name">
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" class="form-control" ref="email" v-model="selectedCustomerData.email" placeholder="Enter email">
+        <input type="email" class="form-control" v-model="selectedCustomerData.email" placeholder="Enter email">
       </div>
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input type="text" class="form-control" ref="phone_number" v-model="selectedCustomerData.phone_number" placeholder="Enter phone number">
+        <input type="text" class="form-control" v-model="selectedCustomerData.phone_number" placeholder="Enter phone number">
       </div>
       <div class="mb-3">
         <label class="form-label">Address</label>
-        <textarea class="form-control" v-model="selectedCustomerData.address" ref="address" placeholder="Enter address"></textarea>
+        <textarea class="form-control" v-model="selectedCustomerData.address" placeholder="Enter address"></textarea>
       </div>
       <div class="text-center">
         <TheButton :lodding="editingStatus">Edit Customer</TheButton>
