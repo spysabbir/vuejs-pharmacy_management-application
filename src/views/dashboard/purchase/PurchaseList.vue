@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { authStore } from '../../../store/store';
-import { purchase } from '../../../store/purchase';
 import showAlert from '../../../helpers/alert';
 
 import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
@@ -39,7 +38,7 @@ const viewPurchaseList = (purchaseItem) => {
     .then((res) => {
       viewPurchaseData.value = res.data;
     }).catch(err => {
-      showAlert('error', err.message || "Failed to fetch purchase list");
+      showAlert('error', err.message || "Failed to fetch purchase data");
     }).finally(() => {
       viewStatus.value = false;
     });
@@ -50,10 +49,10 @@ const deletePurchaseItem = () => {
   authStore.fetchProtectedApi(`purchase/${selectedPurchaseItem.value.id}`, {}, 'DELETE')
     .then((res) => {
       $('.deletingModel').modal('hide');
-      showAlert('success', res.message || "Purchase list deleted successfully");
+      showAlert('success', res.message || "Purchase data deleted successfully");
       getAllPurchaseList();
     }).catch(err => {
-      showAlert('error', err.message || "Failed to delete purchase list");
+      showAlert('error', err.message || "Failed to delete purchase data");
     }).finally(() => {
       deletingStatus.value = false;
     });

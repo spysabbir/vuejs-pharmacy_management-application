@@ -1,22 +1,37 @@
 <script setup>
 import { ref, computed, watch, onBeforeMount } from 'vue';
 import { authStore } from '../../../store/store';
-import { purchase } from '../../../store/purchase';
+import { sale } from '../../../store/sale';
 import showAlert from '../../../helpers/alert';
-
 import TheBreadcrumb from '../../../components/TheBreadcrumb.vue';
 import TheButton from '../../../components/TheButton.vue';
 
+const customers = ref([]);
+const getCustomers = ref(false);
 const medicines = ref([]);
 const getMedicines = ref(false)
-const selectedSupplierId = ref(purchase.selectedSupplierId);
+const selectedCustomerId = ref(sale.selectedCustomerId);
+const selectedSupplierId = ref('');
 const selectedTypeId = ref('');
 const selectedMedicineId = ref('');
-const purchasing = ref(false);
+const saleing = ref(false);
 const discount = ref(0);
 const payment_status = ref('');
 const payment_amount = ref(0);
 const payment_amount_status = ref(true);
+
+const fetchCustomers = () => {
+  getCustomers.value = false;
+  authStore.fetchProtectedApi('customer', {}, 'GET')
+    .then((res) => {
+      getCustomers.value = true;
+      customers.value = res.data;
+    }).catch(err => {
+      showAlert('error', err.message || "Failed to fetch customers");
+    }).finally(() => {
+      getCustomers.value = true;
+    });
+};
 
 const fetchMedicines = () => {
   getMedicines.value = false;
@@ -31,7 +46,10 @@ const fetchMedicines = () => {
     });
 };
 
-onBeforeMount(fetchMedicines);
+onBeforeMount(() => {
+  fetchCustomers();
+  fetchMedicines();
+});
 
 const supplierGroupedItems = computed(() => {
   const grouped = {};
@@ -71,13 +89,15 @@ const filteredMedicines = computed(() => {
   ));
 });
 
-watch(selectedSupplierId, () => {
-  selectedTypeId.value = "";
-  selectedMedicineId.value = "";
+watch(selectedCustomerId, () => {
   discount.value = 0;
   payment_status.value = '';
   payment_amount.value = 0;
-  purchase.emptyCart();
+});
+
+watch(selectedSupplierId, () => {
+  selectedTypeId.value = "";
+  selectedMedicineId.value = "";
 });
 
 watch(selectedTypeId, () => {
@@ -89,8 +109,8 @@ watch(discount, () => {
     discount.value = 0;
     showAlert('error', 'Discount should be greater than 0')
   }
-  if (discount.value > purchase.subTotalPrice) {
-    discount.value = purchase.subTotalPrice;
+  if (discount.value > sale.subTotalPrice) {
+    discount.value = sale.subTotalPrice;
     showAlert('error', 'Discount should be less than sub total price')
   }
 });
@@ -122,20 +142,20 @@ watch(payment_amount, () => {
 })
 
 const addToCart = (medicine) => {
-  purchase.selectedSupplierId = selectedSupplierId.value;
-  purchase.addToCartItem(medicine);
+  sale.selectedCustomerId = selectedCustomerId.value;
+  sale.addToCartItem(medicine);
 };
 
 const grandTotalPrice = computed(() => {
-  return purchase.subTotalPrice - discount.value;
+  return sale.subTotalPrice - discount.value;
 });
 
-const purchasingNow = () => {
-  if (selectedSupplierId.value === "") {
-      showAlert('error', 'Please select a supplier');
+const saleingNow = () => {
+  if (selectedCustomerId.value === "") {
+      showAlert('error', 'Please select a customer');
       return;
   }
-  if (Object.keys(purchase.items).length === 0) {
+  if (Object.keys(sale.items).length === 0) {
       showAlert('error', 'Please add items to cart');
       return;
   }
@@ -147,31 +167,32 @@ const purchasingNow = () => {
     showAlert('error', 'Please enter payment amount');
     return;
   }
-  const purchaseData = {
+  const saleData = {
     discount: discount.value,
     payment_status: payment_status.value,
     payment_amount: payment_amount.value,
   }
 
-  purchase.checkout(purchaseData)
+  sale.checkout(saleData)
   discount.value = 0;
   payment_status.value = '';
   payment_amount.value = 0;
+  selectedCustomerId.value = '';
   selectedSupplierId.value = '';
 };
 </script>
 
 <template>
-  <TheBreadcrumb title="Purchase"></TheBreadcrumb>
+  <TheBreadcrumb title="Sale"></TheBreadcrumb>
 
   <div class="card mb-5 mb-xxl-8">
     <div class="card-header">
       <h3 class="card-title align-items-start flex-column">
-        <span class="card-label fw-bolder fs-3 mb-1">Purchase</span>
+        <span class="card-label fw-bolder fs-3 mb-1">Sale</span>
         <span class="text-muted mt-1 fw-bold fs-7">***</span>
       </h3>
       <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover" title="Empty Cart">
-        <button @click="purchase.emptyCart" class="btn btn-danger er fs-6 px-8 py-4">
+        <button @click="sale.emptyCart" class="btn btn-danger er fs-6 px-8 py-4">
           <!--begin::Svg Icon | path: icons/duotone/Communication/Add-user.svg-->
           <span class="svg-icon svg-icon-3">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -190,6 +211,15 @@ const purchasingNow = () => {
         <div class="row">
           <div class="col-lg-4">
             <div class="row">
+              <div class="col-lg-12  mb-3">
+                <label class="form-label">Select Customer</label>
+                <select class="form-control" v-model="selectedCustomerId">
+                  <option value="">--Customer--</option>
+                  <option :value="item.id" v-for="item in customers" :key="item.id">
+                    {{ item.name }} - {{ item.phone_number }}
+                  </option>
+                </select>
+              </div>
               <div class="col-lg-7 mb-3">
                 <label class="form-label">Select Supplier</label>
                 <select class="form-control" v-model="selectedSupplierId" :disabled="!getMedicines">
@@ -225,6 +255,7 @@ const purchasingNow = () => {
                   <tr>
                     <th>Name | Power</th>
                     <th>Unit</th>
+                    <th>Available</th>
                     <th>Price</th>
                     <th>Qty</th>
                     <th>Total Price</th>
@@ -232,16 +263,17 @@ const purchasingNow = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in purchase.items" :key="item.medicine.id">
+                  <tr v-for="item in sale.items" :key="item.medicine.id">
                     <td>{{ item.medicine.name }} - <span class="text-info fw-bold text-hover-primary">{{ item.medicine.power_name }}</span></td>
                     <td>{{ item.medicine.unit_name }}</td>
-                    <td>{{ item.medicine.purchases_price }}</td>
+                    <td>{{ item.medicine.purchases_quantity - item.medicine.sales_quantity }}</td>
+                    <td>{{ item.medicine.sales_price }}</td>
                     <td>
-                      <input type="number" v-model="item.purchases_quantity" @change="purchase.updateQuantity(item.medicine.id, item.purchases_quantity)">
+                      <input type="number" v-model="item.sales_quantity" @change="sale.updateQuantity(item.medicine.id, item.sales_quantity)">
                     </td>
-                    <td>{{ item.medicine.purchases_price * item.purchases_quantity }}</td>
+                    <td>{{ item.medicine.sales_price * item.sales_quantity }}</td>
                     <td>
-                      <button @click="purchase.removeFromCart(item.medicine.id)" class="btn btn-danger btn-sm">
+                      <button @click="sale.removeFromCart(item.medicine.id)" class="btn btn-danger btn-sm">
                       <!--begin::Svg Icon | path: icons/duotone/General/Trash.svg-->
                       <span class="svg-icon svg-icon-3">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -264,7 +296,7 @@ const purchasingNow = () => {
                 <thead class="table-info">
                   <tr>
                     <th>Sub Total:</th>
-                    <th>{{ purchase.subTotalPrice }}</th>
+                    <th>{{ sale.subTotalPrice }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -297,7 +329,7 @@ const purchasingNow = () => {
                   </tr>
                   <tr>
                     <td colspan="2">
-                      <TheButton :lodding="purchasing" @click="purchasingNow" class="mt-3">Purchase</TheButton>
+                      <TheButton :lodding="saleing" @click="saleingNow" class="mt-3">Sale</TheButton>
                     </td>
                   </tr>
                 </tbody>
