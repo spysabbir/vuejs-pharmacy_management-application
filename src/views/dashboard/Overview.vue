@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { authStore } from '../../store/store';
-import { Chart, Grid, Line } from "vue3-charts";
 
 import TheBreadcrumb from '../../components/TheBreadcrumb.vue';
 
@@ -9,23 +8,12 @@ const overviewData = ref({
   countSupplier: 0,
   countCustomer: 0,
   countMedicine: 0,
+  totalPurchases: 0,
+  totalPaidPurchases: 0,
+  totalSales: 0,
+  totalPaidSales: 0,
+  totalUnpaidSales: 0,
 });
-const plByMonth = [
-  { name: 'Jan', purchase: 1000, avg: 500, inc: 300 },
-  { name: 'Feb', purchase: 2000, avg: 900, inc: 400 },
-  { name: 'Apr', purchase: 400, avg: 400, inc: 500 },
-  { name: 'Mar', purchase: 3100, avg: 1300, inc: 700 },
-  { name: 'May', purchase: 200, avg: 100, inc: 200 },
-  { name: 'Jun', purchase: 600, avg: 400, inc: 300 },
-  { name: 'Jul', purchase: 500, avg: 90, inc: 100 }
-];
-const direction = 'horizontal';
-const margin = {
-  left: 0,
-  top: 20,
-  right: 20,
-  bottom: 0
-};
 
 onBeforeMount(() => {
   const res = authStore.fetchProtectedApi('overview', {}, 'GET')
@@ -65,8 +53,41 @@ onBeforeMount(() => {
               </svg>
             </span>
             <!--end::Svg Icon-->
-            <div class="text-inverse-white fw-bolder fs-2 mb-2 mt-5">500M$</div>
-            <div class="fw-bold text-inverse-white fs-7">SAP UI Progress</div>
+            <div class="text-inverse-white fw-bolder fs-2 mb-2 mt-5">
+              Total Purchases: {{ overviewData.totalPurchases }} <br>
+              Paid Purchases: {{ overviewData.totalPaidPurchases }} <br>
+              Unpaid Purchases: {{ overviewData.totalPurchases - overviewData.totalPaidPurchases }} <br>
+            </div>
+            <div class="fw-bold text-inverse-white fs-7">Purchases Progress</div>
+          </div>
+          <!--end::Body-->
+        </a>
+        <!--end::Statistics Widget 5-->
+      </div>
+      <div class="col-xl-3">
+        <!--begin::Statistics Widget 5-->
+        <a href="#" class="card bg-success hoverable card-xl-stretch mb-xl-8">
+          <!--begin::Body-->
+          <div class="card-body">
+            <!--begin::Svg Icon | path: icons/duotone/Media/Equalizer.svg-->
+            <span class="svg-icon svg-icon-primary svg-icon-3x ms-n1">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <rect x="0" y="0" width="24" height="24"></rect>
+                  <rect fill="#000000" opacity="0.3" x="13" y="4" width="3" height="16" rx="1.5"></rect>
+                  <rect fill="#000000" x="8" y="9" width="3" height="11" rx="1.5"></rect>
+                  <rect fill="#000000" x="18" y="11" width="3" height="9" rx="1.5"></rect>
+                  <rect fill="#000000" x="3" y="13" width="3" height="7" rx="1.5"></rect>
+                </g>
+              </svg>
+            </span>
+            <!--end::Svg Icon-->
+            <div class="text-inverse-white fw-bolder fs-2 mb-2 mt-5">
+              Total Sales: {{ overviewData.totalSales }} <br>
+              Paid Sales: {{ overviewData.totalPaidSales }} <br>
+              Unpaid Sales: {{ overviewData.totalSales - overviewData.totalPaidSales }} <br>
+            </div>
+            <div class="fw-bold text-inverse-white fs-7">Sales Progress</div>
           </div>
           <!--end::Body-->
         </a>
@@ -138,24 +159,6 @@ onBeforeMount(() => {
           <!--end::Body-->
         </a>
         <!--end::Statistics Widget 5-->
-      </div>
-    </div>
-
-    <div class="row g-5 g-xl-8">
-      <div class="col-xl-4">
-        <Chart
-          :data="plByMonth"
-          :margin="margin"
-          :direction="direction"
-        >
-          <template #layers>
-            <Grid strokeDasharray="2,2" />
-            <Line
-              :dataKeys="['name', 'purchase']"
-              :lineStyle="{ strokeWidth: '10px' }"
-            />
-          </template>
-        </Chart>
       </div>
     </div>
   </div>

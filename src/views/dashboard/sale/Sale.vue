@@ -242,7 +242,7 @@ const saleingNow = () => {
                 <div class="row">
                   <div class="col-lg-6 border d-flex align-items-center justify-content-between" v-for="medicine in filteredMedicines" :key="medicine.id"> 
                     <strong>{{ medicine.name }} - {{ medicine.power_name }}</strong>
-                    <TheButton @click="addToCart(medicine)" class="btn btn-primary px-3 py-2">Add</TheButton>
+                    <TheButton @click="addToCart(medicine)" class="btn px-3 py-2" :class="(medicine.purchases_quantity - medicine.sales_quantity) === 0 ? 'btn-danger' : 'btn-primary'">Add</TheButton>
                   </div>
                 </div>
               </div>
@@ -266,7 +266,7 @@ const saleingNow = () => {
                   <tr v-for="item in sale.items" :key="item.medicine.id">
                     <td>{{ item.medicine.name }} - <span class="text-info fw-bold text-hover-primary">{{ item.medicine.power_name }}</span></td>
                     <td>{{ item.medicine.unit_name }}</td>
-                    <td>{{ item.medicine.purchases_quantity - item.medicine.sales_quantity }}</td>
+                    <td><strong class="badge badge-info">{{ item.medicine.purchases_quantity - item.medicine.sales_quantity }}</strong></td>
                     <td>{{ item.medicine.sales_price }}</td>
                     <td>
                       <input type="number" v-model="item.sales_quantity" @change="sale.updateQuantity(item.medicine.id, item.sales_quantity)">

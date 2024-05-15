@@ -41,7 +41,6 @@ const editUserProfileData = () => {
   	authStore.fetchProtectedApi('profile/update', userProfileData.value, 'PUT')
     .then((res) => {
       	showAlert('success', res.message || 'Profile updated successfully.');
-      	resetForm();
     }).catch(err => {
       	showAlert('error', err.message || 'Failed to update profile.');
     })

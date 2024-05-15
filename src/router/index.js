@@ -6,6 +6,7 @@ import LoginPage from "../views/auth/Login.vue";
 import DashboardView from "../views/Dashboard.vue";
 import OverviewView from "../views/dashboard/Overview.vue";
 import ProfileView from "../views/dashboard/Profile.vue";
+import DefaultSettings from "../views/dashboard/DefaultSettings.vue";
 import Supplier from "../views/dashboard/Supplier.vue";
 import Type from "../views/dashboard/Type.vue";
 import Power from "../views/dashboard/Power.vue";
@@ -15,8 +16,10 @@ import Medicine from "../views/dashboard/Medicine.vue";
 import Customer from "../views/dashboard/Customer.vue";
 import Purchase from "../views/dashboard/purchase/Purchase.vue";
 import PurchaseList from "../views/dashboard/purchase/PurchaseList.vue";
+import PurchaseInvoice from "../views/dashboard/purchase/PurchaseInvoice.vue";
 import Sale from "../views/dashboard/sale/Sale.vue";
 import SaleList from "../views/dashboard/sale/SaleList.vue";
+import SaleInvoice from "../views/dashboard/sale/SaleInvoice.vue";
 
 
 const routes = [
@@ -31,6 +34,7 @@ const routes = [
     children: [
       { path: 'overview', name: 'Overview', component: OverviewView },
       { path: 'profile', name: 'Profile', component: ProfileView },
+      { path: 'default/settings', name: 'DefaultSettings', component: DefaultSettings },
       { path: "supplier", component: Supplier },
       { path: "type", component: Type },
       { path: "power", component: Power },
@@ -40,8 +44,10 @@ const routes = [
       { path: "customer", component: Customer },
       { path: "purchase", component: Purchase },
       { path: "purchase/list", component: PurchaseList },
+      { path: "purchase/invoice/:id", component: PurchaseInvoice},
       { path: "sale", component: Sale },
       { path: "sale/list", component: SaleList },
+      { path: "sale/invoice/:id", component: SaleInvoice},
     ]
   },
 ];

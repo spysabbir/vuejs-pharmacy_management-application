@@ -6,7 +6,16 @@ const sale = reactive({
     items:{},
     selectedCustomerId: "",
     addToCartItem(selectedMedicine){
+        const availableQuantity = selectedMedicine.purchases_quantity - selectedMedicine.sales_quantity
+        if(availableQuantity <= 0){
+            showAlert('error', 'No available quantity')
+            return
+        }
         if(sale.items[selectedMedicine.id]){
+            if(sale.items[selectedMedicine.id].sales_quantity >= availableQuantity){
+                showAlert('error', 'Quantity must be less than available quantity')
+                return
+            }
             sale.items[selectedMedicine.id].sales_quantity++
             showAlert('success', 'Item added to cart')
         }
