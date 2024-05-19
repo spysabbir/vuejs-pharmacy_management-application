@@ -196,21 +196,17 @@ const deleteMedicine = () => {
     });
 };
 
-const searchField = ["name"];
+const searchField = ["supplier_name", "type_name", "name", "power_name", "unit_name", "rack_name"];
 const searchValue = ref();
 
 const headers = [
   { text: "Supplier Name", value: "supplier_name" },
-  { text: "Type Name", value: "type_name" },
-  { text: "Medicine Name", value: "name" },
-  { text: "Power Name", value: "power_name" },
-  { text: "Unit Name", value: "unit_name" },
-  { text: "Rack Name", value: "rack_name" },
-  { text: "Purchases Quantity", value: "purchases_quantity" },
-  { text: "Sales Quantity", value: "sales_quantity" },
-  { text: "Purchases Price", value: "purchases_price" },
-  { text: "Sales Price", value: "sales_price" },
-  { text: "Stock Quantity", value: "stock_quantity" },
+  { text: "Medicine Details", value: "medicine_details" },
+  { text: "Unit Details", value: "unit_details" },
+  { text: "Rack", value: "rack_name" },
+  { text: "Quantity", value: "quantity" },
+  { text: "Stock ", value: "stock" },
+  { text: "Price", value: "price" },
   { text: "Created At", value: "created_at", sortable: true },
   { text: "Action", value: "action" },
 ];
@@ -251,8 +247,25 @@ const selectedMedicineId = (id) => {
       <div v-else>
         <input placeholder="Search..." class="form-control mb-3 w-auto" type="text" v-model="searchValue"/>
         <EasyDataTable buttons-pagination border-cell alternating show-index header-text-direction="center" body-text-direction="center" :headers="headers" :items="medicines" :rows-per-page="10" :search-field="searchField" :search-value="searchValue">
-          <template #item-stock_quantity="{ purchases_quantity, sales_quantity }">
+          <template #item-medicine_details="{ type_name, name, power_name }">
+            <span class="badge badge-primary">{{ type_name }}</span>
+            <span class="badge badge-dark m-1">{{ name }}</span>
+            <span class="badge badge-info">{{ power_name }}</span>
+          </template>
+          <template #item-unit_details="{ unit_name, piece_in_unit }">
+            <span class="badge badge-primary">{{ unit_name }}</span>
+            <span class="badge badge-info m-1">{{ piece_in_unit }} Piece</span>
+          </template>
+          <template #item-quantity="{ purchases_quantity, sales_quantity }">
+            <span class="badge badge-primary">Purchases: {{ purchases_quantity }}</span>
+            <span class="badge badge-dark m-1">Sales: {{ sales_quantity }}</span>
+          </template>
+          <template #item-stock="{ purchases_quantity, sales_quantity }">
             <span class="badge badge-info">{{ purchases_quantity- sales_quantity }}</span>
+          </template>
+          <template #item-price="{ purchases_price, sales_price }">
+            <span class="badge badge-primary">Purchases: {{ purchases_price }}</span>
+            <span class="badge badge-dark m-1">Sales: {{ sales_price }}</span>
           </template>
           <template #item-action="{ id }">
             <TheButton data-bs-toggle="modal" data-bs-target=".editingModel" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" color="success" @click="selectedMedicineId(id)">
