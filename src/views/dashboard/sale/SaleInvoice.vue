@@ -1,55 +1,58 @@
 <template>
-  <TheBreadcrumb title="Sale Invoice"></TheBreadcrumb>
+<TheBreadcrumb title="Sale Invoice"></TheBreadcrumb>
 
-  <div class="sale-invoice" ref="invoiceRef">
-    <div class="actions">
-      <button @click="printInvoice">Print</button>
-      <button @click="downloadPDF">Download PDF</button>
+<div class="sale-invoice" ref="invoiceRef">
+  <div class="actions">
+    <button @click="printInvoice">Print</button>
+    <button @click="downloadPDF">Download PDF</button>
+  </div>
+  <h1 class="title">Sale Invoice</h1>
+  <div class="details">
+    <div class="detail">
+      <h3><u>From</u></h3>
+      <span><strong>{{ authStore.defaultSettings.app_name }}</strong></span>
+      <span><strong>Phone: </strong>{{ authStore.defaultSettings.app_phone_number }}</span>
+      <span><strong>Email: </strong>{{ authStore.defaultSettings.app_email }}</span>
+      <span><strong>Address: </strong>{{ authStore.defaultSettings.app_address }}</span>
     </div>
-    <h1 class="title">Sale Invoice</h1>
-    <div class="details">
-      <div class="detail">
-        <span><strong>Invoice Number: </strong>{{ saleInvoice.sales_invoice_no }}</span>
-        <span><strong>Supplier: </strong>{{ saleInvoice.customer_name }}</span>
-        <span><strong>Date: </strong>{{ saleInvoice.created_at }}</span>
-      </div>
-      <div class="detail">
-        <span><strong>Invoice Number: </strong>{{ saleInvoice.sales_invoice_no }}</span>
-        <span><strong>Supplier: </strong>{{ saleInvoice.customer_name }}</span>
-        <span><strong>Date: </strong>{{ saleInvoice.created_at }}</span>
-      </div>
-    </div>
-    <div class="items">
-      <h2 class="subtitle">Medicine Items</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Medicine Details</th>
-            <th>Unit</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in saleInvoice.salesDetails" :key="index">
-            <td>{{ item.medicine_name }} - {{ item.power_name }}</td>
-            <td>{{ item.unit_name }}</td>
-            <td>{{ item.sales_quantity }}</td>
-            <td>{{ item.sales_price }}</td>
-            <td>{{ item.sales_quantity * item.sales_price }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="total">
-      <p><span class="label">Sub Total:</span> {{ saleInvoice.sub_total }}</p>
-      <p><span class="label">Discount:</span> {{ saleInvoice.discount }}</p>
-      <p><span class="label">Grand Total:</span> {{ saleInvoice.grand_total }}</p>
-      <p><span class="label">Payment Status:</span> {{ saleInvoice.payment_status }}</p>
-      <p><span class="label">Payment Amount:</span> {{ saleInvoice.payment_amount }}</p>
+    <div class="detail">
+      <h3><u>To</u></h3>
+      <span><strong>Invoice Number: </strong>{{ saleInvoice.sales_invoice_no }}</span>
+      <span><strong>Customer: </strong>{{ saleInvoice.customer_name }}</span>
+      <span><strong>Date: </strong>{{ saleInvoice.created_at }}</span>
     </div>
   </div>
+  <div class="items">
+    <h2 class="subtitle">Medicine Items</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Medicine Details</th>
+          <th>Unit</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in saleInvoice.salesDetails" :key="index">
+          <td>{{ item.medicine_name }} - {{ item.power_name }}</td>
+          <td>{{ item.unit_name }}</td>
+          <td>{{ item.sales_quantity }}</td>
+          <td>{{ authStore.defaultSettings.app_currency_symbol }} {{ item.sales_price }}</td>
+          <td>{{ authStore.defaultSettings.app_currency_symbol }} {{ item.sales_quantity * item.sales_price }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="total">
+    <p><span class="label">Sub Total:</span> {{ authStore.defaultSettings.app_currency_symbol }} {{ saleInvoice.sub_total }}</p>
+    <p><span class="label">Discount:</span> {{ authStore.defaultSettings.app_currency_symbol }} {{ saleInvoice.discount }}</p>
+    <p><span class="label">Grand Total:</span> {{ authStore.defaultSettings.app_currency_symbol }} {{ saleInvoice.grand_total }}</p>
+    <p><span class="label">Payment Status:</span> {{ saleInvoice.payment_status }}</p>
+    <p><span class="label">Payment Amount:</span> {{ authStore.defaultSettings.app_currency_symbol }} {{ saleInvoice.payment_amount }}</p>
+  </div>
+</div>
 </template>
 
 <script setup>

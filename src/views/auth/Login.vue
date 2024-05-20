@@ -30,17 +30,11 @@ const login = () => {
       <div class="d-flex flex-column position-xl-fixed top-0 bottom-0 w-xl-600px scroll-y">
         <!--begin::Content-->
         <div class="d-flex flex-row-fluid flex-column text-center p-10 pt-lg-20">
-          <!--begin::Logo-->
-          <a href="#" class="py-9">
-            <img alt="Logo" src="/src/assets/media/logos/logo-3.svg" class="h-70px" />
-          </a>
-          <!--end::Logo-->
           <!--begin::Title-->
-          <h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #986923;">Welcome to Spy Pharmacy</h1>
+          <h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #986923;">Welcome </h1>
           <!--end::Title-->
           <!--begin::Description-->
-          <p class="fw-bold fs-2" style="color: #986923;">Discover Amazing Spy Pharmacy
-          <br />with great build tools</p>
+          <p class="fw-bold fs-2" style="color: #986923;">Discover amazing awesome build tools.</p>
           <!--end::Description-->
         </div>
         <!--end::Content-->
@@ -62,7 +56,7 @@ const login = () => {
             <!--begin::Heading-->
             <div class="text-center mb-10">
               <!--begin::Title-->
-              <h1 class="text-dark mb-3">Sign In to Spy Pharmacy</h1>
+              <h1 class="text-dark mb-3">Log In</h1>
               <!--end::Title-->
             </div>
             <!--begin::Heading-->

@@ -26,9 +26,7 @@ onBeforeMount(() => {
 
 
 <template>
-<!--begin::Toolbar-->
 <TheBreadcrumb title="Overview"></TheBreadcrumb>
-<!--end::Toolbar-->
 
 <!--begin::Post-->
 <div class="post d-flex flex-column-fluid" id="kt_post">
