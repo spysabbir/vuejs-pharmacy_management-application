@@ -1,6 +1,7 @@
 import { reactive, computed } from 'vue'
 import showAlert from '../helpers/alert'
 import { authStore } from './store'
+import router from '../router'
 
 const sale = reactive({
     items:{},
@@ -89,7 +90,8 @@ const sale = reactive({
         authStore.fetchProtectedApi('sale', order, 'POST')
         .then((res) => {
             this.emptyCart();
-            showAlert('success', res.message || "Saling successfull");
+            showAlert('success', res.message || "Saling successfully");
+            router.push('/dashboard/sale/list');
         }).catch(err => {
             showAlert('error', err.message || "Saling failed");
         })
