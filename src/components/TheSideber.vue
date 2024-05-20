@@ -94,7 +94,7 @@
           </router-link>
         </div>
 
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': this.$route.path === '/dashboard/purchase' || this.$route.path === '/dashboard/purchase/list' }">
+        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': this.$route.path.startsWith('/dashboard/purchase') }">
           <span class="menu-link">
             <span class="menu-icon">
               <i class="bi bi-sticky fs-3"></i>
@@ -102,7 +102,7 @@
             <span class="menu-title">Purchase</span>
             <span class="menu-arrow"></span>
           </span>
-          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': this.$route.path === '/dashboard/purchase' || this.$route.path === '/dashboard/purchase/list' }">
+          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': this.$route.path.startsWith('/dashboard/purchase') }">
             <div class="menu-item">
               <RouterLink class="menu-link" to="/dashboard/purchase" :class="{ 'active': this.$route.path === '/dashboard/purchase' }">
                 <span class="menu-bullet">
@@ -112,7 +112,7 @@
               </RouterLink>
             </div>
             <div class="menu-item">
-              <RouterLink class="menu-link" to="/dashboard/purchase/list" :class="{ 'active': this.$route.path === '/dashboard/purchase/list' }">
+              <RouterLink class="menu-link" to="/dashboard/purchase/list" :class="{ 'active': this.$route.path === '/dashboard/purchase/list' || this.$route.path.startsWith('/dashboard/purchase/invoice') }">
                 <span class="menu-bullet">
                   <span class="bullet bullet-dot"></span>
                 </span>

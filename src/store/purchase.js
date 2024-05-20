@@ -1,6 +1,7 @@
 import { reactive, computed } from 'vue'
 import showAlert from '../helpers/alert'
 import { authStore } from './store'
+import router from '../router'
 
 const purchase = reactive({
     items:{},
@@ -75,6 +76,7 @@ const purchase = reactive({
         .then((res) => {
             this.emptyCart();
             showAlert('success', res.message || "Purchasing successfully.");
+            router.push('/dashboard/purchase/list');
         }).catch(err => {
             showAlert('error', err.message || "Purchase failed");
         })
