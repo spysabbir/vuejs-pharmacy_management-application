@@ -4,8 +4,7 @@ import { purchase } from './purchase'
 import { sale } from './sale'
 
 const authStore = reactive({
-    // apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
-    apiBase: 'http://localhost:8000/api/',
+    apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
 
     isAuthenticated: localStorage.getItem('auth') == 1,
     user: JSON.parse(localStorage.getItem('user')),
