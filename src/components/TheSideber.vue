@@ -1,4 +1,7 @@
 <script setup>
+import { authStore } from './../store/store';
+import { useRoute } from 'vue-router'
+const $route = useRoute()
 </script>
 
 <template>
@@ -7,7 +10,7 @@
   <div class="aside-logo flex-column-auto" id="kt_aside_logo">
     <!--begin::Logo-->
     <RouterLink to="/dashboard">
-      <img alt="Logo" src="/src/assets/media/logos/logo-default.svg" class="h-15px logo" />
+      <img alt="Logo" :src="authStore.defaultSettings.app_url + '/uploads/default_photo/' + authStore.defaultSettings.app_logo" class="logo" />
     </RouterLink>
     <!--end::Logo-->
     <!--begin::Aside toggler-->
@@ -35,7 +38,7 @@
       <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_aside_menu" data-kt-menu="true">
 
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/overview' }" class="menu-link" to="/dashboard/overview">
+          <router-link :class="{ 'active': $route.path === '/dashboard/overview' }" class="menu-link" to="/dashboard/overview">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -49,7 +52,7 @@
           </div>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/supplier' }" class="menu-link" to="/dashboard/supplier">
+          <router-link :class="{ 'active': $route.path === '/dashboard/supplier' }" class="menu-link" to="/dashboard/supplier">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -57,7 +60,7 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/type' }" class="menu-link" to="/dashboard/type">
+          <router-link :class="{ 'active': $route.path === '/dashboard/type' }" class="menu-link" to="/dashboard/type">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -65,7 +68,7 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/power' }" class="menu-link" to="/dashboard/power">
+          <router-link :class="{ 'active': $route.path === '/dashboard/power' }" class="menu-link" to="/dashboard/power">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -73,7 +76,7 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/unit' }" class="menu-link" to="/dashboard/unit">
+          <router-link :class="{ 'active': $route.path === '/dashboard/unit' }" class="menu-link" to="/dashboard/unit">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -81,7 +84,7 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/rack' }" class="menu-link" to="/dashboard/rack">
+          <router-link :class="{ 'active': $route.path === '/dashboard/rack' }" class="menu-link" to="/dashboard/rack">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
@@ -89,15 +92,14 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/medicine' }" class="menu-link" to="/dashboard/medicine">
+          <router-link :class="{ 'active': $route.path === '/dashboard/medicine' }" class="menu-link" to="/dashboard/medicine">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
             <span class="menu-title">Medicine</span>
           </router-link>
         </div>
-
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': this.$route.path.startsWith('/dashboard/purchase') }">
+        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': $route.path.startsWith('/dashboard/purchase') }">
           <span class="menu-link">
             <span class="menu-icon">
               <i class="bi bi-sticky fs-3"></i>
@@ -105,9 +107,9 @@
             <span class="menu-title">Purchase</span>
             <span class="menu-arrow"></span>
           </span>
-          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': this.$route.path.startsWith('/dashboard/purchase') }">
+          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': $route.path.startsWith('/dashboard/purchase') }">
             <div class="menu-item">
-              <RouterLink class="menu-link" to="/dashboard/purchase" :class="{ 'active': this.$route.path === '/dashboard/purchase' }">
+              <RouterLink class="menu-link" to="/dashboard/purchase" :class="{ 'active': $route.path === '/dashboard/purchase' }">
                 <span class="menu-bullet">
                   <span class="bullet bullet-dot"></span>
                 </span>
@@ -115,7 +117,7 @@
               </RouterLink>
             </div>
             <div class="menu-item">
-              <RouterLink class="menu-link" to="/dashboard/purchase/list" :class="{ 'active': this.$route.path === '/dashboard/purchase/list' || this.$route.path.startsWith('/dashboard/purchase/invoice') }">
+              <RouterLink class="menu-link" to="/dashboard/purchase/list" :class="{ 'active': $route.path === '/dashboard/purchase/list' || $route.path.startsWith('/dashboard/purchase/invoice') }">
                 <span class="menu-bullet">
                   <span class="bullet bullet-dot"></span>
                 </span>
@@ -131,14 +133,14 @@
           </div>
         </div>
         <div class="menu-item">
-          <router-link :class="{ 'active': this.$route.path === '/dashboard/customer' }" class="menu-link" to="/dashboard/customer">
+          <router-link :class="{ 'active': $route.path === '/dashboard/customer' }" class="menu-link" to="/dashboard/customer">
             <span class="menu-icon">
               <i class="bi bi-house fs-3"></i>
             </span>
             <span class="menu-title">Customer</span>
           </router-link>
         </div>
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': this.$route.path.startsWith('/dashboard/sale') }">
+        <div data-kt-menu-trigger="click" class="menu-item menu-accordion" :class="{ 'show': $route.path.startsWith('/dashboard/sale') }">
           <span class="menu-link">
             <span class="menu-icon">
               <i class="bi bi-sticky fs-3"></i>
@@ -146,9 +148,9 @@
             <span class="menu-title">Sale</span>
             <span class="menu-arrow"></span>
           </span>
-          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': this.$route.path.startsWith('/dashboard/sale') }">
+          <div class="menu-sub menu-sub-accordion menu-active-bg" :class="{ 'show': $route.path.startsWith('/dashboard/sale') }">
             <div class="menu-item">
-              <RouterLink class="menu-link" to="/dashboard/sale" :class="{ 'active': this.$route.path === '/dashboard/sale' }">
+              <RouterLink class="menu-link" to="/dashboard/sale" :class="{ 'active': $route.path === '/dashboard/sale' }">
                 <span class="menu-bullet">
                   <span class="bullet bullet-dot"></span>
                 </span>
@@ -156,7 +158,7 @@
               </RouterLink>
             </div>
             <div class="menu-item">
-              <RouterLink class="menu-link" to="/dashboard/sale/list" :class="{ 'active': this.$route.path === '/dashboard/sale/list' || this.$route.path.startsWith('/dashboard/sale/invoice') }">
+              <RouterLink class="menu-link" to="/dashboard/sale/list" :class="{ 'active': $route.path === '/dashboard/sale/list' || $route.path.startsWith('/dashboard/sale/invoice') }">
                 <span class="menu-bullet">
                   <span class="bullet bullet-dot"></span>
                 </span>
@@ -165,54 +167,16 @@
             </div>
           </div>
         </div>
-        
-        <!-- <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-          <span class="menu-link">
-            <span class="menu-icon">
-              <i class="bi bi-sticky fs-3"></i>
-            </span>
-            <span class="menu-title">Resource</span>
-            <span class="menu-arrow"></span>
-          </span>
-          <div class="menu-sub menu-sub-accordion menu-active-bg">
-            <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-              <span class="menu-link">
-                <span class="menu-bullet">
-                  <span class="bullet bullet-dot"></span>
-                </span>
-                <span class="menu-title">Basic Flow</span>
-                <span class="menu-arrow"></span>
-              </span>
-              <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                  <a class="menu-link" href="authentication/flows/basic/sign-in.html">
-                    <span class="menu-bullet">
-                      <span class="bullet bullet-dot"></span>
-                    </span>
-                    <span class="menu-title">Sign-in</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" href="">
-                <span class="menu-bullet">
-                  <span class="bullet bullet-dot"></span>
-                </span>
-                <span class="menu-title">Multi-steps Sign-up</span>
-              </a>
-            </div>
-          </div>
-        </div> -->
       </div>
       <!--end::Menu-->
     </div>
   </div>
   <!--end::Aside menu-->
+
   <!--begin::Footer-->
   <div class="aside-footer flex-column-auto pt-5 pb-7 px-5" id="kt_aside_footer">
-    <a href="#" class="btn btn-custom btn-primary w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="Check out over 200 in-house components, plugins and ready for use solutions">
-      <span class="btn-label">Docs &amp; Components</span>
+    <a :href="authStore.defaultSettings.app_url" target="_blank" class="btn btn-custom btn-primary w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="Check out over 200 in-house components, plugins and ready for use solutions">
+      <span class="btn-label">{{ authStore.defaultSettings.app_name }}</span>
       <!--begin::Svg Icon | path: icons/duotone/General/Clipboard.svg-->
       <span class="svg-icon btn-icon svg-icon-2">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">

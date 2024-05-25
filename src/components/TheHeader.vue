@@ -17,7 +17,7 @@ const auth = authStore;
     <!--begin::Mobile logo-->
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
       <router-link to="/dashboard" class="d-lg-none">
-        <img alt="Logo" src="/src/assets/media/logos/logo-compact.svg" class="h-15px" />
+        <img alt="Logo" :src="authStore.defaultSettings.app_url + '/uploads/default_photo/' + authStore.defaultSettings.app_logo" class="h-15px" />
       </router-link>
     </div>
     <!--end::Mobile logo-->

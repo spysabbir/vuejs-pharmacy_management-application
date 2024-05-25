@@ -16,33 +16,30 @@ onBeforeMount(() => {
 	})
 });
 
-// handleLogoChange
-const handleLogoChange = (e) => {
-	const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
-	if (!allowedExtensions.exec(e.target.files[0].name)) {
-		showAlert('error', 'Invalid file type. Only jpg, jpeg, png, gif files are allowed.');
-		return;
-	}
-	const appLogo = e.target.files[0];
-	if (appLogo) {
-		defaultSetting.value.app_logo = appLogo.name;
-	}
-};
+// const handleLogoChange = (e) => {
+// 	const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+// 	if (!allowedExtensions.exec(e.target.files[0].name)) {
+// 		showAlert('error', 'Invalid file type. Only jpg, jpeg, png, gif files are allowed.');
+// 		return;
+// 	}
+// 	const appLogo = e.target.files[0];
+// 	if (appLogo) {
+// 		defaultSetting.value.app_logo = appLogo.name;
+// 	}
+// };
 
-// handleFaviconChange
-const handleFaviconChange = (e) => {
-	const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
-	if (!allowedExtensions.exec(e.target.files[0].name)) {
-		showAlert('error', 'Invalid file type. Only jpg, jpeg, png, gif files are allowed.');
-		return;
-	}
-	const appFavicon = e.target.files[0];
-	if (appFavicon) {
-		defaultSetting.value.app_favicon = appFavicon.name;
-	}
-};
+// const handleFaviconChange = (e) => {
+// 	const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+// 	if (!allowedExtensions.exec(e.target.files[0].name)) {
+// 		showAlert('error', 'Invalid file type. Only jpg, jpeg, png, gif files are allowed.');
+// 		return;
+// 	}
+// 	const appFavicon = e.target.files[0];
+// 	if (appFavicon) {
+// 		defaultSetting.value.app_favicon = appFavicon.name;
+// 	}
+// };
 
-// editDefaultSettingData
 const editDefaultSettingData = () => {
 	if (!defaultSetting.value.app_name || !defaultSetting.value.app_email || !defaultSetting.value.app_phone_number || !defaultSetting.value.app_address || !defaultSetting.value.app_currency || !defaultSetting.value.app_currency_symbol || !defaultSetting.value.app_timezone || !defaultSetting.value.app_url) {
 		showAlert('error', 'All fields are required.');
@@ -113,14 +110,14 @@ const editDefaultSettingData = () => {
 							<label class="col-form-label required fw-bold fs-6">App Url</label>
 							<input type="text" class="form-control form-control-lg form-control-solid" v-model="defaultSetting.app_url" placeholder="Enter App Url" />
 						</div>
-						<div class="col-lg-6 fv-row">
+						<!-- <div class="col-lg-6 fv-row">
 							<label class="col-form-label required fw-bold fs-6">App Logo</label>
 							<input type="file" class="form-control form-control-lg form-control-solid" @change="handleLogoChange" />
 						</div>
 						<div class="col-lg-6 fv-row">
 							<label class="col-form-label required fw-bold fs-6">App Favicon</label>
 							<input type="file" class="form-control form-control-lg form-control-solid" @change="handleFaviconChange" />
-						</div>
+						</div> -->
 					</div>
 					<!--end::Input group-->
 				</div>

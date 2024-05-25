@@ -20,8 +20,10 @@
 </div>
 </template>
 
-<script>
-export default {
-    props: ['title'],
-}
+<script setup>
+import { defineProps } from 'vue'
+
+defineProps({
+    title: String
+})
 </script>

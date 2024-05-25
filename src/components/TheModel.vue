@@ -44,19 +44,19 @@
 <!--end::Modal-->
 </template>
 
-<script>
-export default {
-    props: {
-        hadding: {
-            type: String,
-            default: "Default Heading"
-        },
-        action: {
-            type: String,
-            default: ""
-        },
-    }
-}
+<script setup>
+import { defineProps } from 'vue'
+
+const props = defineProps({
+    hadding: {
+        type: String,
+        default: "Default Heading"
+    },
+    action: {
+        type: String,
+        default: ""
+    },
+})
 </script>
 
 <style>

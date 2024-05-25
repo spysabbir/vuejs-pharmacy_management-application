@@ -17,7 +17,7 @@
     </div>
     <div class="detail">
       <h3><u>To</u></h3>
-      <span><strong>Invoice Number: </strong>{{ purchaseInvoice.purchases_invoice_no }}</span>
+      <span><strong>Invoice Number: </strong></span>
       <span><strong>Supplier: </strong>{{ purchaseInvoice.supplier_name }}</span>
       <span><strong>Date: </strong>{{ purchaseInvoice.created_at }}</span>
     </div>

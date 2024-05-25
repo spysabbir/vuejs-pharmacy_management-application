@@ -23,8 +23,6 @@ onBeforeMount(() => {
 });
 </script>
 
-
-
 <template>
 <TheBreadcrumb title="Overview"></TheBreadcrumb>
 

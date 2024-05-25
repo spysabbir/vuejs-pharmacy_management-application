@@ -53,20 +53,19 @@ const authStore = reactive({
     authenticate(email, password) {
         authStore.fetchPublicApi('login', { email, password }, 'POST')
         .then(res => {
-            if (res.success) {
-                authStore.isAuthenticated = true
-                authStore.user = res.data
-                localStorage.setItem('auth', 1)
-                localStorage.setItem('user', JSON.stringify(res.data))
-                location.href = "/dashboard";
-            }
-        });
+            authStore.isAuthenticated = true
+            authStore.user = res.data
+            localStorage.setItem('auth', 1)
+            localStorage.setItem('user', JSON.stringify(res.data))
+            location.href = "/dashboard";
+        }).catch(err => {
+            showAlert('error', err.message || 'Failed to authenticate user.');
+        })
     },
     fetchDefaultSetting() {
         authStore.fetchProtectedApi('default/settings', {}, 'GET')
         .then((res) => {
             localStorage.setItem('defaultSettings', JSON.stringify(res.data));
-			authStore.defaultSettings = res.data;
 		}).catch(err => {
 			showAlert('error', err.message || 'Failed to fetch default settings.');
         })
@@ -85,5 +84,4 @@ const authStore = reactive({
         return authStore.user.token
     },
 })
-authStore.fetchDefaultSetting()
 export { authStore }
