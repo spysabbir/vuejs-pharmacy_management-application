@@ -2,6 +2,8 @@ import { reactive } from 'vue'
 import router from '../router'
 import { purchase } from './purchase'
 import { sale } from './sale'
+import showAlert from './../helpers/alert';
+
 
 const authStore = reactive({
     apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',

@@ -80,7 +80,7 @@ const editUserPasswordData = () => {
 				<!--begin: Pic-->
 				<div class="me-7 mb-4">
 					<div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-						<img src="/src/assets/media/avatars/150-2.jpg" alt="image" />
+						<img src="/assets/media/avatars/1.jpg" alt="image" />
 					</div>
 				</div>
 				<!--end::Pic-->
