@@ -2,15 +2,6 @@
 import TheSideber from '../components/TheSideber.vue';
 import TheHeader from '../components/TheHeader.vue';
 import TheFooter from '../components/TheFooter.vue';
-
-import { onBeforeMount } from 'vue';
-import { authStore } from '../store/store';
-
-const auth = authStore;
-
-onBeforeMount(() => {
-  auth.fetchDefaultSetting();
-});
 </script>
 
 <template>

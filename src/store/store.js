@@ -4,13 +4,12 @@ import { purchase } from './purchase'
 import { sale } from './sale'
 import showAlert from './../helpers/alert';
 
-
 const authStore = reactive({
     apiBase: 'https://backend-pharmacy-management.spysabbir.com/api/',
 
     isAuthenticated: localStorage.getItem('auth') == 1,
-    user: JSON.parse(localStorage.getItem('user')),
-    defaultSettings: JSON.parse(localStorage.getItem('defaultSettings')),
+    user: JSON.parse(localStorage.getItem('user') || '{}'),
+    defaultSettings: JSON.parse(localStorage.getItem('defaultSettings') || '{}'),
     async fetchPublicApi(endPoint = "", params = {}, requestType = "GET") {
         let request = {
             method: requestType.toUpperCase(),
@@ -51,25 +50,29 @@ const authStore = reactive({
         const response = await res.json();
         return response;
     },
-    authenticate(email, password) {
-        authStore.fetchPublicApi('login', { email, password }, 'POST')
-        .then(res => {
+    async authenticate(email, password) {
+        try {
+            const res = await authStore.fetchPublicApi('login', { email, password }, 'POST');
             authStore.isAuthenticated = true
             authStore.user = res.data
             localStorage.setItem('auth', 1)
             localStorage.setItem('user', JSON.stringify(res.data))
+
+            await authStore.fetchDefaultSetting()
+            
             location.href = "/dashboard";
-        }).catch(err => {
+        } catch (err) {
             showAlert('error', err.message || 'Failed to authenticate user.');
-        })
+        }
     },
-    fetchDefaultSetting() {
-        authStore.fetchProtectedApi('default/settings', {}, 'GET')
-        .then((res) => {
+    async fetchDefaultSetting() {
+        try {
+            const res = await authStore.fetchProtectedApi('default/settings', {}, 'GET');
+            authStore.defaultSettings = res.data
             localStorage.setItem('defaultSettings', JSON.stringify(res.data));
-		}).catch(err => {
-			showAlert('error', err.message || 'Failed to fetch default settings.');
-        })
+        } catch (err) {
+            showAlert('error', err.message || 'Failed to fetch default settings.');
+        }
     },
     logout() {
         authStore.isAuthenticated = false
