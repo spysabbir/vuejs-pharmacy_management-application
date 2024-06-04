@@ -11,10 +11,23 @@ const password =  ref('12345678')
 const loginStatus = ref(false)
 
 const login = () => {
-  if (!email.value || !password.value) {
-    showAlert('error', 'Please enter both email and password.');
+  if (!email.value) {
+    showAlert('error', 'Email is required')
     return
   }
+  if (!/\S+@\S+\.\S+/.test(email.value)) {
+    showAlert('error', 'Email is invalid')
+    return
+  }
+  if (!password.value) {
+    showAlert('error', 'Password is required')
+    return
+  }
+  if (password.value.length < 6) {
+    showAlert('error', 'Password must be greater than 6 characters')
+    return
+  }
+
   loginStatus.value = true
   auth.authenticate(email.value, password.value)
 }
