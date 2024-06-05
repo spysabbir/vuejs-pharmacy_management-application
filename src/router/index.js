@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
     showAlert('error', 'You need to login to access this page.');
     next('/login');
   } else if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/dashboard');
+    location.href = "/dashboard";
   } else {
     next();
   }
